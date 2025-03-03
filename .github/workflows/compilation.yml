@@ -64,7 +64,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: RA-${{ matrix.docker_owner }}-${{ steps.slug.outputs.sha8 }}
-        path: RA/2/
+        path: 1.zip
 
 
   libretro-salamander:
