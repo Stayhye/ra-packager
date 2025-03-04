@@ -24,8 +24,8 @@ jobs:
           #[gambatte-libretro, gambatte_libretro_ps2],
           #[snes9x2002, snes9x2002_libretro_ps2],
           #[libretro-lutro, lutro_libretro_ps2],
-          [gpsp, gpsp_libretro_ps2],
-          #[libretro-fceumm, fceumm_libretro_ps2],
+          #[gpsp, gpsp_libretro_ps2],
+          [libretro-fceumm, fceumm_libretro_ps2],
           #[stella2014-libretro, stella2014_libretro_ps2],
           #[libretro-cap32, cap32_libretro_ps2],
           #[QuickNES_Core, quicknes_libretro_ps2],
@@ -93,6 +93,8 @@ jobs:
     - name: Compile project
       run: |
         ./prepare_release.sh
+        ./prepare_retroarch.sh
+        ./generate_salamander.sh
 
     - name: Get short SHA
       id: slug
@@ -103,7 +105,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: RA-${{ matrix.docker_owner }}-${{ steps.slug.outputs.sha8 }}
-        path: RA/1/
+        path: RA/
 
 
   libretro-info-core:
@@ -118,6 +120,7 @@ jobs:
     - name: Compile project
       run: |
         ./prepare_release.sh
+        ./libretro-core-info.sh
 
     - name: Get short SHA
       id: slug
