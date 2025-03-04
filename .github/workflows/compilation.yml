@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         docker_owner: [ps2dev]
-        core_opts: [
+          core_opts: [
           #[libretro-prboom, prboom_libretro_ps2],
           #[libretro-samples, test_libretro_ps2],
           #[picodrive, picodrive_libretro_ps2],
@@ -30,7 +30,7 @@ jobs:
           #[libretro-cap32, cap32_libretro_ps2],
           #[QuickNES_Core, quicknes_libretro_ps2],
          ]
-      fail-fast: false
+       fail-fast: false
 
     container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
