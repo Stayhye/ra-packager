@@ -93,8 +93,6 @@ jobs:
     - name: Compile project
       run: |
         ./prepare_release.sh
-        #./prepare_retroarch.sh
-        #./generate_salamander.sh
 
     - name: Get short SHA
       id: slug
@@ -120,7 +118,7 @@ jobs:
     - name: Compile project
       run: |
         ./prepare_release.sh
-        ./libretro-core-info.sh
+        
 
     - name: Get short SHA
       id: slug
