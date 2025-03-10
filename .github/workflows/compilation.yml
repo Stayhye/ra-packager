@@ -18,7 +18,8 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
         core_opts: [
-          [libretro-prboom, prboom_libretro_ps2],
+          [libretro-neocd, neocd_libretro_ps2],
+          #[libretro-prboom, prboom_libretro_ps2],
           # [libretro-samples, test_libretro_ps2],
           # [picodrive, picodrive_libretro_ps2],
           # [gambatte-libretro, gambatte_libretro_ps2],

@@ -9,6 +9,10 @@
 ./cores/libretro-prboom.sh || { exit 1; }
 ./generate_retroarch.sh libretro-prboom prboom_libretro_ps2 || { exit 1; }
 
+# libretro-neocd
+./cores/libretro-neocd.sh || { exit 1; }
+./generate_retroarch.sh neocd_libretro neocd_libretro_ps2 || { exit 1; }
+
 #libretro-samples
 ./cores/libretro-samples.sh || { exit 1; }
 ./generate_retroarch.sh libretro-samples test_libretro_ps2 || { exit 1; }
