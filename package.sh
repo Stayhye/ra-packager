@@ -11,7 +11,7 @@
 
 # libretro-neocd
 chmod +x ./cores/libretro-neocd.sh || { exit 1; }
-./generate_retroarch.sh neocd_libretro neocd_libretro_ps2 || { exit 1; }
+./generate_retroarch.sh libretro-neocd neocd_libretro_ps2 || { exit 1; }
 
 #libretro-samples
 ./cores/libretro-samples.sh || { exit 1; }
