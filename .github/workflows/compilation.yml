@@ -29,15 +29,21 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apk add build-base git bash
+        apk add build-base git bash cmake
 
     - name: Compile custom ps2_driver
       run: |
         git clone --recurse-submodules https://github.com/fjtrujy/ps2_drivers.git
         cd ps2_drivers
-        # Building master branch as mx4sio was merged/removed
-        make -j $(getconf _NPROCESSORS_ONLN) clean
-        make -j $(getconf _NPROCESSORS_ONLN) install
+        # If a Makefile exists, run it. Otherwise, try the modern install script/method.
+        if [ -f Makefile ]; then
+          make -j $(getconf _NPROCESSORS_ONLN) install
+        else
+          # Fallback for newer repo structures that use subdirectories
+          for dir in $(find . -maxdepth 2 -name Makefile); do
+            cd $(dirname $dir) && make install && cd -
+          fi
+        fi
 
     - name: Compile project
       run: |
@@ -72,14 +78,19 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apk add build-base git bash
+        apk add build-base git bash cmake
 
     - name: Compile custom ps2_driver
       run: |
         git clone https://github.com/fjtrujy/ps2_drivers.git
         cd ps2_drivers
-        make -j $(getconf _NPROCESSORS_ONLN) clean
-        make -j $(getconf _NPROCESSORS_ONLN) install
+        if [ -f Makefile ]; then
+          make -j $(getconf _NPROCESSORS_ONLN) install
+        else
+          for dir in $(find . -maxdepth 2 -name Makefile); do
+            cd $(dirname $dir) && make install && cd -
+          fi
+        fi
     
     - name: Compile project
       run: |
