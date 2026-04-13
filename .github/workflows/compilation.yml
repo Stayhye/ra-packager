@@ -36,19 +36,25 @@ jobs:
         git clone --recurse-submodules https://github.com/fjtrujy/ps2_drivers.git
         cd ps2_drivers
         for dir in $(find . -maxdepth 2 -name Makefile); do
+          echo "Building in $(dirname $dir)..."
           make -C $(dirname $dir) install
         done
 
     - name: Patch ps2_gfx for GSkit Compatibility
       run: |
-        # Search for the file in both .c and .cpp variants
+        # Locate the file (usually .c in RetroArch but checking both)
         TARGET_FILE=$(find gfx/drivers/ -name "ps2_gfx.*" | head -n 1)
         if [ -f "$TARGET_FILE" ]; then
-          echo "Found $TARGET_FILE, applying vsync_handler patch..."
-          # Uses regex to catch 'int vsync_handler(void)' regardless of extra spaces
-          sed -i 's/vsync_handler\s*(\s*void\s*)/vsync_handler(int cause)/g' "$TARGET_FILE"
+          echo "Found $TARGET_FILE, applying vsync_handler signature patch..."
+          # Specifically targets 'static int vsync_handler(void)' and replaces with '(int cause)'
+          # The regex handles potential spaces between 'handler' and '('
+          sed -i 's/static int vsync_handler\s*(void)/static int vsync_handler(int cause)/g' "$TARGET_FILE"
+          
+          # Verification check
+          grep "vsync_handler(int cause)" "$TARGET_FILE" || (echo "Patch failed to apply!" && exit 1)
         else
           echo "Could not find ps2_gfx source file to patch."
+          exit 1
         fi
 
     - name: Compile project
