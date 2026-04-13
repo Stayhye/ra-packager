@@ -48,16 +48,32 @@ jobs:
         ./prepare_release.sh
         ./prepare_retroarch.sh
         
-        # 2. Fix the GSkit vsync_handler signature
-        echo "Applying GSkit patch..."
-        find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" -exec sed -i -E 's/int\s+vsync_handler\s*\((void)?\)/int vsync_handler(int cause)/g' {} +
-        
-        # 3. Fix the ps2_filesystem_driver const char pointer mismatch
-        # We find where waitUntilDeviceIsReady is called and cast the argument to (char *)
-        echo "Applying Filesystem Driver patch..."
-        find . -name "platform_ps2.c" -exec sed -i 's/waitUntilDeviceIsReady(\([^)]*\))/waitUntilDeviceIsReady((char *)\1)/g' {} +
+        # 2. Apply the patch only to the function DEFINITION
+        # We look for 'int vsync_handler' followed by '(void)' or '()' 
+        # but specifically avoid the line that calls 'gsKit_add_vsync_handler'
+        echo "Applying surgical patch to ps2_gfx.c..."
+        find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" | while read -r file; do
+          echo "Patching definition in $file"
+          # This replaces 'int vsync_handler(void)' with 'int vsync_handler(int cause)'
+          # but leaves 'gsKit_add_vsync_handler(vsync_handler)' alone.
+          sed -i -E 's/int\s+vsync_handler\s*\((void)?\)/int vsync_handler(int cause)/g' "$file"
+          
+          echo "Verifying Patch Results:"
+          grep -n "vsync_handler" "$file"
+        done
 
-        # Verification
-        echo "Verifying Patches:"
-        find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" -exec grep "vsync_handler" {} +
-        find . -name "platform_ps2.c" -exec grep "waitUntilDeviceIsReady" {} +
+    - name: Compile project
+      run: |
+        ./cores/${{ matrix.core_opts[0] }}.sh
+        ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
+
+    - name: Get short SHA
+      id: slug
+      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
+
+    - name: Upload artifacts
+      if: ${{ success() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: RA-${{ matrix.core_opts[0] }}-${{ steps.slug.outputs.sha8 }}
+        path: RA/
