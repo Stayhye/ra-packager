@@ -36,20 +36,25 @@ jobs:
         git clone --recurse-submodules https://github.com/fjtrujy/ps2_drivers.git
         cd ps2_drivers
         for dir in $(find . -maxdepth 2 -name Makefile); do
-          echo "Building in $(dirname $dir)..."
           make -C $(dirname $dir) install
         done
 
-    - name: Patch ps2_gfx for GSkit Compatibility
+    - name: Patch for GSkit API Changes
       run: |
-        # Find every instance of ps2_gfx (c or cpp)
-        find . -name "ps2_gfx.*" | while read -r file; do
-          echo "Patching $file..."
-          # Fix the vsync_handler definition and declaration (void -> int)
-          sed -i 's/vsync_handler\s*(\s*void\s*)/vsync_handler(int cause)/g' "$file"
-          # Some versions use a specific typedef, this ensures it matches int(*)(int)
-          sed -i 's/int\s*(\s*\*vsync_callback\s*)\s*(\s*void\s*)/int (*vsync_callback)(int)/g' "$file"
-        done
+        echo "Applying global patches for GSkit compatibility..."
+        # 1. Fix vsync_handler signature (definition and declaration)
+        # 2. Fix function pointer types
+        find . -type f \( -name "*.c" -o -name "*.cpp" -o -name "*.h" \) -exec sed -i \
+          -e 's/vsync_handler\s*(\s*void\s*)/vsync_handler(int cause)/g' \
+          -e 's/int\s*(\s*\*vsync_callback\s*)\s*(\s*void\s*)/int (*vsync_callback)(int)/g' \
+          {} +
+        
+        # Verify the patch in the most likely file
+        TARGET=$(find . -name "ps2_gfx.c" -o -name "ps2_gfx.cpp" | head -n 1)
+        if [ -f "$TARGET" ]; then
+          echo "Verifying patch in $TARGET:"
+          grep "vsync_handler" "$TARGET" | head -n 5
+        fi
 
     - name: Compile project
       run: |
@@ -92,13 +97,10 @@ jobs:
       run: |
         chmod +x *.sh
         ./prepare_release.sh
-    - name: Get short SHA
-      id: slug
-      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: RA-salamander-${{ steps.slug.outputs.sha8 }}
+        name: RA-salamander-${{ github.sha }}
         path: RA/
 
   libretro-info-core:
@@ -115,11 +117,8 @@ jobs:
       run: |
         chmod +x *.sh
         ./prepare_release.sh
-    - name: Get short SHA
-      id: slug
-      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: RA-info-${{ steps.slug.outputs.sha8 }}
+        name: RA-info-${{ github.sha }}
         path: RA/
