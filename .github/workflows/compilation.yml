@@ -41,25 +41,26 @@ jobs:
 
     - name: Force Patch GSkit Compatibility
       run: |
-        # 1. Try to find the file using a very broad search
-        TARGET=$(find . -name "ps2_gfx.c" -o -name "ps2_gfx.cpp" | head -n 1)
-        
-        # 2. If find fails, try the hardcoded path from your error log
-        if [ -z "$TARGET" ]; then
-          TARGET="gfx/drivers/ps2_gfx.c"
+        # We target the exact path from the compiler error log
+        # We use 'ls' first to confirm the file exists in the current workspace
+        if [ -f "gfx/drivers/ps2_gfx.c" ]; then
+            TARGET="gfx/drivers/ps2_gfx.c"
+        else
+            # If not in the relative path, search only the root project (not ps2_drivers)
+            TARGET=$(find . -maxdepth 4 -name "ps2_gfx.c" | grep -v "ps2_drivers" | head -n 1)
         fi
 
-        if [ -f "$TARGET" ]; then
-          echo "Patching target file: $TARGET"
+        if [ -n "$TARGET" ] && [ -f "$TARGET" ]; then
+          echo "Found target: $TARGET"
           chmod 666 "$TARGET"
           # Nuclear regex: replaces 'vsync_handler' followed by any parentheses content
           sed -i -E 's/vsync_handler\s*\([^)]*\)/vsync_handler(int cause)/g' "$TARGET"
-          echo "Verification:"
+          echo "Verification (should show 'int cause'):"
           grep -n "vsync_handler" "$TARGET"
         else
-          echo "ERROR: Could not locate ps2_gfx source file."
-          echo "Listing directory structure for debugging:"
-          ls -R
+          echo "ERROR: Could not locate ps2_gfx.c in the project root."
+          echo "Current directory contents:"
+          ls -F
           exit 1
         fi
 
