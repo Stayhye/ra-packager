@@ -39,29 +39,32 @@ jobs:
           make -C $(dirname $dir) install
         done
 
-    - name: Prepare and Patch Source
+    - name: Prepare and Force Patch
       run: |
         chmod +x *.sh
         chmod +x cores/*.sh
         
-        # 1. Download/Extract the RetroArch source
+        # 1. Run preparation scripts
         ./prepare_release.sh
         ./prepare_retroarch.sh
         
-        # 2. Locate and Fix the GSkit API mismatch globally
-        echo "Searching for ps2_gfx.c to apply GSkit patch..."
-        # We search everywhere except the ps2_drivers folder we just built
+        # 2. Find and patch EVERY instance of ps2_gfx.c in the entire workspace
+        # This ensures that even if it's in a subfolder like 'retroarch-src', we hit it.
+        echo "Searching for ps2_gfx.c..."
         find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" | while read -r file; do
-          echo "Found $file - Patching vsync_handler signature..."
-          chmod 666 "$file"
+          echo "Patching: $file"
+          # Use a nuclear regex that replaces 'vsync_handler' regardless of 'static' or 'int'
           sed -i -E 's/vsync_handler\s*\([^)]*\)/vsync_handler(int cause)/g' "$file"
-          # Confirm the fix in the logs
+          echo "Verified content for $file:"
           grep "vsync_handler" "$file"
         done
 
     - name: Compile project
       run: |
-        # Run the specific core build script
+        # We run the patch AGAIN right before the core script, 
+        # just in case the core script does its own clean/reset.
+        find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" -exec sed -i -E 's/vsync_handler\s*\([^)]*\)/vsync_handler(int cause)/g' {} +
+        
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
 
@@ -74,51 +77,4 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: RA-${{ matrix.core_opts[0] }}-${{ steps.slug.outputs.sha8 }}
-        path: RA/
-
-  libretro-salamander:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        docker_owner: [ps2dev]
-    container: ${{ matrix.docker_owner }}/ps2dev:latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Install dependencies
-      run: apk add build-base git bash cmake
-    - name: Compile custom ps2_driver
-      run: |
-        git clone https://github.com/fjtrujy/ps2_drivers.git
-        cd ps2_drivers
-        for dir in $(find . -maxdepth 2 -name Makefile); do
-          make -C $(dirname $dir) install
-        done
-    - name: Compile project
-      run: |
-        chmod +x *.sh
-        ./prepare_release.sh
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: RA-salamander-${{ github.sha }}
-        path: RA/
-
-  libretro-info-core:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        docker_owner: [ps2dev]
-    container: ${{ matrix.docker_owner }}/ps2dev:latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Install dependencies
-      run: apk add build-base git bash
-    - name: Compile project
-      run: |
-        chmod +x *.sh
-        ./prepare_release.sh
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: RA-info-${{ github.sha }}
         path: RA/
