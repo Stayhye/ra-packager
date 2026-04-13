@@ -42,18 +42,25 @@ jobs:
 
     - name: Patch ps2_gfx for GSkit Compatibility
       run: |
-        # Locate the file (usually .c in RetroArch but checking both)
-        TARGET_FILE=$(find gfx/drivers/ -name "ps2_gfx.*" | head -n 1)
-        if [ -f "$TARGET_FILE" ]; then
+        # Search the entire workspace for ps2_gfx.c or .cpp
+        TARGET_FILE=$(find . -name "ps2_gfx.c" -o -name "ps2_gfx.cpp" | head -n 1)
+        
+        if [ -n "$TARGET_FILE" ] && [ -f "$TARGET_FILE" ]; then
           echo "Found $TARGET_FILE, applying vsync_handler signature patch..."
-          # Specifically targets 'static int vsync_handler(void)' and replaces with '(int cause)'
-          # The regex handles potential spaces between 'handler' and '('
-          sed -i 's/static int vsync_handler\s*(void)/static int vsync_handler(int cause)/g' "$TARGET_FILE"
+          # Broadened regex to catch 'int vsync_handler(void)' with any spacing
+          sed -i 's/int\s*vsync_handler\s*(\s*void\s*)/int vsync_handler(int cause)/g' "$TARGET_FILE"
           
           # Verification check
-          grep "vsync_handler(int cause)" "$TARGET_FILE" || (echo "Patch failed to apply!" && exit 1)
+          if grep -q "vsync_handler(int cause)" "$TARGET_FILE"; then
+            echo "Patch applied successfully to $TARGET_FILE"
+          else
+            echo "Patch failed to apply! Check file content."
+            exit 1
+          fi
         else
-          echo "Could not find ps2_gfx source file to patch."
+          echo "Error: ps2_gfx file not found anywhere in the repository."
+          # List files to help debug if it fails again
+          find . -maxdepth 3 -not -path '*/.*'
           exit 1
         fi
 
