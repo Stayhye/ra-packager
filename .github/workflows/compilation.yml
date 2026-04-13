@@ -41,21 +41,25 @@ jobs:
 
     - name: Force Patch GSkit Compatibility
       run: |
-        # Locate ps2_gfx.c regardless of case or slight path variations
-        TARGET=$(find . -name "ps2_gfx.c" | head -n 1)
+        # 1. Try to find the file using a very broad search
+        TARGET=$(find . -name "ps2_gfx.c" -o -name "ps2_gfx.cpp" | head -n 1)
         
-        if [ -n "$TARGET" ]; then
-          echo "Found target: $TARGET"
+        # 2. If find fails, try the hardcoded path from your error log
+        if [ -z "$TARGET" ]; then
+          TARGET="gfx/drivers/ps2_gfx.c"
+        fi
+
+        if [ -f "$TARGET" ]; then
+          echo "Patching target file: $TARGET"
           chmod 666 "$TARGET"
-          
-          # This regex targets the function name and replaces () or (void) with (int cause)
-          # It handles 'static int', 'int', and any amount of whitespace.
-          sed -i -E 's/vsync_handler\s*\((void)?\)/vsync_handler(int cause)/g' "$TARGET"
-          
-          echo "Verifying change:"
+          # Nuclear regex: replaces 'vsync_handler' followed by any parentheses content
+          sed -i -E 's/vsync_handler\s*\([^)]*\)/vsync_handler(int cause)/g' "$TARGET"
+          echo "Verification:"
           grep -n "vsync_handler" "$TARGET"
         else
-          echo "Could not find ps2_gfx.c"
+          echo "ERROR: Could not locate ps2_gfx source file."
+          echo "Listing directory structure for debugging:"
+          ls -R
           exit 1
         fi
 
