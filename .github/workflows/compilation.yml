@@ -41,11 +41,14 @@ jobs:
 
     - name: Patch ps2_gfx for GSkit Compatibility
       run: |
-        # This replaces 'static int vsync_handler(void)' with 'static int vsync_handler(int cause)'
-        # to match the updated gsKit API in the container.
-        if [ -f gfx/drivers/ps2_gfx.c ]; then
-          sed -i 's/static int vsync_handler(void)/static int vsync_handler(int cause)/g' gfx/drivers/ps2_gfx.c
-          echo "Patched gfx/drivers/ps2_gfx.c"
+        # Search for the file in both .c and .cpp variants
+        TARGET_FILE=$(find gfx/drivers/ -name "ps2_gfx.*" | head -n 1)
+        if [ -f "$TARGET_FILE" ]; then
+          echo "Found $TARGET_FILE, applying vsync_handler patch..."
+          # Uses regex to catch 'int vsync_handler(void)' regardless of extra spaces
+          sed -i 's/vsync_handler\s*(\s*void\s*)/vsync_handler(int cause)/g' "$TARGET_FILE"
+        else
+          echo "Could not find ps2_gfx source file to patch."
         fi
 
     - name: Compile project
