@@ -39,23 +39,24 @@ jobs:
           make -C $(dirname $dir) install
         done
 
-    - name: Hard Patch GSkit API Compatibility
+    - name: Force Patch GSkit Compatibility
       run: |
-        # Target the specific file identified in your error log
-        TARGET="gfx/drivers/ps2_gfx.c"
+        # Locate ps2_gfx.c regardless of case or slight path variations
+        TARGET=$(find . -name "ps2_gfx.c" | head -n 1)
         
-        if [ -f "$TARGET" ]; then
-          echo "Patching $TARGET..."
-          # Change function definition: static int vsync_handler(void) -> static int vsync_handler(int cause)
-          sed -i 's/int\s*vsync_handler\s*(\s*void\s*)/int vsync_handler(int cause)/g' "$TARGET"
-          # Change any potential forward declarations
-          sed -i 's/int\s*vsync_handler\s*();/int vsync_handler(int cause);/g' "$TARGET"
+        if [ -n "$TARGET" ]; then
+          echo "Found target: $TARGET"
+          chmod 666 "$TARGET"
           
-          echo "Verifying patch at line 431:"
+          # This regex targets the function name and replaces () or (void) with (int cause)
+          # It handles 'static int', 'int', and any amount of whitespace.
+          sed -i -E 's/vsync_handler\s*\((void)?\)/vsync_handler(int cause)/g' "$TARGET"
+          
+          echo "Verifying change:"
           grep -n "vsync_handler" "$TARGET"
         else
-          echo "Direct path not found, searching everywhere..."
-          find . -name "ps2_gfx.c" -exec sed -i 's/int\s*vsync_handler\s*(\s*void\s*)/int vsync_handler(int cause)/g' {} +
+          echo "Could not find ps2_gfx.c"
+          exit 1
         fi
 
     - name: Compile project
