@@ -94,4 +94,30 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
-        name: RA-salamander-${{ steps.
+        name: RA-salamander-${{ steps.slug.outputs.sha8 }}
+        path: RA/
+
+  libretro-info-core:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        docker_owner: [ps2dev]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Compile project
+      run: |
+        chmod +x *.sh
+        ./prepare_release.sh
+        
+    - name: Get short SHA
+      id: slug
+      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
+
+    - name: Upload artifacts
+      if: ${{ success() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: RA-info-${{ steps.slug.outputs.sha8 }}
+        path: RA/
