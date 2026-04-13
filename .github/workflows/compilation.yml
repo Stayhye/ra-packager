@@ -18,19 +18,9 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
         core_opts: [
-          #[libretro-neocd, neocd_libretro_ps2],
           [libretro-prboom, prboom_libretro_ps2],
-          # [libretro-samples, test_libretro_ps2],
-          # [picodrive, picodrive_libretro_ps2],
           [gambatte-libretro, gambatte_libretro_ps2],
-          # [snes9x2002, snes9x2002_libretro_ps2],
-          # [libretro-lutro, lutro_libretro_ps2],
-          # [gpsp, gpsp_libretro_ps2],
-          #[libretro-fceumm, fceumm_libretro_ps2],
-          #[stella2014-libretro, stella2014_libretro_ps2],
-          #[libretro-cap32, cap32_libretro_ps2],
-          #[QuickNES_Core, quicknes_libretro_ps2],
-         ]
+        ]
       fail-fast: false
 
     container: ${{ matrix.docker_owner }}/ps2dev:latest
@@ -51,6 +41,7 @@ jobs:
     
     - name: Compile project
       run: |
+        chmod +x *.sh
         ./prepare_release.sh
         ./prepare_retroarch.sh
         ./cores/${{ matrix.core_opts[0] }}.sh
@@ -64,9 +55,9 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
-        name: RA-${{ matrix.docker_owner }}-${{ steps.slug.outputs.sha8 }}
+        # Added core name to prevent artifact name collisions in the matrix
+        name: RA-${{ matrix.core_opts[0] }}-${{ steps.slug.outputs.sha8 }}
         path: RA/
-
 
   libretro-salamander:
     runs-on: ubuntu-latest
@@ -93,6 +84,7 @@ jobs:
     
     - name: Compile project
       run: |
+        chmod +x *.sh
         ./prepare_release.sh
         
     - name: Get short SHA
@@ -103,9 +95,8 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
-        name: RA-${{ matrix.docker_owner }}-${{ steps.slug.outputs.sha8 }}
+        name: RA-salamander-${{ steps.slug.outputs.sha8 }}
         path: RA/
-
 
   libretro-info-core:
     runs-on: ubuntu-latest
@@ -118,9 +109,9 @@ jobs:
 
     - name: Compile project
       run: |
+        chmod +x *.sh
         ./prepare_release.sh
         
-
     - name: Get short SHA
       id: slug
       run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
@@ -129,7 +120,5 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
-        name: RA-${{ matrix.docker_owner }}-${{ steps.slug.outputs.sha8 }}
+        name: RA-info-${{ steps.slug.outputs.sha8 }}
         path: RA/
-
-    
