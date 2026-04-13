@@ -39,22 +39,18 @@ jobs:
           make -C $(dirname $dir) install
         done
 
-    - name: Patch for GSkit API Changes
+    - name: Nuclear Patch for GSkit API
       run: |
-        echo "Applying global patches for GSkit compatibility..."
-        # 1. Fix vsync_handler signature (definition and declaration)
-        # 2. Fix function pointer types
-        find . -type f \( -name "*.c" -o -name "*.cpp" -o -name "*.h" \) -exec sed -i \
-          -e 's/vsync_handler\s*(\s*void\s*)/vsync_handler(int cause)/g' \
-          -e 's/int\s*(\s*\*vsync_callback\s*)\s*(\s*void\s*)/int (*vsync_callback)(int)/g' \
-          {} +
+        echo "Searching for ps2_gfx source files..."
+        # Find the file specifically and use a very aggressive replacement
+        # This replaces EVERYTHING between the parentheses of vsync_handler with 'int cause'
+        find . -type f -name "ps2_gfx.*" -exec sed -i 's/vsync_handler\s*([^)]*)/vsync_handler(int cause)/g' {} +
         
-        # Verify the patch in the most likely file
-        TARGET=$(find . -name "ps2_gfx.c" -o -name "ps2_gfx.cpp" | head -n 1)
-        if [ -f "$TARGET" ]; then
-          echo "Verifying patch in $TARGET:"
-          grep "vsync_handler" "$TARGET" | head -n 5
-        fi
+        # Also catch any possible typedefs or forward declarations in headers
+        find . -type f -name "*.h" -exec sed -i 's/vsync_handler\s*([^)]*)/vsync_handler(int cause)/g' {} +
+
+        echo "Verifying change at line 431 (approx):"
+        find . -name "ps2_gfx.*" -exec grep -n "vsync_handler" {} +
 
     - name: Compile project
       run: |
