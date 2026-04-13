@@ -42,26 +42,11 @@ jobs:
 
     - name: Patch ps2_gfx for GSkit Compatibility
       run: |
-        # Search the entire workspace for ps2_gfx.c or .cpp
         TARGET_FILE=$(find . -name "ps2_gfx.c" -o -name "ps2_gfx.cpp" | head -n 1)
-        
         if [ -n "$TARGET_FILE" ] && [ -f "$TARGET_FILE" ]; then
-          echo "Found $TARGET_FILE, applying vsync_handler signature patch..."
-          # Broadened regex to catch 'int vsync_handler(void)' with any spacing
+          echo "Found $TARGET_FILE, applying vsync_handler patch..."
           sed -i 's/int\s*vsync_handler\s*(\s*void\s*)/int vsync_handler(int cause)/g' "$TARGET_FILE"
-          
-          # Verification check
-          if grep -q "vsync_handler(int cause)" "$TARGET_FILE"; then
-            echo "Patch applied successfully to $TARGET_FILE"
-          else
-            echo "Patch failed to apply! Check file content."
-            exit 1
-          fi
-        else
-          echo "Error: ps2_gfx file not found anywhere in the repository."
-          # List files to help debug if it fails again
-          find . -maxdepth 3 -not -path '*/.*'
-          exit 1
+          grep -q "vsync_handler(int cause)" "$TARGET_FILE" || (echo "Patch failed" && exit 1)
         fi
 
     - name: Compile project
@@ -89,8 +74,6 @@ jobs:
     strategy:
       matrix:
         docker_owner: [ps2dev]
-      fail-fast: false
-
     container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
     - uses: actions/checkout@v4
@@ -128,9 +111,13 @@ jobs:
     strategy:
       matrix:
         docker_owner: [ps2dev]
-
+    container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
     - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        apk add build-base git bash
 
     - name: Compile project
       run: |
