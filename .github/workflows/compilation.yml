@@ -35,11 +35,18 @@ jobs:
       run: |
         git clone --recurse-submodules https://github.com/fjtrujy/ps2_drivers.git
         cd ps2_drivers
-        # Build each driver sub-project individually to ensure headers are installed
         for dir in $(find . -maxdepth 2 -name Makefile); do
-          echo "Building in $(dirname $dir)..."
           make -C $(dirname $dir) install
         done
+
+    - name: Patch ps2_gfx for GSkit Compatibility
+      run: |
+        # This replaces 'static int vsync_handler(void)' with 'static int vsync_handler(int cause)'
+        # to match the updated gsKit API in the container.
+        if [ -f gfx/drivers/ps2_gfx.c ]; then
+          sed -i 's/static int vsync_handler(void)/static int vsync_handler(int cause)/g' gfx/drivers/ps2_gfx.c
+          echo "Patched gfx/drivers/ps2_gfx.c"
+        fi
 
     - name: Compile project
       run: |
