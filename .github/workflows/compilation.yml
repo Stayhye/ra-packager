@@ -39,18 +39,24 @@ jobs:
           make -C $(dirname $dir) install
         done
 
-    - name: Nuclear Patch for GSkit API
+    - name: Hard Patch GSkit API Compatibility
       run: |
-        echo "Searching for ps2_gfx source files..."
-        # Find the file specifically and use a very aggressive replacement
-        # This replaces EVERYTHING between the parentheses of vsync_handler with 'int cause'
-        find . -type f -name "ps2_gfx.*" -exec sed -i 's/vsync_handler\s*([^)]*)/vsync_handler(int cause)/g' {} +
+        # Target the specific file identified in your error log
+        TARGET="gfx/drivers/ps2_gfx.c"
         
-        # Also catch any possible typedefs or forward declarations in headers
-        find . -type f -name "*.h" -exec sed -i 's/vsync_handler\s*([^)]*)/vsync_handler(int cause)/g' {} +
-
-        echo "Verifying change at line 431 (approx):"
-        find . -name "ps2_gfx.*" -exec grep -n "vsync_handler" {} +
+        if [ -f "$TARGET" ]; then
+          echo "Patching $TARGET..."
+          # Change function definition: static int vsync_handler(void) -> static int vsync_handler(int cause)
+          sed -i 's/int\s*vsync_handler\s*(\s*void\s*)/int vsync_handler(int cause)/g' "$TARGET"
+          # Change any potential forward declarations
+          sed -i 's/int\s*vsync_handler\s*();/int vsync_handler(int cause);/g' "$TARGET"
+          
+          echo "Verifying patch at line 431:"
+          grep -n "vsync_handler" "$TARGET"
+        else
+          echo "Direct path not found, searching everywhere..."
+          find . -name "ps2_gfx.c" -exec sed -i 's/int\s*vsync_handler\s*(\s*void\s*)/int vsync_handler(int cause)/g' {} +
+        fi
 
     - name: Compile project
       run: |
