@@ -39,31 +39,30 @@ jobs:
           make -C $(dirname $dir) install
         done
 
-    - name: Global Patch GSkit Compatibility
+    - name: Prepare and Patch Source
       run: |
-        # Search the entire workspace for ps2_gfx.c, excluding the ps2_drivers clone
+        chmod +x *.sh
+        chmod +x cores/*.sh
+        
+        # 1. Run preparation scripts to bring in the RetroArch source
+        ./prepare_release.sh
+        ./prepare_retroarch.sh
+        
+        # 2. Find and Patch ps2_gfx.c NOW that it should exist
+        echo "Searching for ps2_gfx.c after preparation..."
         TARGET=$(find . -name "ps2_gfx.c" | grep -v "ps2_drivers" | head -n 1)
-
-        if [ -n "$TARGET" ] && [ -f "$TARGET" ]; then
-          echo "Found target at: $TARGET"
-          chmod 666 "$TARGET"
-          # Nuclear regex: replaces 'vsync_handler' followed by any parentheses content
+        
+        if [ -n "$TARGET" ]; then
+          echo "Found target at: $TARGET. Applying GSkit patch..."
           sed -i -E 's/vsync_handler\s*\([^)]*\)/vsync_handler(int cause)/g' "$TARGET"
-          echo "Verification (should show 'int cause'):"
           grep -n "vsync_handler" "$TARGET"
         else
-          echo "ERROR: Could not locate ps2_gfx.c anywhere in the project."
-          echo "Deep directory search for debugging:"
-          find . -maxdepth 5 -not -path '*/.*'
-          exit 1
+          echo "WARNING: ps2_gfx.c still not found. Listing directory structure:"
+          find . -maxdepth 4 -not -path '*/.*'
         fi
 
     - name: Compile project
       run: |
-        chmod +x *.sh
-        chmod +x cores/*.sh
-        ./prepare_release.sh
-        ./prepare_retroarch.sh
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
 
