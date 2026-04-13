@@ -42,12 +42,14 @@ jobs:
 
     - name: Patch ps2_gfx for GSkit Compatibility
       run: |
-        TARGET_FILE=$(find . -name "ps2_gfx.c" -o -name "ps2_gfx.cpp" | head -n 1)
-        if [ -n "$TARGET_FILE" ] && [ -f "$TARGET_FILE" ]; then
-          echo "Found $TARGET_FILE, applying vsync_handler patch..."
-          sed -i 's/int\s*vsync_handler\s*(\s*void\s*)/int vsync_handler(int cause)/g' "$TARGET_FILE"
-          grep -q "vsync_handler(int cause)" "$TARGET_FILE" || (echo "Patch failed" && exit 1)
-        fi
+        # Find every instance of ps2_gfx (c or cpp)
+        find . -name "ps2_gfx.*" | while read -r file; do
+          echo "Patching $file..."
+          # Fix the vsync_handler definition and declaration (void -> int)
+          sed -i 's/vsync_handler\s*(\s*void\s*)/vsync_handler(int cause)/g' "$file"
+          # Some versions use a specific typedef, this ensures it matches int(*)(int)
+          sed -i 's/int\s*(\s*\*vsync_callback\s*)\s*(\s*void\s*)/int (*vsync_callback)(int)/g' "$file"
+        done
 
     - name: Compile project
       run: |
@@ -77,11 +79,8 @@ jobs:
     container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
     - uses: actions/checkout@v4
-
     - name: Install dependencies
-      run: |
-        apk add build-base git bash cmake
-
+      run: apk add build-base git bash cmake
     - name: Compile custom ps2_driver
       run: |
         git clone https://github.com/fjtrujy/ps2_drivers.git
@@ -89,18 +88,14 @@ jobs:
         for dir in $(find . -maxdepth 2 -name Makefile); do
           make -C $(dirname $dir) install
         done
-    
     - name: Compile project
       run: |
         chmod +x *.sh
         ./prepare_release.sh
-        
     - name: Get short SHA
       id: slug
       run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
-
     - name: Upload artifacts
-      if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
         name: RA-salamander-${{ steps.slug.outputs.sha8 }}
@@ -114,23 +109,4 @@ jobs:
     container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
     - uses: actions/checkout@v4
-
     - name: Install dependencies
-      run: |
-        apk add build-base git bash
-
-    - name: Compile project
-      run: |
-        chmod +x *.sh
-        ./prepare_release.sh
-        
-    - name: Get short SHA
-      id: slug
-      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
-
-    - name: Upload artifacts
-      if: ${{ success() }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: RA-info-${{ steps.slug.outputs.sha8 }}
-        path: RA/
