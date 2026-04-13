@@ -110,3 +110,16 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install dependencies
+      run: apk add build-base git bash
+    - name: Compile project
+      run: |
+        chmod +x *.sh
+        ./prepare_release.sh
+    - name: Get short SHA
+      id: slug
+      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: RA-info-${{ steps.slug.outputs.sha8 }}
+        path: RA/
