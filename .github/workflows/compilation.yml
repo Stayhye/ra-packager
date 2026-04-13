@@ -39,7 +39,7 @@ jobs:
           make -C $(dirname $dir) install
         done
 
-    - name: Prepare and Force Patch
+    - name: Prepare and Surgical Patch
       run: |
         chmod +x *.sh
         chmod +x cores/*.sh
@@ -48,23 +48,22 @@ jobs:
         ./prepare_release.sh
         ./prepare_retroarch.sh
         
-        # 2. Find and patch EVERY instance of ps2_gfx.c in the entire workspace
-        # This ensures that even if it's in a subfolder like 'retroarch-src', we hit it.
-        echo "Searching for ps2_gfx.c..."
+        # 2. Apply the patch only to the function DEFINITION
+        # We look for 'int vsync_handler' followed by '(void)' or '()' 
+        # but specifically avoid the line that calls 'gsKit_add_vsync_handler'
+        echo "Applying surgical patch to ps2_gfx.c..."
         find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" | while read -r file; do
-          echo "Patching: $file"
-          # Use a nuclear regex that replaces 'vsync_handler' regardless of 'static' or 'int'
-          sed -i -E 's/vsync_handler\s*\([^)]*\)/vsync_handler(int cause)/g' "$file"
-          echo "Verified content for $file:"
-          grep "vsync_handler" "$file"
+          echo "Patching definition in $file"
+          # This replaces 'int vsync_handler(void)' with 'int vsync_handler(int cause)'
+          # but leaves 'gsKit_add_vsync_handler(vsync_handler)' alone.
+          sed -i -E 's/int\s+vsync_handler\s*\((void)?\)/int vsync_handler(int cause)/g' "$file"
+          
+          echo "Verifying Patch Results:"
+          grep -n "vsync_handler" "$file"
         done
 
     - name: Compile project
       run: |
-        # We run the patch AGAIN right before the core script, 
-        # just in case the core script does its own clean/reset.
-        find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" -exec sed -i -E 's/vsync_handler\s*\([^)]*\)/vsync_handler(int cause)/g' {} +
-        
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
 
