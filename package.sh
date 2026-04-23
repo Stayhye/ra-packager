@@ -41,6 +41,11 @@ chmod +x ./cores/libretro-neocd.sh || { exit 1; }
 ./cores/libretro-fceumm.sh || { exit 1; }
 ./generate_retroarch.sh libretro-fceumm fceumm_libretro_ps2 || { exit 1; }
 
+# mame2003-plus
+chmod +x ./cores/mame2003-plus.sh || { exit 1; }
+./cores/mame2003-plus.sh || { exit 1; }
+./generate_retroarch.sh mame2003-plus mame2003_plus_libretro_ps2 || { exit 1; }
+
 ## Copy info folder
 ./libretro-core-info.sh || { exit 1; }
 
