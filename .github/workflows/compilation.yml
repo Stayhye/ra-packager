@@ -20,6 +20,7 @@ jobs:
         core_opts: [
           [libretro-prboom, prboom_libretro_ps2],
           [gambatte-libretro, gambatte_libretro_ps2],
+          [mame2003-plus, mame2003_plus_libretro_ps2],
         ]
       fail-fast: false
 
