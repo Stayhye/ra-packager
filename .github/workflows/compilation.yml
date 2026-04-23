@@ -60,49 +60,40 @@ jobs:
 
     - name: Compile project
       run: |
-        # 1. Force the system to recognize ee-gcc globally via Symlinks
-        echo "Creating toolchain symlinks..."
+        # 1. System-wide Symlinks
         ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc /usr/local/bin/ee-gcc
         ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++ /usr/local/bin/ee-g++
         ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar /usr/local/bin/ee-ar
-        ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-strip /usr/local/bin/ee-strip
 
-        # 2. Setup the Environment
+        # 2. Environment Setup
         export PS2DEV=/usr/local/ps2dev
         export PS2SDK=$PS2DEV/ps2sdk
-        export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2SDK/bin
+        export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2SDK/bin
         
-        CORE_DIR="cores/${{ matrix.core_opts[0] }}-libretro"
+        CORE_DIR="cores/mame2003-plus-libretro"
         
-        if [ "${{ matrix.core_opts[0] }}" == "mame2003-plus" ]; then
-          # Ensure a clean state and clone manually
-          rm -rf $CORE_DIR
-          git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro $CORE_DIR
-          
-          echo "Force-injecting paths and fixing compiler flags in Makefile..."
-          # We use '1i' to insert at the top, and we also append -Wno-error flags to PLATCFLAGS
-          sed -i '1i CC = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc' $CORE_DIR/Makefile
-          sed -i '1i CXX = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++' $CORE_DIR/Makefile
-          sed -i '1i AR = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar' $CORE_DIR/Makefile
-          sed -i '1i CROSS_COMPILE = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-' $CORE_DIR/Makefile
-          
-          # This line suppresses the 'incompatible-pointer-types' error that killed the last build
-          sed -i 's/PLATCFLAGS :=/PLATCFLAGS := -fno-strict-aliasing -Wno-error=incompatible-pointer-types /g' $CORE_DIR/Makefile
+        # 3. Clean and Patch
+        rm -rf $CORE_DIR
+        git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro $CORE_DIR
+        
+        echo "Injecting Paths into Makefile..."
+        sed -i '1i CC = ee-gcc' $CORE_DIR/Makefile
+        sed -i '1i CXX = ee-g++' $CORE_DIR/Makefile
+        
+        # This is the 'Silver Bullet': tells GCC not to stop on pointer mismatches
+        sed -i 's/PLATCFLAGS :=/PLATCFLAGS := -fno-strict-aliasing -Wno-error=incompatible-pointer-types /g' $CORE_DIR/Makefile
 
-          echo "Surgically patching src/config.c for type compatibility..."
-          # Find the file regardless of subfolder (MAME2003 structure varies)
-          CONFIG_FILE=$(find $CORE_DIR -name "config.c")
-          if [ -f "$CONFIG_FILE" ]; then
-            sed -i 's/&saved_total/(UINT32 *)\&saved_total/g' "$CONFIG_FILE"
-            sed -i 's/&coins\[i\]/(UINT32 *)\&coins[i]/g' "$CONFIG_FILE"
-            sed -i 's/dispensed_tickets/(UINT32 *)dispensed_tickets/g' "$CONFIG_FILE"
-          fi
+        echo "Finding and patching config.c..."
+        CONFIG_PATH=$(find $CORE_DIR -name "config.c")
+        if [ -n "$CONFIG_PATH" ]; then
+          sed -i 's/&saved_total/(UINT32 *)\&saved_total/g' "$CONFIG_PATH"
+          sed -i 's/&coins\[i\]/(UINT32 *)\&coins[i]/g' "$CONFIG_PATH"
+          sed -i 's/dispensed_tickets/(UINT32 *)dispensed_tickets/g' "$CONFIG_PATH"
+          echo "Patched: $CONFIG_PATH"
         fi
 
-        # 3. Execution
-        # We continue passing the platform and toolchain variables to ensure the shell script 
-        # uses our environment rather than trying to auto-detect its own.
-        ./cores/${{ matrix.core_opts[0] }}.sh \
+        # 4. Execution
+        ./cores/mame2003-plus.sh \
           platform=ps2 \
           CC=ee-gcc \
           CXX=ee-g++ \
