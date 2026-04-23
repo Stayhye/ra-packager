@@ -1,7 +1,7 @@
 #!/bin/bash
 # mame2003-plus.sh
 
-# --- FIX: Define PS2 toolchain paths ---
+# --- FIX: Initialize PS2DEV Environment ---
 export PS2DEV=/usr/local/ps2dev
 export PS2SDK=$PS2DEV/ps2sdk
 export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2DEV/dvp/bin:$PS2SDK/bin
@@ -19,7 +19,7 @@ else
 fi
 
 ## Compile core for PS2
-# We explicitly pass CC and CXX to ensure the Makefile uses the correct PS2 compilers
+# Explicitly setting the compiler variables ensures the Makefile uses the EE toolchain
 make -f Makefile -j $PROC_NR platform=ps2 CC=ee-gcc CXX=ee-g++ AR=ee-ar clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 CC=ee-gcc CXX=ee-g++ AR=ee-ar || { exit 1; }
 
