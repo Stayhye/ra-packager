@@ -61,11 +61,20 @@ jobs:
 
     - name: Compile project
       run: |
-        # Explicitly export tools for MAME's sub-shell makefiles
-        export CROSS_COMPILE=mips64r5900el-ps2-elf-
-        export CC=ee-gcc
-        export CXX=ee-g++
+        # 1. Define the absolute path to the toolchain
+        export PS2_BIN=/usr/local/ps2dev/ee/bin
         
+        # 2. Export the compiler variables with their FULL paths. 
+        # This forces MAME to use the exact file location.
+        export CC=$PS2_BIN/ee-gcc
+        export CXX=$PS2_BIN/ee-g++
+        export AR=$PS2_BIN/ee-ar
+        export CROSS_COMPILE=mips64r5900el-ps2-elf-
+        
+        # 3. Add the PS2DEV bin folder to the PATH one last time for safety
+        export PATH=$PATH:/usr/local/ps2dev/bin:/usr/local/ps2dev/ee/bin:/usr/local/ps2dev/ps2sdk/bin
+        
+        # Run your original scripts
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
 
