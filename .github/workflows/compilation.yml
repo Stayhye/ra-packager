@@ -52,23 +52,26 @@ jobs:
         # 2. Apply the patch only to the function DEFINITION
         echo "Applying surgical patch to ps2_gfx.c..."
         find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" | while read -r file; do
-          echo "Patching definition in $file"
           sed -i -E 's/int\s+vsync_handler\s*\((void)?\)/int vsync_handler(int cause)/g' "$file"
-          
-          echo "Verifying Patch Results:"
-          grep -n "vsync_handler" "$file"
         done
 
     - name: Compile project
       run: |
-        # Global Symlink: This ensures /bin/sh can find the tools regardless of sub-shells
+        # Global Symlink: Corrected path for ps2dev tools
         echo "Creating global symlinks for PS2 toolchain..."
-        for tool in /usr/local/ps2dev/ee/bin/ee-*; do
-          ln -sf "$tool" "/usr/bin/$(basename $tool)"
-        done
+        # We target /usr/local/ps2dev/bin where the ee- binaries are actually housed
+        if [ -d /usr/local/ps2dev/bin ]; then
+          for tool in /usr/local/ps2dev/bin/mips64r5900el-ps2-elf-*; do
+            # Create short-name aliases (ee-gcc) in /usr/bin
+            base=$(basename "$tool")
+            alias_name=$(echo "$base" | sed 's/mips64r5900el-ps2-elf-/ee-/')
+            ln -sf "$tool" "/usr/bin/$base"
+            ln -sf "$tool" "/usr/bin/$alias_name"
+          done
+        fi
         
-        # Verify symlink worked
-        which ee-gcc
+        # Verify the compiler is now visible to the shell
+        ee-gcc --version
         
         # Execute the build
         ./cores/${{ matrix.core_opts[0] }}.sh
