@@ -1,7 +1,12 @@
 #!/bin/bash
 # mame2003-plus.sh
 
-# --- FIX: Initialize PS2DEV Environment ---
+# --- THE FIX: Load the ps2dev environment variables ---
+if [ -f /usr/local/ps2dev/ps2dev.sh ]; then
+    source /usr/local/ps2dev/ps2dev.sh
+fi
+
+# Fallback: Manually set paths if the script above isn't found
 export PS2DEV=/usr/local/ps2dev
 export PS2SDK=$PS2DEV/ps2sdk
 export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2DEV/dvp/bin:$PS2SDK/bin
@@ -19,7 +24,7 @@ else
 fi
 
 ## Compile core for PS2
-# Explicitly setting the compiler variables ensures the Makefile uses the EE toolchain
+# Force the use of the Emotion Engine (ee) compilers
 make -f Makefile -j $PROC_NR platform=ps2 CC=ee-gcc CXX=ee-g++ AR=ee-ar clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 CC=ee-gcc CXX=ee-g++ AR=ee-ar || { exit 1; }
 
