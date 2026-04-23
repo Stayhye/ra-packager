@@ -60,7 +60,7 @@ jobs:
 
     - name: Compile project
       run: |
-        # 1. Global Toolchain Symlinks (Required for all cores)
+        # 1. Global Toolchain Symlinks
         ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc /usr/local/bin/ee-gcc
         ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++ /usr/local/bin/ee-g++
         ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar /usr/local/bin/ee-ar
@@ -73,25 +73,31 @@ jobs:
         CORE_NAME="${{ matrix.core_opts[0] }}"
         CORE_DIR="cores/${CORE_NAME}-libretro"
         
-        # 3. MAME-SPECIFIC PATCHING (Only runs if the core is MAME)
+        # 3. MAME-SPECIFIC PATCHING
         if [ "$CORE_NAME" == "mame2003-plus" ]; then
+          echo "Preparing MAME source..."
+          # If the folder doesn't exist, clone it now so we can patch it
+          if [ ! -d "$CORE_DIR" ]; then
+            git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro "$CORE_DIR"
+          fi
+
           echo "Applying MAME-specific surgical fixes..."
-          # Fix the Pointer Mismatches in config.c
-          CONFIG_PATH=$(find $CORE_DIR -name "config.c")
+          CONFIG_PATH=$(find "$CORE_DIR" -name "config.c")
           if [ -n "$CONFIG_PATH" ]; then
+            # Fix the specific readint/writeint types from your source dump
             sed -i 's/static int readint(mame_file \*f, UINT32 \*num)/static int readint(mame_file \*f, unsigned int \*num)/g' "$CONFIG_PATH"
             sed -i 's/static void writeint(mame_file \*f, UINT32 num)/static void writeint(mame_file \*f, unsigned int num)/g' "$CONFIG_PATH"
             sed -i 's/UINT32 i;/unsigned int i;/g' "$CONFIG_PATH"
           fi
           
           # Inject MAME-specific Makefile flags
-          sed -i '1i CC = ee-gcc' $CORE_DIR/Makefile
-          sed -i '1i CXX = ee-g++' $CORE_DIR/Makefile
-          sed -i 's/PLATCFLAGS :=/PLATCFLAGS := -fno-strict-aliasing -Wno-error=incompatible-pointer-types /g' $CORE_DIR/Makefile
+          sed -i '1i CC = ee-gcc' "$CORE_DIR/Makefile"
+          sed -i '1i CXX = ee-g++' "$CORE_DIR/Makefile"
+          sed -i 's/PLATCFLAGS :=/PLATCFLAGS := -fno-strict-aliasing -Wno-error=incompatible-pointer-types /g' "$CORE_DIR/Makefile"
         fi
 
-        # 4. UNIVERSAL EXECUTION (Works for UAE, PicoDrive, MAME, etc.)
-        # We pass the standard PS2 variables that the .sh scripts expect.
+        # 4. UNIVERSAL EXECUTION
+        # Passing variables via env ensures the .sh script uses our patched environment
         platform=ps2 PLATFORM=ps2 CC=ee-gcc CXX=ee-g++ AR=ee-ar \
         ./cores/${CORE_NAME}.sh
 
