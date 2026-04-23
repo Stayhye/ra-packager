@@ -24,14 +24,7 @@ jobs:
         ]
       fail-fast: false
 
-    container:
-      image: ${{ matrix.docker_owner }}/ps2dev:latest
-      # This ensures the container environment variables are strictly enforced
-      env:
-        PS2DEV: /usr/local/ps2dev
-        PS2SDK: /usr/local/ps2dev/ps2sdk
-        PATH: /usr/local/ps2dev/bin:/usr/local/ps2dev/ee/bin:/usr/local/ps2dev/iop/bin:/usr/local/ps2dev/dvp/bin:/usr/local/ps2dev/ps2sdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
+    container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
     - uses: actions/checkout@v4
 
@@ -52,29 +45,33 @@ jobs:
         chmod +x *.sh
         chmod +x cores/*.sh
         
+        # 1. Run original preparation scripts
         ./prepare_release.sh
         ./prepare_retroarch.sh
         
+        # 2. Patch RetroArch common graphics
         find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" | while read -r file; do
           sed -i -E 's/int\s+vsync_handler\s*\((void)?\)/int vsync_handler(int cause)/g' "$file"
         done
 
     - name: Compile project
       run: |
-        # 1. Define the absolute path to the toolchain
-        export PS2_BIN=/usr/local/ps2dev/ee/bin
+        # PRE-BUILD: Inject absolute paths into the core's Makefile
+        # This targets the specific core being built in the matrix
+        CORE_DIR="cores/${{ matrix.core_opts[0] }}-libretro"
         
-        # 2. Export the compiler variables with their FULL paths. 
-        # This forces MAME to use the exact file location.
-        export CC=$PS2_BIN/ee-gcc
-        export CXX=$PS2_BIN/ee-g++
-        export AR=$PS2_BIN/ee-ar
-        export CROSS_COMPILE=mips64r5900el-ps2-elf-
-        
-        # 3. Add the PS2DEV bin folder to the PATH one last time for safety
-        export PATH=$PATH:/usr/local/ps2dev/bin:/usr/local/ps2dev/ee/bin:/usr/local/ps2dev/ps2sdk/bin
-        
-        # Run your original scripts
+        # We manually clone here so we can patch the file before the .sh script runs its own make
+        if [ "${{ matrix.core_opts[0] }}" == "mame2003-plus" ]; then
+          git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro $CORE_DIR
+          
+          echo "Hardcoding toolchain paths into MAME Makefile..."
+          # This replaces the 'ee-' prefix with the full absolute path to the ps2dev binaries
+          sed -i 's/CROSS_COMPILE := ee-/CROSS_COMPILE := \/usr\/local\/ps2dev\/ee\/bin\/mips64r5900el-ps2-elf-/g' $CORE_DIR/Makefile
+          sed -i 's/CC = ee-gcc/CC = \/usr\/local\/ps2dev\/ee\/bin\/mips64r5900el-ps2-elf-gcc/g' $CORE_DIR/Makefile
+          sed -i 's/CXX = ee-g++/CXX = \/usr\/local\/ps2dev\/ee\/bin\/mips64r5900el-ps2-elf-g++/g' $CORE_DIR/Makefile
+        fi
+
+        # Run the original build script (it will now use our patched Makefile)
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
 
