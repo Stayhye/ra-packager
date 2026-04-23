@@ -4,25 +4,14 @@ on:
   push:
     branches: 
       - '*'
-    tags:
-      - v*
-  pull_request:
-  repository_dispatch:
-    types: [run_build]
   workflow_dispatch: {}
 
 jobs:
   cores:
     runs-on: ubuntu-latest
-    # THE FIX: This injects the toolchain paths directly into the GitHub Runner environment
-    env:
-      PS2DEV: /usr/local/ps2dev
-      PS2SDK: /usr/local/ps2dev/ps2sdk
-      PATH: /usr/local/ps2dev/bin:/usr/local/ps2dev/ee/bin:/usr/local/ps2dev/iop/bin:/usr/local/ps2dev/dvp/bin:/usr/local/ps2dev/ps2sdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-
+    container: ps2dev/ps2dev:latest
     strategy:
       matrix:
-        docker_owner: [ps2dev]
         core_opts: [
           [libretro-prboom, prboom_libretro_ps2],
           [gambatte-libretro, gambatte_libretro_ps2],
@@ -30,16 +19,15 @@ jobs:
         ]
       fail-fast: false
 
-    container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
     - uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: |
-        apk add build-base git bash cmake
+      run: apk add build-base git bash cmake
 
     - name: Compile custom ps2_driver
       run: |
+        [ -f /usr/local/ps2dev/ps2dev.sh ] && source /usr/local/ps2dev/ps2dev.sh
         git clone --recurse-submodules https://github.com/fjtrujy/ps2_drivers.git
         cd ps2_drivers
         for dir in $(find . -maxdepth 2 -name Makefile); do
@@ -50,23 +38,18 @@ jobs:
       run: |
         chmod +x *.sh
         chmod +x cores/*.sh
-        
-        # 1. Run preparation scripts
         ./prepare_release.sh
         ./prepare_retroarch.sh
-        
-        # 2. Apply the patch only to the function DEFINITION
-        echo "Applying surgical patch to ps2_gfx.c..."
         find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" | while read -r file; do
-          echo "Patching definition in $file"
           sed -i -E 's/int\s+vsync_handler\s*\((void)?\)/int vsync_handler(int cause)/g' "$file"
-          
-          echo "Verifying Patch Results:"
-          grep -n "vsync_handler" "$file"
         done
 
     - name: Compile project
       run: |
+        # Force environment loading for this shell
+        [ -f /usr/local/ps2dev/ps2dev.sh ] && source /usr/local/ps2dev/ps2dev.sh
+        export PATH=$PATH:/usr/local/ps2dev/bin:/usr/local/ps2dev/ee/bin:/usr/local/ps2dev/iop/bin:/usr/local/ps2dev/ps2sdk/bin
+        
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
 
