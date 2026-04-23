@@ -61,7 +61,6 @@ jobs:
     - name: Compile project
       run: |
         # 1. Force the system to recognize ee-gcc globally via Symlinks
-        # This creates a shortcut so 'ee-gcc' points directly to the real file
         echo "Creating toolchain symlinks..."
         ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc /usr/local/bin/ee-gcc
         ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++ /usr/local/bin/ee-g++
@@ -76,25 +75,38 @@ jobs:
         CORE_DIR="cores/${{ matrix.core_opts[0] }}-libretro"
         
         if [ "${{ matrix.core_opts[0] }}" == "mame2003-plus" ]; then
-          # Ensure we are in a clean state
+          # Ensure a clean state and clone manually
           rm -rf $CORE_DIR
           git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro $CORE_DIR
           
-          echo "Force-injecting paths to the TOP of MAME Makefile..."
-          # This inserts these lines at line 1 of the Makefile, so they cannot be overridden easily
+          echo "Force-injecting paths and fixing compiler flags in Makefile..."
+          # We use '1i' to insert at the top, and we also append -Wno-error flags to PLATCFLAGS
           sed -i '1i CC = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc' $CORE_DIR/Makefile
           sed -i '1i CXX = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++' $CORE_DIR/Makefile
           sed -i '1i AR = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar' $CORE_DIR/Makefile
           sed -i '1i CROSS_COMPILE = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-' $CORE_DIR/Makefile
+          
+          # This line suppresses the 'incompatible-pointer-types' error that killed the last build
+          sed -i 's/PLATCFLAGS :=/PLATCFLAGS := -fno-strict-aliasing -Wno-error=incompatible-pointer-types /g' $CORE_DIR/Makefile
+
+          echo "Surgically patching src/config.c for type compatibility..."
+          # Find the file regardless of subfolder (MAME2003 structure varies)
+          CONFIG_FILE=$(find $CORE_DIR -name "config.c")
+          if [ -f "$CONFIG_FILE" ]; then
+            sed -i 's/&saved_total/(UINT32 *)\&saved_total/g' "$CONFIG_FILE"
+            sed -i 's/&coins\[i\]/(UINT32 *)\&coins[i]/g' "$CONFIG_FILE"
+            sed -i 's/dispensed_tickets/(UINT32 *)dispensed_tickets/g' "$CONFIG_FILE"
+          fi
         fi
 
-        # 3. Execution with explicit Pathing
-        # We pass the absolute path to CC/CXX directly to the bash script
+        # 3. Execution
+        # We continue passing the platform and toolchain variables to ensure the shell script 
+        # uses our environment rather than trying to auto-detect its own.
         ./cores/${{ matrix.core_opts[0] }}.sh \
           platform=ps2 \
-          CC=/usr/local/bin/ee-gcc \
-          CXX=/usr/local/bin/ee-g++ \
-          AR=/usr/local/bin/ee-ar
+          CC=ee-gcc \
+          CXX=ee-g++ \
+          AR=ee-ar
 
     - name: Get short SHA
       id: slug
