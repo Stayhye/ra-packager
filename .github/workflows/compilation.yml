@@ -34,6 +34,11 @@ jobs:
 
     - name: Compile custom ps2_driver
       run: |
+        # Setup environment for SDK-based drivers
+        export PS2DEV=/usr/local/ps2dev
+        export PS2SDK=$PS2DEV/ps2sdk
+        export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2SDK/bin
+
         git clone --recurse-submodules https://github.com/fjtrujy/ps2_drivers.git
         cd ps2_drivers
         for dir in $(find . -maxdepth 2 -name Makefile); do
@@ -45,34 +50,43 @@ jobs:
         chmod +x *.sh
         chmod +x cores/*.sh
         
-        # 1. Run original preparation scripts
         ./prepare_release.sh
         ./prepare_retroarch.sh
         
-        # 2. Patch RetroArch common graphics
         find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" | while read -r file; do
           sed -i -E 's/int\s+vsync_handler\s*\((void)?\)/int vsync_handler(int cause)/g' "$file"
         done
 
     - name: Compile project
       run: |
-        # PRE-BUILD: Inject absolute paths into the core's Makefile
-        # This targets the specific core being built in the matrix
+        # 1. Global Toolchain Setup (RetroArch Makefile style)
+        export PS2DEV=/usr/local/ps2dev
+        export PS2SDK=$PS2DEV/ps2sdk
+        export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2SDK/bin
+        
+        # 2. Targeted MAME Patching
+        # MAME uses its own internal logic that often ignores the system PATH
         CORE_DIR="cores/${{ matrix.core_opts[0] }}-libretro"
         
-        # We manually clone here so we can patch the file before the .sh script runs its own make
         if [ "${{ matrix.core_opts[0] }}" == "mame2003-plus" ]; then
+          # We clone manually to ensure we can modify the Makefile before the .sh script executes
           git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro $CORE_DIR
           
-          echo "Hardcoding toolchain paths into MAME Makefile..."
-          # This replaces the 'ee-' prefix with the full absolute path to the ps2dev binaries
-          sed -i 's/CROSS_COMPILE := ee-/CROSS_COMPILE := \/usr\/local\/ps2dev\/ee\/bin\/mips64r5900el-ps2-elf-/g' $CORE_DIR/Makefile
-          sed -i 's/CC = ee-gcc/CC = \/usr\/local\/ps2dev\/ee\/bin\/mips64r5900el-ps2-elf-gcc/g' $CORE_DIR/Makefile
-          sed -i 's/CXX = ee-g++/CXX = \/usr\/local\/ps2dev\/ee\/bin\/mips64r5900el-ps2-elf-g++/g' $CORE_DIR/Makefile
+          echo "Injecting absolute toolchain paths into MAME Makefile..."
+          # Target the PS2-specific CROSS_COMPILE and CC variables in MAME's Makefile
+          sed -i 's|CROSS_COMPILE := ee-|CROSS_COMPILE := /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-|g' $CORE_DIR/Makefile
+          sed -i 's|CC = ee-gcc|CC = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc|g' $CORE_DIR/Makefile
+          sed -i 's|CXX = ee-g++|CXX = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++|g' $CORE_DIR/Makefile
         fi
 
-        # Run the original build script (it will now use our patched Makefile)
-        ./cores/${{ matrix.core_opts[0] }}.sh
+        # 3. Execution
+        # We pass CC/CXX as arguments to catch any cores that don't use internal hardcoding
+        ./cores/${{ matrix.core_opts[0] }}.sh \
+          CC=ee-gcc \
+          CXX=ee-g++ \
+          AR=ee-ar \
+          STRIP=ee-strip
+
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
 
     - name: Get short SHA
