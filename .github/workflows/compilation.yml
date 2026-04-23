@@ -60,42 +60,44 @@ jobs:
 
     - name: Compile project
       run: |
-        # (Your Symlinks and Environment exports remain the same)
+        # 1. Global Toolchain Symlinks (The "Nuclear" Option)
+        # This makes ee-gcc available to EVERY shell, even if the script clones a new repo
+        sudo ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc /usr/bin/ee-gcc
+        sudo ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++ /usr/bin/ee-g++
+        sudo ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar /usr/bin/ee-ar
+        sudo ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-strip /usr/bin/ee-strip
+
+        # 2. Environment Setup
         export PS2DEV=/usr/local/ps2dev
         export PS2SDK=$PS2DEV/ps2sdk
-        export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2SDK/bin
-
+        export PATH=$PS2DEV/bin:$PS2DEV/ee/bin:$PS2SDK/bin:$PATH
+        
         CORE_DIR="cores/${{ matrix.core_opts[0] }}-libretro"
         
+        # 3. Patching (Only if the folder exists)
         if [ "${{ matrix.core_opts[0] }}" == "mame2003-plus" ]; then
-          # Ensure a clean clone
-          rm -rf $CORE_DIR
-          git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro $CORE_DIR
+          # If the script hasn't cloned it yet, we do it now to patch it
+          if [ ! -d "$CORE_DIR" ]; then
+            git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro $CORE_DIR
+          fi
           
-          # Inject paths into Makefile
-          sed -i '1i CC = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc' $CORE_DIR/Makefile
-          sed -i '1i CXX = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++' $CORE_DIR/Makefile
+          # Patch the Makefile and config.c in place
           sed -i 's/PLATCFLAGS :=/PLATCFLAGS := -fno-strict-aliasing -Wno-error=incompatible-pointer-types /g' $CORE_DIR/Makefile
-
-          echo "Locating and patching config.c..."
-          # Find the actual path of config.c and apply the UINT32 casts
           CONFIG_FILE=$(find $CORE_DIR -name "config.c")
           if [ -f "$CONFIG_FILE" ]; then
             sed -i 's/&saved_total/(UINT32 *)\&saved_total/g' "$CONFIG_FILE"
             sed -i 's/&coins\[i\]/(UINT32 *)\&coins[i]/g' "$CONFIG_FILE"
             sed -i 's/dispensed_tickets/(UINT32 *)dispensed_tickets/g' "$CONFIG_FILE"
-            echo "Successfully patched $CONFIG_FILE"
-          else
-            echo "Warning: config.c not found!"
           fi
         fi
 
-        # Execute build
-        ./cores/${{ matrix.core_opts[0] }}.sh \
-          platform=ps2 \
-          CC=ee-gcc \
-          CXX=ee-g++ \
-          AR=ee-ar
+        # 4. Final Execution
+        # We pass the paths directly into the environment of the script execution
+        # This prevents the script from 'forgetting' where the compiler is.
+        CC=/usr/bin/ee-gcc CXX=/usr/bin/ee-g++ PLATFORM=ps2 platform=ps2 \
+        ./cores/${{ matrix.core_opts[0] }}.sh
+        
+        ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
 
     - name: Get short SHA
       id: slug
