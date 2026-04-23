@@ -34,7 +34,7 @@ jobs:
 
     - name: Compile custom ps2_driver
       run: |
-        # Setup environment for SDK-based drivers
+        # Ensure toolchain is in path for driver compilation
         export PS2DEV=/usr/local/ps2dev
         export PS2SDK=$PS2DEV/ps2sdk
         export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2SDK/bin
@@ -53,35 +53,37 @@ jobs:
         ./prepare_release.sh
         ./prepare_retroarch.sh
         
+        # Patch RetroArch common graphics for modern PS2SDK compatibility
         find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" | while read -r file; do
           sed -i -E 's/int\s+vsync_handler\s*\((void)?\)/int vsync_handler(int cause)/g' "$file"
         done
 
     - name: Compile project
       run: |
-        # 1. Global Toolchain Setup (RetroArch Makefile style)
+        # 1. Setup the Environment (The RetroArch Makefile.ps2 way)
         export PS2DEV=/usr/local/ps2dev
         export PS2SDK=$PS2DEV/ps2sdk
         export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2SDK/bin
         
-        # 2. Targeted MAME Patching
-        # MAME uses its own internal logic that often ignores the system PATH
+        # 2. Apply MAME-Specific Path Fixes
         CORE_DIR="cores/${{ matrix.core_opts[0] }}-libretro"
         
         if [ "${{ matrix.core_opts[0] }}" == "mame2003-plus" ]; then
-          # We clone manually to ensure we can modify the Makefile before the .sh script executes
+          # Manually clone so we can edit the Makefile before the .sh script runs
           git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro $CORE_DIR
           
-          echo "Injecting absolute toolchain paths into MAME Makefile..."
-          # Target the PS2-specific CROSS_COMPILE and CC variables in MAME's Makefile
-          sed -i 's|CROSS_COMPILE := ee-|CROSS_COMPILE := /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-|g' $CORE_DIR/Makefile
+          echo "Applying Surgical Fix to MAME Makefile for PS2 toolchain..."
+          # Target the lines you shared to use absolute paths
+          # We use '|' as sed delimiter to handle the slashes in the path
           sed -i 's|CC = ee-gcc|CC = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc|g' $CORE_DIR/Makefile
           sed -i 's|CXX = ee-g++|CXX = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++|g' $CORE_DIR/Makefile
+          sed -i 's|AR = ee-ar|AR = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar|g' $CORE_DIR/Makefile
         fi
 
         # 3. Execution
-        # We pass CC/CXX as arguments to catch any cores that don't use internal hardcoding
+        # We pass the platform and toolchain variables as direct arguments to override internal Makefile defaults
         ./cores/${{ matrix.core_opts[0] }}.sh \
+          platform=ps2 \
           CC=ee-gcc \
           CXX=ee-g++ \
           AR=ee-ar \
