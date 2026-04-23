@@ -4,17 +4,22 @@ on:
   push:
     branches: 
       - '*'
+    tags:
+      - v*
+  pull_request:
+  repository_dispatch:
+    types: [run_build]
   workflow_dispatch: {}
 
 jobs:
   cores:
     runs-on: ubuntu-latest
-    # --- THE FIX: Define environment variables for the entire job ---
+    # THE FIX: This injects the toolchain paths directly into the GitHub Runner environment
     env:
       PS2DEV: /usr/local/ps2dev
       PS2SDK: /usr/local/ps2dev/ps2sdk
       PATH: /usr/local/ps2dev/bin:/usr/local/ps2dev/ee/bin:/usr/local/ps2dev/iop/bin:/usr/local/ps2dev/dvp/bin:/usr/local/ps2dev/ps2sdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-    
+
     strategy:
       matrix:
         docker_owner: [ps2dev]
@@ -45,11 +50,19 @@ jobs:
       run: |
         chmod +x *.sh
         chmod +x cores/*.sh
+        
+        # 1. Run preparation scripts
         ./prepare_release.sh
         ./prepare_retroarch.sh
         
+        # 2. Apply the patch only to the function DEFINITION
+        echo "Applying surgical patch to ps2_gfx.c..."
         find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" | while read -r file; do
+          echo "Patching definition in $file"
           sed -i -E 's/int\s+vsync_handler\s*\((void)?\)/int vsync_handler(int cause)/g' "$file"
+          
+          echo "Verifying Patch Results:"
+          grep -n "vsync_handler" "$file"
         done
 
     - name: Compile project
