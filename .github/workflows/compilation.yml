@@ -60,45 +60,40 @@ jobs:
 
     - name: Compile project
       run: |
-        # 1. Toolchain Symlinks
+        # 1. Global Toolchain Symlinks (Required for all cores)
         ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc /usr/local/bin/ee-gcc
         ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++ /usr/local/bin/ee-g++
         ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar /usr/local/bin/ee-ar
 
-        # 2. Setup Environment
+        # 2. Setup General Environment
         export PS2DEV=/usr/local/ps2dev
         export PS2SDK=$PS2DEV/ps2sdk
         export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2SDK/bin
         
-        CORE_DIR="cores/mame2003-plus-libretro"
+        CORE_NAME="${{ matrix.core_opts[0] }}"
+        CORE_DIR="cores/${CORE_NAME}-libretro"
         
-        # 3. Clean and Patch
-        rm -rf $CORE_DIR
-        git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro $CORE_DIR
-        
-        echo "Injecting Paths into Makefile..."
-        sed -i '1i CC = ee-gcc' $CORE_DIR/Makefile
-        sed -i '1i CXX = ee-g++' $CORE_DIR/Makefile
-        
-        # Add permissive flags to handle the messy legacy C code
-        sed -i 's/PLATCFLAGS :=/PLATCFLAGS := -fno-strict-aliasing -fpermissive -Wno-error=incompatible-pointer-types /g' $CORE_DIR/Makefile
-
-        echo "Surgically fixing config.c type definitions..."
-        CONFIG_PATH=$(find $CORE_DIR -name "config.c")
-        if [ -n "$CONFIG_PATH" ]; then
-          # Change the 'readint' and 'writeint' definitions to use unsigned int 
-          # This matches the variables passed to them elsewhere in the file.
-          sed -i 's/static int readint(mame_file \*f, UINT32 \*num)/static int readint(mame_file \*f, unsigned int \*num)/g' "$CONFIG_PATH"
-          sed -i 's/static void writeint(mame_file \*f, UINT32 num)/static void writeint(mame_file \*f, unsigned int num)/g' "$CONFIG_PATH"
+        # 3. MAME-SPECIFIC PATCHING (Only runs if the core is MAME)
+        if [ "$CORE_NAME" == "mame2003-plus" ]; then
+          echo "Applying MAME-specific surgical fixes..."
+          # Fix the Pointer Mismatches in config.c
+          CONFIG_PATH=$(find $CORE_DIR -name "config.c")
+          if [ -n "$CONFIG_PATH" ]; then
+            sed -i 's/static int readint(mame_file \*f, UINT32 \*num)/static int readint(mame_file \*f, unsigned int \*num)/g' "$CONFIG_PATH"
+            sed -i 's/static void writeint(mame_file \*f, UINT32 num)/static void writeint(mame_file \*f, unsigned int num)/g' "$CONFIG_PATH"
+            sed -i 's/UINT32 i;/unsigned int i;/g' "$CONFIG_PATH"
+          fi
           
-          # Also fix the UINT32 i variable inside read_ver_8 and other local spots
-          sed -i 's/UINT32 i;/unsigned int i;/g' "$CONFIG_PATH"
-          echo "Patched $CONFIG_PATH"
+          # Inject MAME-specific Makefile flags
+          sed -i '1i CC = ee-gcc' $CORE_DIR/Makefile
+          sed -i '1i CXX = ee-g++' $CORE_DIR/Makefile
+          sed -i 's/PLATCFLAGS :=/PLATCFLAGS := -fno-strict-aliasing -Wno-error=incompatible-pointer-types /g' $CORE_DIR/Makefile
         fi
 
-        # 4. Execution
+        # 4. UNIVERSAL EXECUTION (Works for UAE, PicoDrive, MAME, etc.)
+        # We pass the standard PS2 variables that the .sh scripts expect.
         platform=ps2 PLATFORM=ps2 CC=ee-gcc CXX=ee-g++ AR=ee-ar \
-        ./cores/mame2003-plus.sh
+        ./cores/${CORE_NAME}.sh
 
     - name: Get short SHA
       id: slug
