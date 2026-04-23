@@ -1,108 +1,89 @@
-name: CI
+name: Build PS2 Cores
 
 on:
   push:
-    branches: 
-      - '*'
-    tags:
-      - v*
+    branches: [ main ]
   pull_request:
-  repository_dispatch:
-    types: [run_build]
-  workflow_dispatch: {}
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  cores:
+  build:
     runs-on: ubuntu-latest
+    container: ps2dev/ps2dev:latest
     strategy:
       matrix:
-        docker_owner: [ps2dev]
+        # Your actual project list
         core_opts: [
-          [libretro-prboom, prboom_libretro_ps2],
-          [gambatte-libretro, gambatte_libretro_ps2],
-          [mame2003-plus, mame2003_plus_libretro_ps2],
+          [gambatte, gambatte],
+          [pr-boom, prboom],
+          [mame2003-plus, mame2003_plus]
         ]
-      fail-fast: false
 
-    container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: |
-        apk add build-base git bash cmake
+      - name: Install dependencies
+        run: |
+          apk add --no-cache git make patch bash
 
-    - name: Compile custom ps2_driver
-      run: |
-        # Ensure toolchain is in path for driver compilation
-        export PS2DEV=/usr/local/ps2dev
-        export PS2SDK=$PS2DEV/ps2sdk
-        export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2SDK/bin
+      - name: Compile project
+        run: |
+          # 1. Global Toolchain Symlinks
+          ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc /usr/local/bin/ee-gcc
+          ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++ /usr/local/bin/ee-g++
+          ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar /usr/local/bin/ee-ar
+          ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-strip /usr/local/bin/ee-strip
 
-        git clone --recurse-submodules https://github.com/fjtrujy/ps2_drivers.git
-        cd ps2_drivers
-        for dir in $(find . -maxdepth 2 -name Makefile); do
-          make -C $(dirname $dir) install
-        done
-
-    - name: Prepare and Surgical Patch
-      run: |
-        chmod +x *.sh
-        chmod +x cores/*.sh
-        
-        ./prepare_release.sh
-        ./prepare_retroarch.sh
-        
-        # Patch RetroArch common graphics for modern PS2SDK compatibility
-        find . -name "ps2_gfx.c" -not -path "./ps2_drivers/*" | while read -r file; do
-          sed -i -E 's/int\s+vsync_handler\s*\((void)?\)/int vsync_handler(int cause)/g' "$file"
-        done
-
-    - name: Compile project
-      run: |
-        # 1. Force the system to recognize ee-gcc globally via Symlinks
-        # This creates a shortcut so 'ee-gcc' points directly to the real file
-        echo "Creating toolchain symlinks..."
-        ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc /usr/local/bin/ee-gcc
-        ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++ /usr/local/bin/ee-g++
-        ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar /usr/local/bin/ee-ar
-        ln -sf /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-strip /usr/local/bin/ee-strip
-
-        # 2. Setup the Environment
-        export PS2DEV=/usr/local/ps2dev
-        export PS2SDK=$PS2DEV/ps2sdk
-        export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2SDK/bin
-        
-        CORE_DIR="cores/${{ matrix.core_opts[0] }}-libretro"
-        
-        if [ "${{ matrix.core_opts[0] }}" == "mame2003-plus" ]; then
-          # Ensure we are in a clean state
-          rm -rf $CORE_DIR
-          git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro $CORE_DIR
+          # 2. Setup General Environment
+          export PS2DEV=/usr/local/ps2dev
+          export PS2SDK=$PS2DEV/ps2sdk
+          export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2SDK/bin
           
-          echo "Force-injecting paths to the TOP of MAME Makefile..."
-          # This inserts these lines at line 1 of the Makefile, so they cannot be overridden easily
-          sed -i '1i CC = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc' $CORE_DIR/Makefile
-          sed -i '1i CXX = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++' $CORE_DIR/Makefile
-          sed -i '1i AR = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar' $CORE_DIR/Makefile
-          sed -i '1i CROSS_COMPILE = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-' $CORE_DIR/Makefile
-        fi
+          CORE_NAME="${{ matrix.core_opts[0] }}"
+          CORE_DIR="cores/${CORE_NAME}-libretro"
 
-        # 3. Execution with explicit Pathing
-        # We pass the absolute path to CC/CXX directly to the bash script
-        ./cores/${{ matrix.core_opts[0] }}.sh \
-          platform=ps2 \
-          CC=/usr/local/bin/ee-gcc \
-          CXX=/usr/local/bin/ee-g++ \
-          AR=/usr/local/bin/ee-ar
+          # 3. MAME-SPECIFIC FIXES
+          if [ "$CORE_NAME" == "mame2003-plus" ]; then
+            echo "Applying surgical fixes to MAME 2003 Plus..."
+            # Clone early if the script hasn't yet, so we can patch the source
+            if [ ! -d "$CORE_DIR" ]; then
+              git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro "$CORE_DIR"
+            fi
 
-    - name: Get short SHA
-      id: slug
-      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
+            # Patch config.c pointer types
+            CONFIG_PATH=$(find "$CORE_DIR" -name "config.c")
+            if [ -n "$CONFIG_PATH" ]; then
+              sed -i 's/UINT32 \*num/unsigned int \*num/g' "$CONFIG_PATH"
+              sed -i 's/UINT32 num/unsigned int num/g' "$CONFIG_PATH"
+              sed -i 's/UINT32 i;/unsigned int i;/g' "$CONFIG_PATH"
+            fi
+            
+            # Use -fpermissive so the compiler doesn't stop on legacy type mismatches
+            sed -i 's/PLATCFLAGS :=/PLATCFLAGS := -fpermissive -fno-strict-aliasing -Wno-error=incompatible-pointer-types /g' "$CORE_DIR/Makefile"
+            
+            # Inject toolchain directly into Makefile
+            sed -i '1i CC = ee-gcc' "$CORE_DIR/Makefile"
+            sed -i '1i CXX = ee-g++' "$CORE_DIR/Makefile"
+            sed -i '1i AR = ee-ar' "$CORE_DIR/Makefile"
+          fi
 
-    - name: Upload artifacts
-      if: ${{ success() }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: RA-${{ matrix.core_opts[0] }}-${{ steps.slug.outputs.sha8 }}
-        path: RA/
+          # 4. UNIVERSAL EXECUTION
+          chmod +x ./cores/${CORE_NAME}.sh
+          platform=ps2 PLATFORM=ps2 CC=ee-gcc CXX=ee-g++ AR=ee-ar \
+          ./cores/${CORE_NAME}.sh
+
+      - name: Generate RetroArch Package
+        run: |
+          chmod +x ./generate_retroarch.sh
+          ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.core_opts[0] }}-ps2
+          path: |
+            *.elf
+            *.a
+            retroarch/
