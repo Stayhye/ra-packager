@@ -60,7 +60,7 @@ jobs:
 
     - name: Compile project
       run: |
-        # (Keep your existing Symlinks and Environment exports here)
+        # (Your Symlinks and Environment exports remain the same)
         export PS2DEV=/usr/local/ps2dev
         export PS2SDK=$PS2DEV/ps2sdk
         export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2SDK/bin
@@ -68,20 +68,26 @@ jobs:
         CORE_DIR="cores/${{ matrix.core_opts[0] }}-libretro"
         
         if [ "${{ matrix.core_opts[0] }}" == "mame2003-plus" ]; then
-          # ... (Keep your git clone and Makefile injections) ...
-
-          echo "Patching src/config.c for UINT32 compatibility..."
-          # Fix argument 2 of readint in config_read_ports
-          sed -i 's/&saved_total/(UINT32 *)\&saved_total/g' $CORE_DIR/src/config.c
+          # Ensure a clean clone
+          rm -rf $CORE_DIR
+          git clone --depth 1 https://github.com/libretro/mame2003-plus-libretro $CORE_DIR
           
-          # Fix argument 2 of readint in config_read_coin_and_ticket_counters
-          sed -i 's/&coins\[i\]/(UINT32 *)\&coins[i]/g' $CORE_DIR/src/config.c
-          sed -i 's/dispensed_tickets/(UINT32 *)dispensed_tickets/g' $CORE_DIR/src/config.c
-
-          echo "Disabling strict-aliasing and pointer-type errors..."
-          # Add -fno-strict-aliasing and suppress incompatible pointer errors to the Makefile
-          # This helps with those 'cast increases required alignment' warnings in memory.h
+          # Inject paths into Makefile
+          sed -i '1i CC = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc' $CORE_DIR/Makefile
+          sed -i '1i CXX = /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++' $CORE_DIR/Makefile
           sed -i 's/PLATCFLAGS :=/PLATCFLAGS := -fno-strict-aliasing -Wno-error=incompatible-pointer-types /g' $CORE_DIR/Makefile
+
+          echo "Locating and patching config.c..."
+          # Find the actual path of config.c and apply the UINT32 casts
+          CONFIG_FILE=$(find $CORE_DIR -name "config.c")
+          if [ -f "$CONFIG_FILE" ]; then
+            sed -i 's/&saved_total/(UINT32 *)\&saved_total/g' "$CONFIG_FILE"
+            sed -i 's/&coins\[i\]/(UINT32 *)\&coins[i]/g' "$CONFIG_FILE"
+            sed -i 's/dispensed_tickets/(UINT32 *)dispensed_tickets/g' "$CONFIG_FILE"
+            echo "Successfully patched $CONFIG_FILE"
+          else
+            echo "Warning: config.c not found!"
+          fi
         fi
 
         # Execute build
