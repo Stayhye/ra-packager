@@ -51,6 +51,12 @@ jobs:
         ./prepare_release.sh
         ./prepare_retroarch.sh
         ./cores/${{ matrix.core_opts[0] }}.sh
+        
+        # Patch Makefile.ps2 to link core object files directly instead of looking for -lretro_ps2 archive
+        cd RetroArch
+        sed -i 's/-lretro_ps2/-Wl,--start-group ..\/${{ matrix.core_opts[0] }}\/*.o ..\/${{ matrix.core_opts[0] }}\/mednafen\/*.o ..\/${{ matrix.core_opts[0] }}\/mednafen\/*\/*.o ..\/${{ matrix.core_opts[0] }}\/libretro-common\/*\/*.o -Wl,--end-group/g' Makefile.ps2
+        cd ..
+        
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
     - name: Get short SHA
       id: slug
