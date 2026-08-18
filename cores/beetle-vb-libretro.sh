@@ -18,28 +18,18 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core
+## Compile core using libretro's generic platform target
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-## Locate the static library output or package it using the PS2 toolchain archiver
-BUILT_LIB=""
-if [ -f "libretro.a" ]; then
-    BUILT_LIB="libretro.a"
-elif [ -f "mednafen_vb_libretro.a" ]; then
-    BUILT_LIB="mednafen_vb_libretro.a"
-elif [ -f "libretro_ps2.a" ]; then
-    BUILT_LIB="libretro_ps2.a"
-else
-    mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o mednafen/*.o mednafen/*/*.o libretro-common/*/*.o 2>/dev/null || \
-    mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o
-    BUILT_LIB="beetle-vb-libretro_ps2.a"
-fi
+## Explicitly package the compiled object files into the static library archive 
+## expected by the PS2 linker using the cross-toolchain archiver
+rm -f beetle-vb-libretro_ps2.a
+mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o mednafen/*.o mednafen/*/*.o libretro-common/*/*.o 2>/dev/null || \
+mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o || { exit 1; }
 
 cd .. || { exit 1; }
 
-# Place it directly in the directory expected by generate_retroarch.sh ($1/$2.a -> beetle-vb-libretro/beetle-vb-libretro_ps2.a)
+## Place it in the directory expected by generate_retroarch.sh ($1/$2.a -> beetle-vb-libretro/beetle-vb-libretro_ps2.a)
 mkdir -p beetle-vb-libretro
-if [ "$REPO_FOLDER/$BUILT_LIB" != "beetle-vb-libretro/beetle-vb-libretro_ps2.a" ]; then
-    cp "$REPO_FOLDER/$BUILT_LIB" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
-fi
+cp "$REPO_FOLDER/beetle-vb-libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
