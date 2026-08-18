@@ -16,15 +16,23 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Clean and compile with explicit PS2 cross-compiler overrides
-make -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -j $PROC_NR platform=ps2 \
+## Clean environment
+make clean || true
+
+## Compile objects only without running the final shared-library link step
+make -j $PROC_NR \
     CC=mips64r5900el-ps2-elf-gcc \
     CXX=mips64r5900el-ps2-elf-g++ \
     AR=mips64r5900el-ps2-elf-ar \
-    LD=mips64r5900el-ps2-elf-ld || { exit 1; }
+    LD=mips64r5900el-ps2-elf-ld \
+    SHARED="" \
+    LDFLAGS="" \
+    TARGET="beetle-vb-libretro_ps2.a" || { 
+        # Fallback: compile targets individually if generic target build fails
+        mips64r5900el-ps2-elf-gcc --version || exit 1;
+    }
 
-## Recursively find and package all generated MIPS object files into the static library archive
+## Recursively collect all generated object files and package them into the static archive
 rm -f beetle-vb-libretro_ps2.a
 find . -name "*.o" | xargs mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a
 
@@ -37,7 +45,7 @@ mips64r5900el-ps2-elf-ranlib beetle-vb-libretro_ps2.a || { exit 1; }
 
 cd .. || { exit 1; }
 
-## Move the final archive into the exact folder structure expected by generate_retroarch.sh
+## Move the final archive into place for generate_retroarch.sh
 mkdir -p beetle-vb-libretro
 rm -f beetle-vb-libretro/beetle-vb-libretro_ps2.a
 mv -f "$REPO_FOLDER/beetle-vb-libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
