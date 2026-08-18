@@ -20,6 +20,7 @@ jobs:
         core_opts: [
           # [libretro-prboom, prboom_libretro_ps2],
           [libretro-samples, test_libretro_ps2],
+          [beetle-vb-libretro, beetle-vb-libretro_ps2],
           [picodrive, picodrive_libretro_ps2],
           # [gambatte-libretro, gambatte_libretro_ps2],
           [snes9x2002, snes9x2002_libretro_ps2],
