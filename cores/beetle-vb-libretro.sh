@@ -22,7 +22,7 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-# Locate whatever static library the core's Makefile built
+## Locate the static library output or package it using the PS2 toolchain archiver
 BUILT_LIB=""
 if [ -f "libretro.a" ]; then
     BUILT_LIB="libretro.a"
@@ -31,16 +31,15 @@ elif [ -f "mednafen_vb_libretro.a" ]; then
 elif [ -f "libretro_ps2.a" ]; then
     BUILT_LIB="libretro_ps2.a"
 else
-    # Fallback: pack the object files using the PS2 toolchain archiver if no .a was generated
     mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o mednafen/*.o mednafen/*/*.o libretro-common/*/*.o 2>/dev/null || \
     mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o
     BUILT_LIB="beetle-vb-libretro_ps2.a"
 fi
 
-cp "$BUILT_LIB" beetle-vb-libretro_ps2.a || { exit 1; }
-
 cd .. || { exit 1; }
 
-# Place it in the directory structure expected by generate_retroarch.sh ($1/$2.a)
+# Place it directly in the directory expected by generate_retroarch.sh ($1/$2.a -> beetle-vb-libretro/beetle-vb-libretro_ps2.a)
 mkdir -p beetle-vb-libretro
-cp "$REPO_FOLDER/beetle-vb-libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
+if [ "$REPO_FOLDER/$BUILT_LIB" != "beetle-vb-libretro/beetle-vb-libretro_ps2.a" ]; then
+    cp "$REPO_FOLDER/$BUILT_LIB" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
+fi
