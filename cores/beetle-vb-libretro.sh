@@ -8,8 +8,9 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 REPO_URL="https://github.com/libretro/beetle-vb-libretro"
 REPO_FOLDER="bettle-vb"
 BRANCH_NAME="master"
+
 if test ! -d "$REPO_FOLDER"; then
-	git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL && cd $REPO_FOLDER || { exit 1; }
+	git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER && cd $REPO_FOLDER || { exit 1; }
 else
 	cd $REPO_FOLDER && git fetch origin && git reset --hard origin/${BRANCH_NAME} && git checkout ${BRANCH_NAME} || { exit 1; }
 fi
