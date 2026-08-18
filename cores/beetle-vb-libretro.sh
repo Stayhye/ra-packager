@@ -6,7 +6,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 ## Download the source code.
 REPO_URL="https://github.com/libretro/beetle-vb-libretro"
-REPO_FOLDER="bettle-vb"
+REPO_FOLDER="beetle-vb-libretro"
 BRANCH_NAME="master"
 
 if test ! -d "$REPO_FOLDER"; then
@@ -18,5 +18,9 @@ fi
 ## Compile core
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
+
+# Debug: List files to see where the .a file went and what it's named
+ls -la
+ls -la ..
 
 cd .. || { exit 1; }
