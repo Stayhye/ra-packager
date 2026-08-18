@@ -16,20 +16,29 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-# Compile core for platform=ps2
+## Compile core for platform=ps2
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-# Force-remove old archive and build a fresh MIPS cross-archive with indexed symbol table (ranlib)
+## Debug: list object files found to verify compilation succeeded
+echo "Locating compiled object files..."
+find . -name "*.o"
+
+## Package ALL recursively found object files into the static library archive
 rm -f beetle-vb-libretro_ps2.a
-mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o mednafen/*.o mednafen/*/*.o libretro-common/*/*.o 2>/dev/null || \
-mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o || { exit 1; }
+find . -name "*.o" | xargs mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a
+
+if [ ! -f "beetle-vb-libretro_ps2.a" ]; then
+    echo "Error: Failed to create beetle-vb-libretro_ps2.a via recursive find"
+    exit 1
+fi
 
 mips64r5900el-ps2-elf-ranlib beetle-vb-libretro_ps2.a || { exit 1; }
 
 cd .. || { exit 1; }
 
-# Copy safely without self-collision
+## Move it safely to the directory expected by generate_retroarch.sh
 mkdir -p beetle-vb-libretro
-rm -f beetle-vb-libretro/beetle-vb-libretro_ps2.a
-cp "$REPO_FOLDER/beetle-vb-libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
+mv -f "$REPO_FOLDER/beetle-vb-libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
+
+echo "Successfully prepared beetle-vb-libretro/beetle-vb-libretro_ps2.a"
