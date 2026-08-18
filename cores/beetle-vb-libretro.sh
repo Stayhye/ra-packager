@@ -4,16 +4,10 @@
 ## Determine the maximum number of processes that Make can work with.
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
-## Download the source code safely.
+## Download the source code.
 REPO_URL="https://github.com/libretro/beetle-vb-libretro"
-REPO_FOLDER="vb"
+REPO_FOLDER="bettle-vb"
 BRANCH_NAME="master"
-
-# Clean up directory if it's corrupted or not a proper git repo
-if [ -d "$REPO_FOLDER" ] && [ ! -d "$REPO_FOLDER/.git" ]; then
-    rm -rf "$REPO_FOLDER"
-fi
-
 if test ! -d "$REPO_FOLDER"; then
 	git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL && cd $REPO_FOLDER || { exit 1; }
 else
