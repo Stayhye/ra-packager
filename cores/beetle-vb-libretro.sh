@@ -16,8 +16,14 @@ else
 fi
 
 ## Compile core
-## Compile core
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
+
+# Rename the compiled output to match what generate_retroarch.sh expects
+if [ -f "mednafen_vb_libretro.a" ]; then
+    cp mednafen_vb_libretro.a beetle-vb-libretro_ps2.a || { exit 1; }
+elif [ -f "beetle_vb_libretro.a" ]; then
+    cp beetle_vb_libretro.a beetle-vb-libretro_ps2.a || { exit 1; }
+fi
 
 cd .. || { exit 1; }
