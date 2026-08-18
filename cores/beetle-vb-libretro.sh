@@ -16,9 +16,14 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core normally for platform=ps2
+## Clean and build explicitly suppressing shared library linking flags
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -j $PROC_NR platform=ps2 || { exit 1; }
+make -j $PROC_NR platform=ps2 TARGET=libretro_ps2.a SHARED="" || { exit 1; }
+
+## If that fails to pick up SHARED, let's force compiling objects individually via clean make flags
+if [ ! -f "libretro.o" ] && [ ! -f "mednafen/libretro.o" ]; then
+    make -j $PROC_NR platform=ps2 CC="mips64r5900el-ps2-elf-gcc" CXX="mips64r5900el-ps2-elf-g++" LD="mips64r5900el-ps2-elf-ld" || { exit 1; }
+fi
 
 ## Recursively find and package ALL compiled object files into the static library archive
 rm -f beetle-vb-libretro_ps2.a
