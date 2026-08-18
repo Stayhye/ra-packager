@@ -16,11 +16,15 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Clean and build normally for the PS2 platform target
+## Clean and compile with explicit PS2 cross-compiler overrides
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -j $PROC_NR platform=ps2 || { exit 1; }
+make -j $PROC_NR platform=ps2 \
+    CC=mips64r5900el-ps2-elf-gcc \
+    CXX=mips64r5900el-ps2-elf-g++ \
+    AR=mips64r5900el-ps2-elf-ar \
+    LD=mips64r5900el-ps2-elf-ld || { exit 1; }
 
-## Package all generated object files into the static library archive expected by RetroArch
+## Recursively find and package all generated MIPS object files into the static library archive
 rm -f beetle-vb-libretro_ps2.a
 find . -name "*.o" | xargs mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a
 
