@@ -38,9 +38,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Configure Git Safe Directory
+      run: |
+        git config --global --add safe.directory '*'
+
     - name: Install dependencies
       run: |
-        apk add build-base git bash
+        apk add --no-cache build-base git bash autoconf automake libtool patch wget unzip
     
     - name: Grant execution rights to scripts
       run: |
@@ -77,9 +81,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Configure Git Safe Directory
+      run: |
+        git config --global --add safe.directory '*'
+
     - name: Install dependencies
       run: |
-        apk add build-base git bash
+        apk add --no-cache build-base git bash autoconf automake libtool patch wget unzip
     
     - name: Grant execution rights to scripts
       run: |
@@ -109,8 +117,17 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
 
+    container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
     - uses: actions/checkout@v4
+
+    - name: Configure Git Safe Directory
+      run: |
+        git config --global --add safe.directory '*'
+
+    - name: Install dependencies
+      run: |
+        apk add --no-cache build-base git bash autoconf automake libtool patch wget unzip
 
     - name: Grant execution rights to scripts
       run: |
