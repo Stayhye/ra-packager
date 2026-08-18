@@ -22,13 +22,13 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-## Create the archive explicitly from the compiled object files if an archive doesn't exist
+## Package all compiled object files into the static library archive (.a)
+rm -f beetle-vb-libretro_ps2.a
 if [ -f "libretro.o" ]; then
-    # Create the static library archive expected by the PS2 toolchain packaging script
     ar rcs beetle-vb-libretro_ps2.a *.o mednafen/*.o mednafen/*/*.o libretro-common/*/*.o 2>/dev/null || ar rcs beetle-vb-libretro_ps2.a *.o
 fi
 
-# Fallback: if any other .a file was made, use it
+# Fallback check for any .a file produced
 if [ ! -f "beetle-vb-libretro_ps2.a" ]; then
     for f in *.a; do
         if [ -f "$f" ]; then
@@ -45,6 +45,6 @@ fi
 
 cd .. || { exit 1; }
 
-# Place it in the directory structure expected by generate_retroarch.sh ($1/$2.a -> beetle-vb-libretro/beetle-vb-libretro_ps2.a)
+# Place it in the directory expected by generate_retroarch.sh ($1/$2.a -> beetle-vb-libretro/beetle-vb-libretro_ps2.a)
 mkdir -p beetle-vb-libretro
-mv "$REPO_FOLDER/beetle-vb-libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
+cp "$REPO_FOLDER/beetle-vb-libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
