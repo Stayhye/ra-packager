@@ -19,15 +19,14 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 ## Clean environment
 make clean || true
 
-## Compile source objects with explicit libc linking flags to resolve standard symbols like strlen
+## Compile source objects using correct $PS2SDK variables and libretro header locations
 make -j $PROC_NR \
     CC="mips64r5900el-ps2-elf-gcc" \
     CXX="mips64r5900el-ps2-elf-g++" \
     AR="mips64r5900el-ps2-elf-ar" \
     LD="mips64r5900el-ps2-elf-ld" \
-    CFLAGS="-I$(ps2sdk ee/include) -I$(ps2sdk common/include)" \
-    CXXFLAGS="-I$(ps2sdk ee/include) -I$(ps2sdk common/include)" \
-    LIBS="-lc" \
+    CFLAGS="-I$PS2SDK/ee/include -I$PS2SDK/common/include -I." \
+    CXXFLAGS="-I$PS2SDK/ee/include -I$PS2SDK/common/include -I." \
     SHARED="" \
     TARGET="beetle-vb-libretro_ps2.a" || { exit 1; }
 
