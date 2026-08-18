@@ -19,20 +19,19 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 ## Clean environment
 make clean || true
 
-## Compile objects only without running the final shared-library link step
+## Compile source objects with explicit libc linking flags to resolve standard symbols like strlen
 make -j $PROC_NR \
-    CC=mips64r5900el-ps2-elf-gcc \
-    CXX=mips64r5900el-ps2-elf-g++ \
-    AR=mips64r5900el-ps2-elf-ar \
-    LD=mips64r5900el-ps2-elf-ld \
+    CC="mips64r5900el-ps2-elf-gcc" \
+    CXX="mips64r5900el-ps2-elf-g++" \
+    AR="mips64r5900el-ps2-elf-ar" \
+    LD="mips64r5900el-ps2-elf-ld" \
+    CFLAGS="-I$(ps2sdk ee/include) -I$(ps2sdk common/include)" \
+    CXXFLAGS="-I$(ps2sdk ee/include) -I$(ps2sdk common/include)" \
+    LIBS="-lc" \
     SHARED="" \
-    LDFLAGS="" \
-    TARGET="beetle-vb-libretro_ps2.a" || { 
-        # Fallback: compile targets individually if generic target build fails
-        mips64r5900el-ps2-elf-gcc --version || exit 1;
-    }
+    TARGET="beetle-vb-libretro_ps2.a" || { exit 1; }
 
-## Recursively collect all generated object files and package them into the static archive
+## Package all generated object files into the static library archive
 rm -f beetle-vb-libretro_ps2.a
 find . -name "*.o" | xargs mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a
 
