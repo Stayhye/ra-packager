@@ -22,25 +22,30 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-## Find whatever archive/library the Makefile built and map it to what generate_retroarch.sh expects
-FOUND_FILE=""
-for f in *.a; do
-    if [ -f "$f" ]; then
-        FOUND_FILE="$f"
-        break
-    fi
-done
+## Create the archive explicitly from the compiled object files if an archive doesn't exist,
+## or package whatever libretro output was produced.
+if [ -f "libretro.o" ]; then
+    # Create the static library archive expected by the PS2 toolchain packaging script
+    ar rcs beetle-vb-libretro_ps2.a *.o mednafen/*.o mednafen/*/*.o libretro-common/*/*.o 2>/dev/null || ar rcs beetle-vb-libretro_ps2.a *.o
+fi
 
-if [ -z "$FOUND_FILE" ]; then
-    echo "Error: Could not find any compiled .a static library file!"
+# Fallback: if any other .a file was made, use it
+if [ ! -f "beetle-vb-libretro_ps2.a" ]; then
+    for f in *.a; do
+        if [ -f "$f" ]; then
+            cp "$f" beetle-vb-libretro_ps2.a
+            break
+        fi
+    done
+fi
+
+if [ ! -f "beetle-vb-libretro_ps2.a" ]; then
+    echo "Error: Failed to generate beetle-vb-libretro_ps2.a"
     exit 1
 fi
 
-echo "Found compiled library: $FOUND_FILE. Copying to beetle-vb-libretro_ps2.a"
-cp "$FOUND_FILE" "../beetle-vb-libretro_ps2.a" || { exit 1; }
-
 cd .. || { exit 1; }
 
-# Ensure it's placed where generate_retroarch.sh expects it ($1/$2.a)
+# Place it in the directory expected by generate_retroarch.sh ($1/$2.a -> beetle-vb-libretro/beetle-vb-libretro_ps2.a)
 mkdir -p beetle-vb-libretro
-mv beetle-vb-libretro_ps2.a beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
+mv "$REPO_FOLDER/beetle-vb-libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
