@@ -38,26 +38,20 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Configure Git Safe Directory
-      run: |
-        git config --global --add safe.directory '*'
-
     - name: Install dependencies
       run: |
-        apk add --no-cache build-base git bash autoconf automake libtool patch wget unzip
+        apk add build-base git bash
     
     - name: Grant execution rights to scripts
       run: |
         chmod +x ./cores/*.sh
         chmod +x ./*.sh
-
     - name: Compile project
       run: |
         ./prepare_release.sh
         ./prepare_retroarch.sh
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
-
     - name: Get short SHA
       id: slug
       run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
@@ -81,24 +75,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Configure Git Safe Directory
-      run: |
-        git config --global --add safe.directory '*'
-
     - name: Install dependencies
       run: |
-        apk add --no-cache build-base git bash autoconf automake libtool patch wget unzip
+        apk add build-base git bash
     
     - name: Grant execution rights to scripts
       run: |
         chmod +x ./*.sh
-
     - name: Compile project
       run: |
         ./prepare_release.sh
         ./prepare_retroarch.sh
         ./generate_salamander.sh
-
     - name: Get short SHA
       id: slug
       run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
@@ -117,27 +105,16 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
 
-    container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
     - uses: actions/checkout@v4
-
-    - name: Configure Git Safe Directory
-      run: |
-        git config --global --add safe.directory '*'
-
-    - name: Install dependencies
-      run: |
-        apk add --no-cache build-base git bash autoconf automake libtool patch wget unzip
 
     - name: Grant execution rights to scripts
       run: |
         chmod +x ./*.sh
-
     - name: Compile project
       run: |
         ./prepare_release.sh
         ./libretro-core-info.sh
-
     - name: Get short SHA
       id: slug
       run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
@@ -171,7 +148,6 @@ jobs:
         run: |
           mkdir -p final-artifact
           cp -r artifacts/* final-artifact/
-
       - name: Upload final artifact
         uses: actions/upload-artifact@v4
         with:
