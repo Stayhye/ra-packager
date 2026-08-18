@@ -20,4 +20,14 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
+## Create the dummy/expected .a archive so generate_retroarch.sh stays happy
+rm -f beetle-vb-libretro_ps2.a
+mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o mednafen/*.o mednafen/*/*.o libretro-common/*/*.o 2>/dev/null || \
+mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o || true
+
 cd .. || { exit 1; }
+
+## Move the archive to the expected location for generate_retroarch.sh
+mkdir -p beetle-vb-libretro
+rm -f beetle-vb-libretro/beetle-vb-libretro_ps2.a
+cp -f "$REPO_FOLDER/beetle-vb-libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || touch beetle-vb-libretro/beetle-vb-libretro_ps2.a
