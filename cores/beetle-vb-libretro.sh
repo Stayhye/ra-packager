@@ -16,11 +16,8 @@ else
 fi
 
 ## Compile core
+## Compile core
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
-
-# Debug: List files to see where the .a file went and what it's named
-ls -la
-ls -la ..
 
 cd .. || { exit 1; }
