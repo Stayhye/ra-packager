@@ -22,10 +22,10 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-## Package all compiled object files into the static library archive (.a)
+## Package all compiled object files into the static library archive (.a) using the PS2 toolchain archiver
 rm -f beetle-vb-libretro_ps2.a
 if [ -f "libretro.o" ]; then
-    ar rcs beetle-vb-libretro_ps2.a *.o mednafen/*.o mednafen/*/*.o libretro-common/*/*.o 2>/dev/null || ar rcs beetle-vb-libretro_ps2.a *.o
+    mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o mednafen/*.o mednafen/*/*.o libretro-common/*/*.o 2>/dev/null || mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o
 fi
 
 # Fallback check for any .a file produced
