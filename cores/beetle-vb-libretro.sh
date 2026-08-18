@@ -16,20 +16,24 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core normally for platform=ps2 (this ensures MIPS EM: 8 format)
+## Compile core normally for platform=ps2
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-## Create the static library archive required by generate_retroarch.sh
+## Recursively find and package ALL compiled object files into the static library archive
 rm -f beetle-vb-libretro_ps2.a
-mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o mednafen/*.o mednafen/*/*.o libretro-common/*/*.o 2>/dev/null || \
-mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a *.o || { exit 1; }
+find . -name "*.o" | xargs mips64r5900el-ps2-elf-ar rcs beetle-vb-libretro_ps2.a
+
+if [ ! -f "beetle-vb-libretro_ps2.a" ]; then
+    echo "Error: Failed to generate beetle-vb-libretro_ps2.a archive"
+    exit 1
+fi
 
 mips64r5900el-ps2-elf-ranlib beetle-vb-libretro_ps2.a || { exit 1; }
 
 cd .. || { exit 1; }
 
-## Move it to the location expected by generate_retroarch.sh ($1/$2.a)
+## Ensure the destination folder exists and move the archive into place for generate_retroarch.sh
 mkdir -p beetle-vb-libretro
 rm -f beetle-vb-libretro/beetle-vb-libretro_ps2.a
 mv -f "$REPO_FOLDER/beetle-vb-libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
