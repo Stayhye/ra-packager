@@ -37,9 +37,13 @@
 ./cores/gpsp.sh || { exit 1; }
 ./generate_retroarch.sh gpsp gpsp_libretro_ps2 || { exit 1; }
 
-#vb
+#beetle-vb-libretro
 ./cores/beetle-vb-libretro.sh || { exit 1; }
-./generate_retroarch.sh vb beetle-vb-libretro_ps2 || { exit 1; }
+./generate_retroarch.sh beetle-vb-libretro beetle-vb-libretro_ps2 || { exit 1; }
+
+#mame2000-libretro
+./cores/mame2000-libretro.sh || { exit 1; }
+./generate_retroarch.sh mame2000-libretro mame2000-libretro_ps2 || { exit 1; }
 
 # libretro-fceumm
 ./cores/libretro-fceumm.sh || { exit 1; }
