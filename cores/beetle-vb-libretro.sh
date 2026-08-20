@@ -16,8 +16,9 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-make -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -j $PROC_NR platform=ps2 || { exit 1; }
+## Compile core
+make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
+make -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
 
 ## Package all nested object files recursively into the archive
 rm -f libretro_ps2.a
