@@ -90,10 +90,7 @@ jobs:
       run: |
         ./prepare_release.sh
         ./prepare_retroarch.sh
-        ./cores/${{ matrix.core_opts[0] }}.sh
-        # Initialize submodules for the cloned core repository
-        cd ${{ matrix.core_opts[0] }} && git submodule update --init --recursive && cd ..
-        ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
+        ./generate_salamander.sh
     - name: Get short SHA
       id: slug
       run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
