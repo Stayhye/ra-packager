@@ -51,6 +51,9 @@ jobs:
       run: |
         ./prepare_release.sh
         ./prepare_retroarch.sh
+        rm -rf ${{ matrix.core_opts[0] }}
+        git clone --recursive https://github.com/Stayhye/${{ matrix.core_opts[0] }}.git -b ps2-gcc9
+        cd ${{ matrix.core_opts[0] }} && sed -i '/$(CORE_DIR)\/src\/cheat.c \\/d' Makefile.common && cd ..
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
     - name: Get short SHA
