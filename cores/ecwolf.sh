@@ -5,7 +5,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 ## Download the source code.
-REPO_URL="https://github.com/fjtrujy/ecwolf"
+REPO_URL="https://github.com/Stayhye/ecwolf"
 REPO_FOLDER="ecwolf"
 BRANCH_NAME="ps2"
 if test ! -d "$REPO_FOLDER"; then
