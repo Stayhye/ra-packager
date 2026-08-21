@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/libretro/beetle-vb-libretro"
-REPO_FOLDER="beetle-vb-libretro"
+REPO_FOLDER="mednafen-vb-libretro"
 BRANCH_NAME="master"
 
 if test ! -d "$REPO_FOLDER"; then
@@ -26,4 +26,4 @@ cd .. || { exit 1; }
 cp -f "$REPO_FOLDER/mednafen_vb_libretro_ps2.a" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p beetle-vb-libretro
-cp -f "$REPO_FOLDER/mednafen_vb_libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
+cp -f "$REPO_FOLDER/mednafen_vb_libretro_ps2.a" mednafen_vb_libretro_ps2.a || { exit 1; }
