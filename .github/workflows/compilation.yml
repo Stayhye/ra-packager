@@ -21,7 +21,7 @@ jobs:
           #[libretro-prboom, prboom_libretro_ps2],
           [libretro-samples, test_libretro_ps2],
           #[picodrive, picodrive_libretro_ps2],
-          [ecwolf, ecwolf_ibretro_ps2],
+          [ecwolf, ecwolf_libretro_ps2],
           [gambatte-libretro, gambatte_libretro_ps2],
           [snes9x2002, snes9x2002_libretro_ps2],
           [libretro-lutro, lutro_libretro_ps2],
@@ -48,14 +48,12 @@ jobs:
       run: |
         chmod +x *.sh
         chmod +x ./cores/*.sh
-        # Redirect ECWolf Bitbucket submodules to their GitHub mirrors
         git config --global url."https://github.com/ECWolfEngine/".insteadOf "https://bitbucket.org/ecwolf/"
 
     - name: Compile project
       run: |
         ./prepare_release.sh
         ./prepare_retroarch.sh
-        # Clean up any leftover SDL directory
         rm -rf ecwolf/deps/SDL deps/SDL
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
