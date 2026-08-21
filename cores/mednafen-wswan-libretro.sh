@@ -14,7 +14,8 @@ else
 	cd $REPO_FOLDER && git fetch origin && git reset --hard origin/${BRANCH_NAME} && git checkout ${BRANCH_NAME} && git submodule update --init --recursive || { exit 1; }
 fi
 
-make -j $PROC_NR platform=ps2 clean || exit 1
-make -j $PROC_NR platform=ps2 || exit 1
+## Compile core
+make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
+make -f Makefile.libretro  -j $PROC_NR platform=ps2 || { exit 1; }
 
-cd .. || exit 1
+cd .. || { exit 1; }
