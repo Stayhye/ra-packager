@@ -32,7 +32,7 @@ jobs:
           #[stella2014-libretro, stella2014_libretro_ps2],
           [mednafen-vb-libretro, mednafen-vb-libretro_ps2],
           #[libretro-cap32, cap32_libretro_ps2],
-          [mame2000-libretro, mame2000_libretro_ps2],
+          #[mame2000-libretro, mame2000_libretro_ps2],
           #[QuickNES_Core, quicknes_libretro_ps2],
          ]
       fail-fast: false
