@@ -5,10 +5,10 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 ## Download the source code.
-REPO_URL="https://github.com/libretro/RetroArch.git"
+REPO_URL="https://github.com/Stayhye/RetroArch.git"
 REPO_FOLDER="RetroArch"
 BRANCH_NAME="master"
-##REPO_URL="https://github.com/Stayhye/RetroArch.git"
+##REPO_URL="https://github.com/fjtrujy/RetroArch.git"
 ##REPO_FOLDER="RetroArch"
 ##BRANCH_NAME="ps2/gcc15"
 if test ! -d "$REPO_FOLDER"; then
