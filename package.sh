@@ -5,7 +5,11 @@
 
 ./prepare_retroarch.sh || { exit 1; }
 
-# libretro-prboom
+#ecwolf
+./cores/ecwolf.sh || { exit 1; }
+./generate_retroarch.sh ecwolf ecwolf_libretro_ps2 || { exit 1; }
+
+#libretro-prboom
 ./cores/libretro-prboom.sh || { exit 1; }
 ./generate_retroarch.sh libretro-prboom prboom_libretro_ps2 || { exit 1; }
 
@@ -45,7 +49,7 @@
 ./cores/mame2000-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mame2000-libretro mame2000-libretro_ps2 || { exit 1; }
 
-# libretro-fceumm
+#libretro-fceumm
 ./cores/libretro-fceumm.sh || { exit 1; }
 ./generate_retroarch.sh libretro-fceumm fceumm_libretro_ps2 || { exit 1; }
 
