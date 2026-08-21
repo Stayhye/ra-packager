@@ -53,6 +53,8 @@ jobs:
       run: |
         ./prepare_release.sh
         ./prepare_retroarch.sh
+        # Clean up any leftover SDL directory to prevent duplicate clone failure in ECWolf
+        rm -rf ecwolf/deps/SDL deps/SDL
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
 
