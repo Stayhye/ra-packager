@@ -9,9 +9,9 @@
 ./cores/ecwolf.sh || { exit 1; }
 ./generate_retroarch.sh ecwolf ecwolf_libretro_ps2 || { exit 1; }
 
-#mednafen-wswan-libretro
+#beetle-wswan-libretro
 ./cores/mednafen-wswan-libretro.sh || { exit 1; }
-./generate_retroarch.sh mednafen-wswan-libretro mednafen-wswan-libretro_ps2 || { exit 1; }
+./generate_retroarch.sh beetle-wswan-libretro mednafen-wswan-libretro_ps2 || { exit 1; }
 
 #libretro-prboom
 ./cores/libretro-prboom.sh || { exit 1; }
