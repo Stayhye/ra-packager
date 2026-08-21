@@ -16,9 +16,15 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core using native platform=ps2 support with required signal overrides (shell-safe)
-make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf -Dsiglongjmp=longjmp" clean || { exit 1; }
-make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf -Dsiglongjmp=longjmp" || { exit 1; }
+## Patch sjlj.c for PS2 compatibility to avoid missing signal-jumping symbols
+if [ -f "src/libretro/libretro-common/libco/sjlj.c" ]; then
+    sed -i 's/sigsetjmp/setjmp/g' src/libretro/libretro-common/libco/sjlj.c
+    sed -i 's/siglongjmp/longjmp/g' src/libretro/libretro-common/libco/sjlj.c
+fi
+
+## Compile core using native platform=ps2 support with required signal overrides
+make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf" clean || { exit 1; }
+make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf" || { exit 1; }
 
 cd .. || { exit 1; }
 
