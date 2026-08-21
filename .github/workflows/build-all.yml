@@ -27,11 +27,11 @@ jobs:
           [libretro-lutro, lutro_libretro_ps2],
           [gpsp, gpsp_libretro_ps2],
           [libretro-fceumm, fceumm_libretro_ps2],
-          [mgba, mgba_libretro_ps2],
+          #[mgba, mgba_libretro_ps2],
           [stella2014-libretro, stella2014_libretro_ps2],
-          [beetle-vb-libretro, beetle-vb-libretro_ps2],
+          #[beetle-vb-libretro, beetle-vb-libretro_ps2],
           [libretro-cap32, cap32_libretro_ps2],
-          [mame2000-libretro, mame2000_libretro_ps2],
+          #[mame2000-libretro, mame2000_libretro_ps2],
           [QuickNES_Core, quicknes_libretro_ps2],
          ]
       fail-fast: false
@@ -89,7 +89,7 @@ jobs:
       run: |
         ./prepare_release.sh
         ./prepare_retroarch.sh
-        ./generate_salamander.sh
+        #./generate_salamander.sh
 
     - name: Get short SHA
       id: slug
