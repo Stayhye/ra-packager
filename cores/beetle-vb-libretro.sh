@@ -22,8 +22,16 @@ make -j $PROC_NR platform=ps2 || { exit 1; }
 
 cd .. || { exit 1; }
 
-## Copy the generated static archive directly (Makefile outputs mednafen_vb_libretro_ps2.a)
-cp -f "$REPO_FOLDER/mednafen_vb_libretro_ps2.a" ./libretro_ps2.a || { exit 1; }
+## Locate the generated static archive dynamically in the repo folder
+GENERATED_LIB=$(find "$REPO_FOLDER" -maxdepth 1 -name "*libretro_ps2.a" | head -n 1)
+
+if [ -z "$GENERATED_LIB" ]; then
+    echo "Error: Could not find generated libretro_ps2.a file!"
+    exit 1
+fi
+
+## Copy the generated archive to both locations
+cp -f "$GENERATED_LIB" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p beetle-vb-libretro
-cp -f "$REPO_FOLDER/mednafen_vb_libretro_ps2.a" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
+cp -f "$GENERATED_LIB" beetle-vb-libretro/beetle-vb-libretro_ps2.a || { exit 1; }
