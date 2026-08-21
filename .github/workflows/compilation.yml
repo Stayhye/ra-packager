@@ -44,6 +44,11 @@ jobs:
       run: |
         apk add build-base git bash
     
+    - name: Grant execute permissions
+      run: |
+        chmod +x *.sh
+        chmod +x ./cores/*.sh
+
     - name: Compile project
       run: |
         ./prepare_release.sh
@@ -78,6 +83,10 @@ jobs:
       run: |
         apk add build-base git bash
     
+    - name: Grant execute permissions
+      run: |
+        chmod +x *.sh
+
     - name: Compile project
       run: |
         ./prepare_release.sh
@@ -104,6 +113,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Grant execute permissions
+      run: |
+        chmod +x *.sh
 
     - name: Compile project
       run: |
@@ -164,5 +177,3 @@ jobs:
         uses: geekyeggo/delete-artifact@v5
         with:
           name: "core-info-${{ matrix.docker_owner }}-${{ steps.slug.outputs.sha8 }}"
-
-    
