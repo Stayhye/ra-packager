@@ -40,8 +40,6 @@ jobs:
     container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
     - uses: actions/checkout@v4
-      with:
-        submodules: true
 
     - name: Install dependencies
       run: |
