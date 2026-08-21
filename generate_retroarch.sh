@@ -1,8 +1,11 @@
 #!/bin/bash
 # package.sh by Francisco Javier Trujillo Mata (fjtrujy@gmail.com)
 
-# Copy from core folder to Ra
-cp $1/$2.a RetroArch/libretro_ps2.a || { exit 1; }
+# Convert hyphens to underscores for the library file name
+LIB_NAME=$(echo "$2" | tr '-' '_')
+
+# Copy from core folder to Ra using the correct filename
+cp $1/$LIB_NAME.a RetroArch/libretro_ps2.a || { exit 1; }
 
 cd RetroArch || { exit 1; }
 
