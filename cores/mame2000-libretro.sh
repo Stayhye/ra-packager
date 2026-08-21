@@ -17,8 +17,8 @@ git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
 ## Compile core using native platform=ps2 support with required signal overrides
-make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsiglongjmp=longjmp" clean || { exit 1; }
-make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsiglongjmp=longjmp" || { exit 1; }
+make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf -Dsigsetjmp(env,savesigs)=setjmp(env) -Dsiglongjmp=longjmp" clean || { exit 1; }
+make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf -Dsigsetjmp(env,savesigs)=setjmp(env) -Dsiglongjmp=longjmp" || { exit 1; }
 
 cd .. || { exit 1; }
 
