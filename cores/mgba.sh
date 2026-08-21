@@ -3,7 +3,7 @@
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
-REPO_URL="https://github.com/mgba-emu/mgba"
+REPO_URL="https://github.com/libretro/mgba"
 REPO_FOLDER="mgba"
 BRANCH_NAME="master"
 
@@ -16,14 +16,14 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core using the correct path to Makefile.libretro
-make -C ports/libretro -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -C ports/libretro -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
+## Compile core using libretro Makefile
+make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
+make -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
 
 cd .. || { exit 1; }
 
 ## Copy the generated static archive to both locations
-cp -f "$REPO_FOLDER/ports/libretro/mgba_libretro_ps2.a" ./libretro_ps2.a || { exit 1; }
+cp -f "$REPO_FOLDER/mgba_libretro_ps2.a" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p mgba
-cp -f "$REPO_FOLDER/ports/libretro/mgba_libretro_ps2.a" mgba/mgba_libretro_ps2.a || { exit 1; }
+cp -f "$REPO_FOLDER/mgba_libretro_ps2.a" mgba/mgba_libretro_ps2.a || { exit 1; }
