@@ -16,9 +16,9 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Patch sjlj.c for PS2 compatibility to avoid missing signal-jumping symbols
+## Patch sjlj.c for PS2 compatibility to handle sigsetjmp argument counts properly
 if [ -f "src/libretro/libretro-common/libco/sjlj.c" ]; then
-    sed -i 's/sigsetjmp/setjmp/g' src/libretro/libretro-common/libco/sjlj.c
+    sed -i 's/sigsetjmp(\([^,]*\), [^)]*)/setjmp(\1)/g' src/libretro/libretro-common/libco/sjlj.c
     sed -i 's/siglongjmp/longjmp/g' src/libretro/libretro-common/libco/sjlj.c
 fi
 
