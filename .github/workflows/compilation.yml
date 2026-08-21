@@ -21,7 +21,7 @@ jobs:
           [libretro-prboom, prboom_libretro_ps2],
           [libretro-samples, test_libretro_ps2],
           [picodrive, picodrive_libretro_ps2],
-          [ecwolf, ecwolf_libretro_ps2],
+          [ecwolf, ecwolf_ibretro_ps2],
           [gambatte-libretro, gambatte_libretro_ps2],
           [snes9x2002, snes9x2002_libretro_ps2],
           [libretro-lutro, lutro_libretro_ps2],
@@ -42,7 +42,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apk add build-base git bash
+        apk add build-base git bash cmake
     
     - name: Grant execute permissions and redirect Bitbucket to GitHub
       run: |
