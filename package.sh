@@ -56,4 +56,5 @@
 ## Copy info folder
 ./libretro-core-info.sh || { exit 1; }
 
-
+## Salamander to finish
+./generate_salamander.sh
