@@ -16,14 +16,26 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core using libretro Makefile
-make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
+## Configure and compile using CMake for PS2/libretro
+mkdir -p build && cd build
+cmake .. \
+    -DCMAKE_TOOLCHAIN_FILE="${PS2SDK}/../ps2lib.cmake" \
+    -DBUILD_LIBRETRO=ON \
+    -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
-cd .. || { exit 1; }
+make -j $PROC_NR || { exit 1; }
 
-## Copy the generated static archive to both locations
-cp -f "$REPO_FOLDER/mgba_libretro_ps2.a" ./libretro_ps2.a || { exit 1; }
+cd ../.. || { exit 1; }
+
+## Locate and copy the generated static archive to both locations
+GENERATED_LIB=$(find "$REPO_FOLDER/build" -name "*libretro*.a" | head -n 1)
+
+if [ -z "$GENERATED_LIB" ]; then
+    echo "Error: Could not find generated mGBA libretro archive!"
+    exit 1
+fi
+
+cp -f "$GENERATED_LIB" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p mgba
-cp -f "$REPO_FOLDER/mgba_libretro_ps2.a" mgba/mgba_libretro_ps2.a || { exit 1; }
+cp -f "$GENERATED_LIB" mgba/mgba_libretro_ps2.a || { exit 1; }
