@@ -20,6 +20,7 @@ jobs:
         core_opts: [
           [libretro-prboom, prboom_libretro_ps2],
           [libretro-samples, test_libretro_ps2],
+          [mednafen-wswan-libretro, mednafen-wswan-libretro_ps2],
           [picodrive, picodrive_libretro_ps2],
           [ecwolf, ecwolf_libretro_ps2],
           [gambatte-libretro, gambatte_libretro_ps2],
