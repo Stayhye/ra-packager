@@ -45,9 +45,9 @@
 ./cores/gpsp.sh || { exit 1; }
 ./generate_retroarch.sh gpsp gpsp_libretro_ps2 || { exit 1; }
 
-#beetle-vb-libretro
-./cores/beetle-vb-libretro.sh || { exit 1; }
-./generate_retroarch.sh beetle-vb-libretro beetle-vb-libretro_ps2 || { exit 1; }
+#mednafen-vb-libretro
+./cores/mednafen-vb-libretro.sh || { exit 1; }
+./generate_retroarch.sh mednafen-vb-libretro mednafen-vb-libretro_ps2 || { exit 1; }
 
 #mame2000-libretro
 ./cores/mame2000-libretro.sh || { exit 1; }
