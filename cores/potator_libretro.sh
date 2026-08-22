@@ -39,6 +39,6 @@ echo "Found archive at: $FOUND_ARCHIVE"
 # Copy to root as libretro_ps2.a
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
-# Create target directory and copy file into it using explicit paths
-mkdir -p potator-libretro
-cp -f "$FOUND_ARCHIVE" potator-libretro/ || { exit 1; }
+# Create target directory and copy archive into it safely
+mkdir -p potator_libretro
+cp -f "$FOUND_ARCHIVE" potator_libretro/ || { exit 1; }
