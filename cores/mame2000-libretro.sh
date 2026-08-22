@@ -61,15 +61,17 @@ if [ -f "$LIBCO_SELECTOR" ]; then
 EOF
 fi
 
-## Patch sjlj.c for PS2 compatibility to handle sigsetjmp argument counts properly
+## Patch sjlj.c for PS2 compatibility to handle setjmp and remove signal stack usage entirely
 if [ -f "src/libretro/libretro-common/libco/sjlj.c" ]; then
     sed -i 's/sigsetjmp(\([^,]*\), [^)]*)/setjmp(\1)/g' src/libretro/libretro-common/libco/sjlj.c
     sed -i 's/siglongjmp/longjmp/g' src/libretro/libretro-common/libco/sjlj.c
+    # Disable internal sigaltstack/sigaction blocks inside sjlj.c for bare-metal
+    sed -i 's/defined(__GNUC__)/defined(__NOT_A_PLATFORM__)/g' src/libretro/libretro-common/libco/sjlj.c
 fi
 
-## Compile core using native platform=ps2 support with required signal overrides
-make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf" clean || { exit 1; }
-make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf" || { exit 1; }
+## Compile core using native platform=ps2 support with cheats disabled and signal overrides
+make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf -DNO_CHEAT" clean || { exit 1; }
+make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf -DNO_CHEAT" || { exit 1; }
 
 cd .. || { exit 1; }
 
