@@ -3,8 +3,8 @@
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
-##REPO_URL="https://github.com/Stayhye/mame2000-libretro.git"
-REPO_URL="https://github.com/libretro/mame2000-libretro.git"
+REPO_URL="https://github.com/Stayhye/mame2000-libretro.git"
+##REPO_URL="https://github.com/libretro/mame2000-libretro.git"
 REPO_FOLDER="mame2000-libretro"
 BRANCH_NAME="master"
 
