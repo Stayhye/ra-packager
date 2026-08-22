@@ -16,62 +16,22 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Force libco to use sjlj.c by overwriting libco.c directly
-LIBCO_SELECTOR="src/libretro/libretro-common/libco/libco.c"
-if [ -f "$LIBCO_SELECTOR" ]; then
-    cat << 'EOF' > "$LIBCO_SELECTOR"
-/*
-  libco
-  auto-selection module
-  license: public domain
-*/
-
-#if defined _MSC_VER
-  #include <Windows.h>
-  #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
-    #include "fiber.c"
-  #elif defined _M_IX86
-    #include "x86.c"
-  #elif defined _M_AMD64
-    #include "amd64.c"
-  #else
-    #include "fiber.c"
-  #endif
-#elif defined __GNUC__
-  #if defined(__mips__) || defined(_PS2)
-    #include "sjlj.c"
-  #elif defined __i386__
-    #include "x86.c"
-  #elif defined __amd64__
-    #include "amd64.c"
-  #elif defined _ARCH_PPC
-    #include "ppc.c"
-  #elif defined(__aarch64__)
-    #include "aarch64.c"
-  #elif defined VITA
-    #include "scefiber.c"
-  #elif defined(__ARM_EABI__) || defined(__arm__)
-    #include "armeabi.c"
-  #else
-    #include "sjlj.c"
-  #endif
-#else
-  #error "libco: unsupported processor, compiler or operating system"
-#endif
-EOF
+## 1. Force libretro-common's libco to use SJLJ backend directly by replacing ucontext references if they exist
+if [ -f "src/libretro/libretro-common/include/libco.h" ] || [ -d "src/libretro/libretro-common/libco" ]; then
+    # If libretro-common forces ucontext for unix/linux targets, let's trick it or override it
+    find src/libretro/libretro-common/libco/ -type f -name "*.c" -exec sed -i 's/defined(__GNUC__) && !defined(__MINGW32__) && !defined(__APPLE__)/0/g' {} +
 fi
 
-## Patch sjlj.c for PS2 compatibility to handle setjmp and remove signal stack usage entirely
+## 2. Patch sjlj.c for PS2 compatibility
 if [ -f "src/libretro/libretro-common/libco/sjlj.c" ]; then
     sed -i 's/sigsetjmp(\([^,]*\), [^)]*)/setjmp(\1)/g' src/libretro/libretro-common/libco/sjlj.c
     sed -i 's/siglongjmp/longjmp/g' src/libretro/libretro-common/libco/sjlj.c
-    # Disable internal sigaltstack/sigaction blocks inside sjlj.c for bare-metal
-    sed -i 's/defined(__GNUC__)/defined(__NOT_A_PLATFORM__)/g' src/libretro/libretro-common/libco/sjlj.c
 fi
 
-## Compile core using native platform=ps2 support with cheats disabled and signal overrides
-make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf -DNO_CHEAT" clean || { exit 1; }
-make -j $PROC_NR platform=ps2 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf -DNO_CHEAT" || { exit 1; }
+## 3. Ensure cheat source files are included or disable cheat functionality via Makefile variables
+# If there's a cheat toggle in the Makefile, pass it here (e.g., CHEAT=0 or similar)
+make -j $PROC_NR platform=ps2 CHEAT=0 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf -UHAVE_CHEATS" clean || { exit 1; }
+make -j $PROC_NR platform=ps2 CHEAT=0 CFLAGS="-DSA_ONSTACK=0 -Dsigjmp_buf=jmp_buf -UHAVE_CHEATS" || { exit 1; }
 
 cd .. || { exit 1; }
 
@@ -80,4 +40,3 @@ cp -f "$REPO_FOLDER/mame2000_libretro_ps2.a" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p mame2000-libretro
 cp -f "$REPO_FOLDER/mame2000_libretro_ps2.a" mame2000-libretro/mame2000-libretro_ps2.a || { exit 1; }
-
