@@ -16,14 +16,52 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## 1. Force libco to use sjlj.c for MIPS/PS2 instead of ucontext
+## Force libco to use sjlj.c by overwriting libco.c directly
 LIBCO_SELECTOR="src/libretro/libretro-common/libco/libco.c"
 if [ -f "$LIBCO_SELECTOR" ]; then
-    # Insert the MIPS/PS2 check at the top of the GCC block
-    sed -i '/#elif defined __GNUC__/a \  #if defined(__mips__) || defined(_PS2)\n    #include "sjlj.c"\n  #elif' "$LIBCO_SELECTOR"
+    cat << 'EOF' > "$LIBCO_SELECTOR"
+/*
+  libco
+  auto-selection module
+  license: public domain
+*/
+
+#if defined _MSC_VER
+  #include <Windows.h>
+  #if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP)
+    #include "fiber.c"
+  #elif defined _M_IX86
+    #include "x86.c"
+  #elif defined _M_AMD64
+    #include "amd64.c"
+  #else
+    #include "fiber.c"
+  #endif
+#elif defined __GNUC__
+  #if defined(__mips__) || defined(_PS2)
+    #include "sjlj.c"
+  #elif defined __i386__
+    #include "x86.c"
+  #elif defined __amd64__
+    #include "amd64.c"
+  #elif defined _ARCH_PPC
+    #include "ppc.c"
+  #elif defined(__aarch64__)
+    #include "aarch64.c"
+  #elif defined VITA
+    #include "scefiber.c"
+  #elif defined(__ARM_EABI__) || defined(__arm__)
+    #include "armeabi.c"
+  #else
+    #include "sjlj.c"
+  #endif
+#else
+  #error "libco: unsupported processor, compiler or operating system"
+#endif
+EOF
 fi
 
-## 2. Patch sjlj.c for PS2 compatibility to handle sigsetjmp argument counts properly
+## Patch sjlj.c for PS2 compatibility to handle sigsetjmp argument counts properly
 if [ -f "src/libretro/libretro-common/libco/sjlj.c" ]; then
     sed -i 's/sigsetjmp(\([^,]*\), [^)]*)/setjmp(\1)/g' src/libretro/libretro-common/libco/sjlj.c
     sed -i 's/siglongjmp/longjmp/g' src/libretro/libretro-common/libco/sjlj.c
