@@ -129,6 +129,7 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
 
+    container: ${{ matrix.docker_owner }}/ps2dev:latest
     steps:
     - uses: actions/checkout@v4
 
