@@ -13,6 +13,10 @@
 ./cores/mednafen-pce-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mednafen-pce-libretro mednafen-pce-libretro_ps2 || { exit 1; }
 
+#mednafen-pce-fast-libretro
+./cores/mednafen-pce-fast-libretro.sh || { exit 1; }
+./generate_retroarch.sh mednafen_pce_fast_libretro mednafen_pce_fast_libretro_ps2 || { exit 1; }
+
 #beetle-wswan-libretro
 ./cores/mednafen-wswan-libretro.sh || { exit 1; }
 ./generate_retroarch.sh beetle-wswan-libretro mednafen-wswan-libretro_ps2 || { exit 1; }
