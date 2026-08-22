@@ -37,5 +37,5 @@ fi
 echo "Found archive at: $FOUND_ARCHIVE"
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
-mkdir -p potator_libretro
-cp -f "$FOUND_ARCHIVE" potator_libretro/potator_libretro_ps2.a || { exit 1; }
+mkdir -p ./potator_libretro
+cp -f "$FOUND_ARCHIVE" ./potator_libretro/potator_libretro_ps2.a || { exit 1; }
