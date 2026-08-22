@@ -35,7 +35,10 @@ if [ -z "$FOUND_ARCHIVE" ]; then
 fi
 
 echo "Found archive at: $FOUND_ARCHIVE"
+
+# Copy to root as libretro_ps2.a
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
-mkdir -p ./potator_libretro
-cp -f "$FOUND_ARCHIVE" ./potator_libretro/potator_libretro_ps2.a || { exit 1; }
+# Create target directory and copy file into it using explicit paths
+mkdir -p potator_libretro
+cp -f "$FOUND_ARCHIVE" potator_libretro/ || { exit 1; }
