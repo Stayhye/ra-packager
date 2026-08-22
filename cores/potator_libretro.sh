@@ -26,8 +26,16 @@ make -j $PROC_NR platform=ps2 || { exit 1; }
 # Return to the repository root
 cd ../.. || { exit 1; }
 
-## Copy the static archive using the exact filename generated (potator_libretro_ps2.a)
-cp -f "$REPO_FOLDER/platform/libretro/potator_libretro_ps2.a" ./libretro_ps2.a || { exit 1; }
+## Find and copy the generated static archive dynamically
+FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_libretro_ps2.a" | head -n 1)
+
+if [ -z "$FOUND_ARCHIVE" ]; then
+    echo "Error: Could not find the compiled static archive file!"
+    exit 1
+fi
+
+echo "Found archive at: $FOUND_ARCHIVE"
+cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p potator_libretro
-cp -f "$REPO_FOLDER/platform/libretro/potator_libretro_ps2.a" potator_libretro/potator_libretro_ps2.a || { exit 1; }
+cp -f "$FOUND_ARCHIVE" potator_libretro/potator_libretro_ps2.a || { exit 1; }
