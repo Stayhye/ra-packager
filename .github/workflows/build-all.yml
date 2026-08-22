@@ -61,6 +61,7 @@ jobs:
 
     - name: Compile project
       run: |
+        export CFLAGS="-Wno-error=incompatible-pointer-types"
         ./prepare_release.sh
         ./prepare_retroarch.sh
         rm -rf ecwolf/deps/SDL deps/SDL
