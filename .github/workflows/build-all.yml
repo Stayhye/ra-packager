@@ -23,7 +23,7 @@ jobs:
           #[genesis_plus_gx_libretro, genesis_plus_gx_libretro_ps2],
           #[potator_libretro, potator_libretro_ps2],
           [gw-libretro, gw-libretro_ps2],
-          [fbalpha2012_cps2_libretro, fbalpha2012_cps2_libretro_ps2],
+          [fbalpha2012_cps2, fbalpha2012_cps2_libretro_ps2],
           #[mednafen-wswan-libretro, mednafen-wswan-libretro_ps2],
           #[mednafen-pce-libretro, mednafen_pce_libretro_ps2],
           #[mednafen-pce-fast-libretro, mednafen_pce_fast_libretro_ps2],
