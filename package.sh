@@ -13,6 +13,10 @@
 ./cores/genesis_plus_gx_libretro.sh || { exit 1; }
 ./generate_retroarch.sh genesis_plus_gx_libretro genesis_plus_gx_libretro_ps2 || { exit 1; }
 
+#potator-libretro
+./cores/potator-libretro.sh || { exit 1; }
+./generate_retroarch.sh potator_libretro potator_libretro_ps2 || { exit 1; }
+
 #mednafen-pce-libretro
 ./cores/mednafen-pce-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mednafen-pce-libretro mednafen-pce-libretro_ps2 || { exit 1; }
