@@ -26,8 +26,8 @@ make -j $PROC_NR platform=ps2 || { exit 1; }
 # Return to the repository root
 cd ../.. || { exit 1; }
 
-## Find and copy the generated static archive dynamically
-FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_libretro_ps2.a" | head -n 1)
+## Find and copy the generated static archive dynamically from the current directory
+FOUND_ARCHIVE=$(find . -name "*_libretro_ps2.a" | head -n 1)
 
 if [ -z "$FOUND_ARCHIVE" ]; then
     echo "Error: Could not find the compiled static archive file!"
