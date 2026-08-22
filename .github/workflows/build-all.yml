@@ -91,9 +91,19 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Install dependencies
+      run: |
+        apk add build-base git bash
+
     - name: Grant execute permissions
       run: |
         chmod +x *.sh
+
+    - name: Setup toolchain aliases
+      run: |
+        ln -s /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc /usr/local/ps2dev/ee/bin/ee-gcc
+        ln -s /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++ /usr/local/ps2dev/ee/bin/ee-g++
+        ln -s /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar /usr/local/ps2dev/ee/bin/ee-ar
 
     - name: Compile project
       run: |
@@ -121,6 +131,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        apk add build-base git bash
 
     - name: Grant execute permissions
       run: |
