@@ -1,5 +1,5 @@
 #!/bin/bash
-# package.sh by Francisco Javier Trujillo Mata (fjtrujy@gmail.com)
+# package.sh by Francisco Javier Trujillo Mata
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
