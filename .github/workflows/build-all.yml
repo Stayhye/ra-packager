@@ -20,7 +20,7 @@ jobs:
         core_opts: [
           #[libretro-prboom, prboom_libretro_ps2],
           #[libretro-samples, test_libretro_ps2],
-          [genesis_plus_gx_paprium_libretro, genesis_plus_gx_paprium_libretro_ps2],
+          [genesis_plus_gx_libretro, genesis_plus_gx_libretro_ps2],
           [mednafen-wswan-libretro, mednafen-wswan-libretro_ps2],
           [mednafen-pce-libretro, mednafen_pce_libretro_ps2],
           [mednafen-pce-fast-libretro, mednafen_pce_fast_libretro_ps2],
