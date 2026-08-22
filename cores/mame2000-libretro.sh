@@ -5,7 +5,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/mame2000-libretro.git"
 REPO_FOLDER="mame2000-libretro"
-BRANCH_NAME="ps2-gcc9"
+BRANCH_NAME="master"
 
 if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
