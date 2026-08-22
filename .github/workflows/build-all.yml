@@ -53,6 +53,12 @@ jobs:
         chmod +x ./cores/*.sh
         git config --global url."https://github.com/ECWolfEngine/".insteadOf "https://bitbucket.org/ecwolf/"
 
+    - name: Setup toolchain aliases
+      run: |
+        ln -s /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc /usr/local/ps2dev/ee/bin/ee-gcc
+        ln -s /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++ /usr/local/ps2dev/ee/bin/ee-g++
+        ln -s /usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar /usr/local/ps2dev/ee/bin/ee-ar
+
     - name: Compile project
       run: |
         ./prepare_release.sh
