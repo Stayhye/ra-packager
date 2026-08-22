@@ -16,7 +16,14 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Patch sjlj.c for PS2 compatibility to handle sigsetjmp argument counts properly
+## 1. Force libco to use sjlj.c for MIPS/PS2 instead of ucontext
+LIBCO_SELECTOR="src/libretro/libretro-common/libco/libco.c"
+if [ -f "$LIBCO_SELECTOR" ]; then
+    # Insert the MIPS/PS2 check at the top of the GCC block
+    sed -i '/#elif defined __GNUC__/a \  #if defined(__mips__) || defined(_PS2)\n    #include "sjlj.c"\n  #elif' "$LIBCO_SELECTOR"
+fi
+
+## 2. Patch sjlj.c for PS2 compatibility to handle sigsetjmp argument counts properly
 if [ -f "src/libretro/libretro-common/libco/sjlj.c" ]; then
     sed -i 's/sigsetjmp(\([^,]*\), [^)]*)/setjmp(\1)/g' src/libretro/libretro-common/libco/sjlj.c
     sed -i 's/siglongjmp/longjmp/g' src/libretro/libretro-common/libco/sjlj.c
@@ -33,3 +40,4 @@ cp -f "$REPO_FOLDER/mame2000_libretro_ps2.a" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p mame2000-libretro
 cp -f "$REPO_FOLDER/mame2000_libretro_ps2.a" mame2000-libretro/mame2000-libretro_ps2.a || { exit 1; }
+
