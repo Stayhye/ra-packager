@@ -5,7 +5,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/mame2003-plus-libretro" 
 REPO_FOLDER="mame2003-plus-libretro" 
-BRANCH_NAME="master" 
+BRANCH_NAME="avsp-only" 
 
 if test ! -d "$REPO_FOLDER"; then 
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; } 
