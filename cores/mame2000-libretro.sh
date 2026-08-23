@@ -17,16 +17,13 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Navigate into the platform/libretro directory where the Makefile is located
-cd platform/libretro || { exit 1; }
-
-## Compile core using native platform=ps2 support
+## Compile core using native platform=ps2 support from the root directory
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-## Return back to the root workspace directory (where the script started)
-cd ../../.. || { exit 1; }
+## Return back to the workspace root
+cd .. || { exit 1; }
 
-## Find the generated archive inside the repo folder from the workspace root
+## Find and copy the generated archive
 FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_ps2.a" | head -n 1)
 if [ -z "$FOUND_ARCHIVE" ]; then
     echo "Error: Could not find generated static archive (*_ps2.a)"
@@ -36,4 +33,4 @@ fi
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p mame2000-libretro
-cp -f "$FOUND_ARCHIVE" mame2000-libretro/mame2000_libretro_ps2.a || { exit 1; }
+cp -f "$FOUND_ARCHIVE" mame2000-libretro/mame2000-libretro_ps2.a || { exit 1; }
