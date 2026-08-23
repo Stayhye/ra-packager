@@ -9,6 +9,10 @@
 ./cores/ecwolf.sh || { exit 1; }
 ./generate_retroarch.sh ecwolf ecwolf_libretro_ps2 || { exit 1; }
 
+#ecwolf
+./cores/pokemini.sh || { exit 1; }
+./generate_retroarch.sh pokemini pokemini_libretro_ps2 || { exit 1; }
+
 #gw-libretro
 ./cores/gw-libretro.sh || { exit 1; }
 ./generate_retroarch.sh gw-libretro gw-libretro_ps2 || { exit 1; }
