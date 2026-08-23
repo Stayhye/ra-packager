@@ -16,9 +16,9 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME} 
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-## Compile core using native platform=ps2 support with size optimization and dead-code elimination
-make -j $PROC_NR platform=ps2 CFLAGS="-Os -ffunction-sections -fdata-sections" LDFLAGS="-Wl,--gc-sections" clean || { exit 1; } 
-make -j $PROC_NR platform=ps2 CFLAGS="-Os -ffunction-sections -fdata-sections" LDFLAGS="-Wl,--gc-sections" || { exit 1; } 
+## Compile core using native platform=ps2 support 
+make -j $PROC_NR platform=ps2 clean || { exit 1; } 
+make -j $PROC_NR platform=ps2 || { exit 1; } 
 
 cd .. || { exit 1; } 
 
