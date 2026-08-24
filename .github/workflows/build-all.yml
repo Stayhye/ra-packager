@@ -22,9 +22,13 @@ jobs:
           #[libretro-samples, test_libretro_ps2],
           #[genesis_plus_gx_libretro, genesis_plus_gx_libretro_ps2],
           #[potator, potator-libretro_ps2],
+<<<<<<< HEAD
           [mame2000-libretro, mame2000-libretro_ps2],
           [mame2010-libretro, mame2010-libretro_ps2],
           [mame2003-plus-libretro, mame2003-plus-libretro_ps2],
+=======
+          #[mame2003-plus-libretro, mame2003-plus-libretro_ps2],
+>>>>>>> 4ef1ab58d3d9c9b71bca20fed83e7c562fdb5320
           #[pokemini, pokemini_libretro_ps2],
           #[gw-libretro, gw-libretro_ps2],
           #[fbalpha2012_cps2, fbalpha2012_cps2_libretro_ps2],
@@ -42,6 +46,7 @@ jobs:
           #[stella2014-libretro, stella2014_libretro_ps2],
           #[mednafen-vb-libretro, mednafen-vb-libretro_ps2],
           #[libretro-cap32, cap32_libretro_ps2],
+          [mame2000-libretro, mame2000-libretro_ps2],
           #[QuickNES_Core, quicknes_libretro_ps2],
          ]
       fail-fast: false
