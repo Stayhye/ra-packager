@@ -13,6 +13,10 @@
 ./cores/mame2003-plus-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mame2003-plus-libretro mame2003-plus-libretro_ps2 || { exit 1; }
 
+#mame2010-libretro
+./cores/mame2010-libretro.sh || { exit 1; }
+./generate_retroarch.sh mame2010-libretro mame2010-libretro_ps2 || { exit 1; }
+
 #pokemini
 ./cores/pokemini.sh || { exit 1; }
 ./generate_retroarch.sh pokemini pokemini_libretro_ps2 || { exit 1; }
