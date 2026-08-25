@@ -21,7 +21,7 @@ jobs:
           #[libretro-prboom, prboom_libretro_ps2],
           #[libretro-samples, test_libretro_ps2],
           [genesis_plus_gx_libretro, genesis_plus_gx_libretro_ps2],
-          #[potator, potator-libretro_ps2],
+          [potator, potator-libretro_ps2],
           [mame2000-libretro, mame2000-libretro_ps2],
           #[mame2010-libretro, mame2010-libretro_ps2],
           #[mame2003-plus-libretro, mame2003-plus-libretro_ps2],
