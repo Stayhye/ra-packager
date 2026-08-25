@@ -17,6 +17,10 @@
 ./cores/mame2010-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mame2010-libretro mame2010-libretro_ps2 || { exit 1; }
 
+#mednafen-ngp-libretro
+./cores/mednafen-ngp-libretro.sh || { exit 1; }
+./generate_retroarch.sh mednafen-ngp-libretro mednafen-ngp-libretro_ps2 || { exit 1; }
+
 #pokemini
 ./cores/pokemini.sh || { exit 1; }
 ./generate_retroarch.sh pokemini pokemini_libretro_ps2 || { exit 1; }
