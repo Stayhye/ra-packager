@@ -5,7 +5,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/beetle-vb-libretro"
 REPO_FOLDER="mednafen-vb-libretro"
-BRANCH_NAME="master"
+BRANCH_NAME="2d-only"
 
 if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
