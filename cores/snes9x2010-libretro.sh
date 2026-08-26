@@ -3,7 +3,7 @@
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
-REPO_URL="https://github.com/Stayhye/snes9x2010-libretro.git"
+REPO_URL="https://github.com/Stayhye/snes9x2010"
 ##REPO_URL="https://github.com/libretro/mame2000-libretro.git"
 REPO_FOLDER="snes9x2010-libretro"
 BRANCH_NAME="master"
