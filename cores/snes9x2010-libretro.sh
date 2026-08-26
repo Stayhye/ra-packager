@@ -4,7 +4,6 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/snes9x2010"
-##REPO_URL="https://github.com/libretro/mame2000-libretro.git"
 REPO_FOLDER="snes9x2010-libretro"
 BRANCH_NAME="master"
 
@@ -32,5 +31,5 @@ fi
 
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
-mkdir -p mame2003-libretro
-cp -f "$FOUND_ARCHIVE" snes9x2010-libretro/snes9x2010-libretro_ps2.a || { exit 1; }
+mkdir -p "$REPO_FOLDER"
+cp -f "$FOUND_ARCHIVE" "$REPO_FOLDER/snes9x2010_libretro_ps2.a" || { exit 1; }
