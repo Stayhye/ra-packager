@@ -13,6 +13,10 @@
 ./cores/geargrafx.sh || { exit 1; }
 ./generate_retroarch.sh geargrafx geargrafx_libretro_ps2 || { exit 1; }
 
+#neocd_libretro
+./cores/neocd_libretro.sh || { exit 1; }
+./generate_retroarch.sh neocd_libretro neocd_libretro_ps2 || { exit 1; }
+
 #dice-libretro
 ./cores/dice-libretro.sh || { exit 1; }
 ./generate_retroarch.sh dice-libretro dice-libretro_ps2 || { exit 1; }
