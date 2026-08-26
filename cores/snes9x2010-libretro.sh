@@ -1,3 +1,5 @@
+Bash
+
 #!/bin/bash
 # package.sh 
 
@@ -15,6 +17,35 @@ cd $REPO_FOLDER || { exit 1; }
 git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
+
+# --- PATCH POSIX_MEMALIGN FOR PS2 ---
+# snes9x2010 uses libretro/libretro.cpp or libretro.cpp
+LIBRETRO_FILE=$(find . -name "libretro.cpp" -o -name "libretro.c" | head -n 1)
+if [ -n "$LIBRETRO_FILE" ]; then
+    cat << 'EOF' >> "$LIBRETRO_FILE"
+
+#ifdef __PS2__
+#include <stdlib.h>
+#include <malloc.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+int posix_memalign(void **memptr, size_t alignment, size_t size)
+{
+   if (!memptr)
+      return -1;
+   *memptr = memalign(alignment, size);
+   if (!*memptr && size != 0)
+      return -1;
+   return 0;
+}
+#ifdef __cplusplus
+}
+#endif
+#endif
+EOF
+fi
+# ------------------------------------
 
 ## Compile core using native platform=ps2 support from the root directory
 make -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
