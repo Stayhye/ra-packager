@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/Geargrafx"
-REPO_FOLDER="geargrafx-libretro"
+REPO_FOLDER="geargrafx"
 BRANCH_NAME="main"
 
 if test ! -d "$REPO_FOLDER"; then
