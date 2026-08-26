@@ -32,4 +32,7 @@ fi
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p "$REPO_FOLDER"
-cp -f "$FOUND_ARCHIVE" "$REPO_FOLDER/snes9x2010_libretro_ps2.a" || { exit 1; }
+# Only copy if the source and destination paths aren't identical
+if [ "$FOUND_ARCHIVE" != "$REPO_FOLDER/snes9x2010_libretro_ps2.a" ]; then
+    cp -f "$FOUND_ARCHIVE" "$REPO_FOLDER/snes9x2010_libretro_ps2.a" || { exit 1; }
+fi
