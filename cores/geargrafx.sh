@@ -7,6 +7,9 @@ REPO_URL="https://github.com/Stayhye/Geargrafx"
 REPO_FOLDER="geargrafx-libretro"
 BRANCH_NAME="main"
 
+# Capture the absolute path of the workspace root where we started
+ROOT_DIR=$(pwd)
+
 if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
 fi
@@ -27,12 +30,10 @@ if [ -z "$FOUND_ARCHIVE" ]; then
     exit 1
 fi
 
-## Copy it to the workspace root (up two levels from platforms/libretro)
-cp -f "$FOUND_ARCHIVE" ../../libretro_ps2.a || { exit 1; }
+## Copy using absolute paths back to the workspace root
+cp -f "$FOUND_ARCHIVE" "$ROOT_DIR/libretro_ps2.a" || { exit 1; }
 
-## Create target directory in the workspace root and copy it there too
-mkdir -p ../../"$REPO_FOLDER"
-cp -f "$FOUND_ARCHIVE" ../../"$REPO_FOLDER"/geargrafx_libretro_ps2.a || { exit 1; }
+mkdir -p "$ROOT_DIR/$REPO_FOLDER"
+cp -f "$FOUND_ARCHIVE" "$ROOT_DIR/$REPO_FOLDER/geargrafx_libretro_ps2.a" || { exit 1; }
 
-## Return back to workspace root cleanly
-cd ../.. || true
+echo "Successfully built and packaged $FOUND_ARCHIVE"
