@@ -4,7 +4,6 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/Geargrafx"
-##REPO_URL="https://github.com/libretro/mame2000-libretro.git"
 REPO_FOLDER="geargrafx-libretro"
 BRANCH_NAME="main"
 
@@ -17,13 +16,16 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core using native platform=ps2 support from the root directory
+## Navigate into the platforms/libretro directory where the Makefile is located
+cd platforms/libretro || { exit 1; }
+
+## Compile core using platform=ps2 support from its Makefile directory
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-## Return back to the workspace root
-cd .. || { exit 1; }
+## Return back to the workspace root (stepping out of platforms/libretro and the repo root)
+cd ../.. || { exit 1; }
 
-## Find and copy the generated archive
+## Find and copy the generated archive from inside the repo folder
 FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_ps2.a" | head -n 1)
 if [ -z "$FOUND_ARCHIVE" ]; then
     echo "Error: Could not find generated static archive (*_ps2.a)"
