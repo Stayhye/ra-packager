@@ -16,6 +16,9 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
+## Navigate into the platforms/libretro directory where the Makefile is located
+cd platforms/libretro || { exit 1; }
+
 ## Compile core using native platform=ps2 support
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
