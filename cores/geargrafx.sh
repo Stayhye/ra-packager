@@ -34,5 +34,5 @@ fi
 
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
-mkdir -p geargrafx-libretro
-cp -f "$FOUND_ARCHIVE" geargrafx-libretro/geargrafx-libretro_ps2.a || { exit 1; }
+mkdir -p geargrafx_libretro
+cp -f "$FOUND_ARCHIVE" geargrafx_libretro/geargrafx_libretro_ps2.a || { exit 1; }
