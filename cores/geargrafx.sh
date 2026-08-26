@@ -33,7 +33,7 @@ fi
 ## Copy using absolute paths back to the workspace root
 cp -f "$FOUND_ARCHIVE" "$ROOT_DIR/libretro_ps2.a" || { exit 1; }
 
-mkdir -p "$ROOT_DIR/$REPO_FOLDER"
-cp -f "$FOUND_ARCHIVE" "$ROOT_DIR/$REPO_FOLDER/geargrafx_libretro_ps2.a" || { exit 1; }
+mkdir -p "$ROOT_DIR/geargrafx"
+cp -f "$FOUND_ARCHIVE" "$ROOT_DIR/geargrafx/geargrafx_libretro_ps2.a"
 
 echo "Successfully built and packaged $FOUND_ARCHIVE"
