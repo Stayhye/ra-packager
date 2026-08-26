@@ -27,9 +27,12 @@ if [ -z "$FOUND_ARCHIVE" ]; then
     exit 1
 fi
 
-## Copy it back up to the workspace root and into the repo folder
+## Copy it to the workspace root (up two levels from platforms/libretro)
 cp -f "$FOUND_ARCHIVE" ../../libretro_ps2.a || { exit 1; }
+
+## Create target directory in the workspace root and copy it there too
+mkdir -p ../../"$REPO_FOLDER"
 cp -f "$FOUND_ARCHIVE" ../../"$REPO_FOLDER"/geargrafx_libretro_ps2.a || { exit 1; }
 
-## Return back to workspace root
-cd ../../.. || true
+## Return back to workspace root cleanly
+cd ../.. || true
