@@ -29,4 +29,4 @@ cd .. || { exit 1; }
 cp -f "$REPO_FOLDER/geargrafx_libretro_ps2.a" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p geargrafx_libretro
-cp -f "$REPO_FOLDER/geargrafx_libretro_ps2.a" geargrafx_libretro_ps2.a || { exit 1; }
+cp -f geargrafx_libretro_ps2.a || { exit 1; }
