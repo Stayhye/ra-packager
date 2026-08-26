@@ -18,7 +18,7 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
         core_opts: [
-          [geargrafx_libretro, geargrafx_libretro_ps2],
+          [geargrafx, geargrafx_libretro_ps2],
           #[dice-libretro, dice_libretro_ps2],
           #[libretro-prboom, prboom_libretro_ps2],
           #[libretro-samples, test_libretro_ps2],
