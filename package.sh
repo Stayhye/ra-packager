@@ -17,6 +17,10 @@
 ./cores/dice-libretro.sh || { exit 1; }
 ./generate_retroarch.sh dice-libretro dice-libretro_ps2 || { exit 1; }
 
+#mame2003-libretro
+./cores/mame2003-libretro.sh || { exit 1; }
+./generate_retroarch.sh mame2003-libretro mame2003-libretro_ps2 || { exit 1; }
+
 #mame2003-plus-libretro
 ./cores/mame2003-plus-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mame2003-plus-libretro mame2003-plus-libretro_ps2 || { exit 1; }
