@@ -29,6 +29,10 @@
 ./cores/mame2010-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mame2010-libretro mame2010-libretro_ps2 || { exit 1; }
 
+#mednafen-supergrafx-libretro
+./cores/mednafen-supergrafx-libretro.sh || { exit 1; }
+./generate_retroarch.sh mednafen-supergrafx-libretro mednafen-supergrafx-libretro_ps2 || { exit 1; }
+
 #mednafen-lynx-libretro
 ./cores/mednafen-lynx-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mednafen-lynx-libretro mednafen-lynx-libretro_ps2 || { exit 1; }
