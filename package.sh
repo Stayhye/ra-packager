@@ -17,6 +17,10 @@
 ./cores/neocd_libretro.sh || { exit 1; }
 ./generate_retroarch.sh neocd_libretro neocd_libretro_ps2 || { exit 1; }
 
+#scummvm_libretro
+./cores/scummvm_libretro.sh || { exit 1; }
+./generate_retroarch.sh scummvm_libretro scummvm_libretro_ps2 || { exit 1; }
+
 #dice-libretro
 ./cores/dice-libretro.sh || { exit 1; }
 ./generate_retroarch.sh dice-libretro dice-libretro_ps2 || { exit 1; }
