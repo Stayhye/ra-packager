@@ -18,7 +18,8 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
         core_opts: [
-          [dice-libretro, dice_libretro_ps2],
+          [geargrafx, geargrafx_libretro_ps2],
+          #[dice-libretro, dice_libretro_ps2],
           #[libretro-prboom, prboom_libretro_ps2],
           #[libretro-samples, test_libretro_ps2],
           #[genesis_plus_gx_libretro, genesis_plus_gx_libretro_ps2],
@@ -27,7 +28,7 @@ jobs:
           #[mame2010-libretro, mame2010-libretro_ps2],
           #[mame2003-plus-libretro, mame2003-plus-libretro_ps2],
           #[pokemini, pokemini_libretro_ps2],
-          [gw-libretro, gw-libretro_ps2],
+          #[gw-libretro, gw-libretro_ps2],
           #[mednafen-ngp-libretro, mednafen-ngp-libretro_ps2],
           #[fbalpha2012_cps2, fbalpha2012_cps2_libretro_ps2],
           #[mednafen-wswan-libretro, mednafen-wswan-libretro_ps2],
