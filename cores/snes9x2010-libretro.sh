@@ -37,11 +37,7 @@ int posix_memalign(void **memptr, size_t alignment, size_t size)
 EOF
 # ------------------------------------
 
-## Navigate into platforms/libretro or build directly depending on snes9x2010 structure
-## (snes9x2010 usually builds right from the root or libretro folder)
-## Compile core using native platform=ps2 support
-make -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -j $PROC_NR platform=ps2 || { exit 1; }
+make -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
 
 ## Locate the archive
 FOUND_ARCHIVE=$(ls *.a 2>/dev/null | head -n 1)
