@@ -3,7 +3,7 @@
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
-REPO_URL="https://github.com/libretro/mgba"
+REPO_URL="https://github.com/Stayhye/mgba"
 REPO_FOLDER="mgba"
 BRANCH_NAME="master"
 
