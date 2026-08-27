@@ -32,6 +32,7 @@ jobs:
           [pokemini, pokemini_libretro_ps2],
           [gw-libretro, gw-libretro_ps2],
           [mednafen-supergrafx-libretro, mednafen-supergrafx-libretro_ps2],
+          [bsnes-libretro, bsnes_libretro_ps2],
           [neocd_libretro, neocd_libretro_ps2],
           #[scummvm_libretro, scummvm_libretro_ps2], <--NOT WORKING
           [mednafen-lynx-libretro, mednafen-lynx-libretro_ps2],
