@@ -19,7 +19,7 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 ## Configure and compile using CMake for PS2/libretro
 mkdir -p build && cd build
 cmake .. \
-    -DCMAKE_TOOLCHAIN_FILE="${PS2SDK}/../ps2lib.cmake" \
+    -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
     -DBUILD_LIBRETRO=ON \
     -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
