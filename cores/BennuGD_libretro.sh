@@ -25,23 +25,27 @@ export CXXFLAGS="-O3 -G0 -ffat-lto-objects"
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
     -DTHREADS_HAVE_PTHREAD_ARG=OFF \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DOGG_BUILD_TESTING=OFF \
-    -DCMAKE_C_COMPILER_WORKS=TRUE \
-    -DCMAKE_CXX_COMPILER_WORKS=TRUE
+    -DCMAKE_BUILD_TYPE=Release
 
-# If ogg generated its CheckSizes failure, bypass it by providing the correct type sizing hints via cache variables recognized by CheckTypeSize
+# Safely override CheckSizes.cmake with valid cache variables that CheckTypeSize expects
 if [ -f "_deps/ogg-src/cmake/CheckSizes.cmake" ]; then
-    cmake .. \
-        -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
-        -DTHREADS_HAVE_PTHREAD_ARG=OFF \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DHAVE_INTTYPES_H=1 \
-        -DHAVE_STDINT_H=1 \
-        -DHAVE_SYS_TYPES_H=1 || { exit 1; }
+    cat << 'EOF' > "_deps/ogg-src/cmake/CheckSizes.cmake"
+set(HAVE_INTTYPES_H 1)
+set(HAVE_STDINT_H 1)
+set(HAVE_SYS_TYPES_H 1)
+set(SIZE16 2)
+set(USIZE16 2)
+set(SIZE32 4)
+set(USIZE32 4)
+set(SIZE64 8)
+set(USIZE64 8)
+set(INCLUDE_FILES "inttypes.h" "stdint.h" "sys/types.h")
+EOF
+    # Re-run cmake to process the corrected check variables
+    cmake .. || { exit 1; }
 fi
 
-# Build sequentially to catch any residual compiler/linker errors accurately
+# Build sequentially to capture the exact compiler/linker error output
 make VERBOSE=1 || { exit 1; }
 
 cd ../.. || { exit 1; }
