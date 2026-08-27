@@ -31,7 +31,8 @@ cmake .. \
     -DCMAKE_RANLIB="${PS2DEV}/ee/bin/mips64r5900el-ps2-elf-ranlib" \
     -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
-make -j $PROC_NR || { exit 1; }
+# Build ONLY the libretro target to skip desktop binaries/tests
+make -j $PROC_NR mgba_libretro || { exit 1; }
 
 cd ../.. || { exit 1; }
 
