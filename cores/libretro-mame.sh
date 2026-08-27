@@ -24,8 +24,8 @@ chmod +x ./fake-bin/moc
 export PATH="./fake-bin:$PATH"
 
 ## Compile core using native platform=ps2 support, overriding MOC and QMAKE globally
-make -j $PROC_NR platform=ps2 MOC=true QMAKE=true clean || { exit 1; }
-make -j $PROC_NR platform=ps2 MOC=true QMAKE=true || { exit 1; }
+make -j $PROC_NR platform=ps2 NOWERROR=1 clean || { exit 1; }
+make -j $PROC_NR platform=ps2 NOWERROR=1 || { exit 1; }
 
 cd .. || { exit 1; }
 
