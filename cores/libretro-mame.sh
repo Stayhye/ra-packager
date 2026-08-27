@@ -23,9 +23,9 @@ echo 'exit 0' >> ./fake-bin/moc
 chmod +x ./fake-bin/moc
 export PATH="./fake-bin:$PATH"
 
-## Compile core using native platform=ps2 support, overriding MOC globally
-make -j $PROC_NR platform=ps2 MOC=true clean || { exit 1; }
-make -j $PROC_NR platform=ps2 MOC=true || { exit 1; }
+## Compile core using native platform=ps2 support, overriding MOC and QMAKE globally
+make -j $PROC_NR platform=ps2 MOC=true QMAKE=true clean || { exit 1; }
+make -j $PROC_NR platform=ps2 MOC=true QMAKE=true || { exit 1; }
 
 cd .. || { exit 1; }
 
