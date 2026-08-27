@@ -19,29 +19,19 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 ## Configure using CMake for PS2/libretro
 mkdir -p build && cd build
 
-# Pre-create ogg build directory structure and write correct types header to bypass CheckSizes.cmake
-mkdir -p _deps/ogg-build/include/ogg
-cat << 'EOF' > "_deps/ogg-build/include/ogg/config_types.h"
-#ifndef _OGG_TYPES_H
-#define _OGG_TYPES_H
-#include <sys/types.h>
-#include <stdint.h>
-typedef int16_t ogg_int16_t;
-typedef uint16_t ogg_uint16_t;
-typedef int32_t ogg_int32_t;
-typedef uint32_t ogg_uint32_t;
-typedef int64_t ogg_int64_t;
-typedef uint64_t ogg_uint64_t;
-#endif
-EOF
-
 export CFLAGS="-O3 -G0 -ffat-lto-objects"
 export CXXFLAGS="-O3 -G0 -ffat-lto-objects"
 
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
     -DTHREADS_HAVE_PTHREAD_ARG=OFF \
-    -DCMAKE_BUILD_TYPE=Release || { exit 1; }
+    -DCMAKE_BUILD_TYPE=Release \
+    -DSIZE16=2 \
+    -DUSIZE16=2 \
+    -DSIZE32=4 \
+    -DUSIZE32=4 \
+    -DSIZE64=8 \
+    -DUSIZE64=8 || { exit 1; }
 
 # Build using parallel cores with verbose logs enabled
 make -j $PROC_NR VERBOSE=1 || { exit 1; }
