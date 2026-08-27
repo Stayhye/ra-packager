@@ -19,15 +19,16 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 ## Configure and compile using CMake for PS2/libretro
 mkdir -p build && cd build
 
-export CFLAGS="-O3 -fno-lto"
-export CXXFLAGS="-O3 -fno-lto"
-export LDFLAGS="-fno-lto"
+export CFLAGS="-O3 -fno-lto -ffat-lto-objects"
+export CXXFLAGS="-O3 -fno-lto -ffat-lto-objects"
 
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
     -DBUILD_LIBRETRO=ON \
     -DENABLE_LTO=OFF \
     -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
+    -DCMAKE_AR="${PS2DEV}/ee/bin/mips64r5900el-ps2-elf-ar" \
+    -DCMAKE_RANLIB="${PS2DEV}/ee/bin/mips64r5900el-ps2-elf-ranlib" \
     -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
 make -j $PROC_NR || { exit 1; }
