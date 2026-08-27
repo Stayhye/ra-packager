@@ -5,7 +5,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/zc210-libretro"
 REPO_FOLDER="zc210-libretro"
-BRANCH_NAME="master"
+BRANCH_NAME="main"
 
 if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
