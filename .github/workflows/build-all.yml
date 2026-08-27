@@ -49,6 +49,7 @@ jobs:
           #[libretro-fceumm, fceumm_libretro_ps2],
           #[mgba, mgba_libretro_ps2], <--NOT WORKING
           #[stella2014-libretro, stella2014_libretro_ps2],
+          [libretro-mame, libretro-mame_ps2],
           [mednafen-vb-libretro, mednafen-vb-libretro_ps2],
           #[libretro-cap32, cap32_libretro_ps2],
           #[QuickNES_Core, quicknes_libretro_ps2],
