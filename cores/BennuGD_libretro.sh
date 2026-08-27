@@ -25,23 +25,23 @@ export CXXFLAGS="-O3 -G0 -ffat-lto-objects"
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
     -DTHREADS_HAVE_PTHREAD_ARG=OFF \
-    -DCMAKE_BUILD_TYPE=Release
+    -DCMAKE_BUILD_TYPE=Release \
+    -DOGG_BUILD_TESTING=OFF \
+    -DCMAKE_C_COMPILER_WORKS=TRUE \
+    -DCMAKE_CXX_COMPILER_WORKS=TRUE
 
-# Patch ogg type checking now that the dependency has been populated
+# If ogg generated its CheckSizes failure, bypass it by providing the correct type sizing hints via cache variables recognized by CheckTypeSize
 if [ -f "_deps/ogg-src/cmake/CheckSizes.cmake" ]; then
-    cat << 'EOF' > "_deps/ogg-src/cmake/CheckSizes.cmake"
-set(SIZE16 2)
-set(USIZE16 2)
-set(SIZE32 4)
-set(USIZE32 4)
-set(SIZE64 8)
-set(USIZE64 8)
-EOF
-    # Re-run cmake to pick up the patched check
-    cmake .. || { exit 1; }
+    cmake .. \
+        -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
+        -DTHREADS_HAVE_PTHREAD_ARG=OFF \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DHAVE_INTTYPES_H=1 \
+        -DHAVE_STDINT_H=1 \
+        -DHAVE_SYS_TYPES_H=1 || { exit 1; }
 fi
 
-# Build sequentially to capture the exact compiler/linker error output
+# Build sequentially to catch any residual compiler/linker errors accurately
 make VERBOSE=1 || { exit 1; }
 
 cd ../.. || { exit 1; }
