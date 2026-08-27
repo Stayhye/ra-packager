@@ -18,6 +18,7 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
         core_opts: [
+          [BennuGD_libretro, BennuGD_libretro_ps2],
           #[bsnes-libretro, bsnes_libretro_ps2],
           #[dice-libretro, dice_libretro_ps2],
           #[ecwolf, ecwolf_libretro_ps2],
@@ -42,7 +43,7 @@ jobs:
           #[mednafen-pce-fast-libretro, mednafen_pce_fast_libretro_ps2],
           #[mednafen-lynx-libretro, mednafen-lynx-libretro_ps2],
           #[mednafen-ngp-libretro, mednafen-ngp-libretro_ps2],
-          [mednafen-vb-libretro, mednafen-vb-libretro_ps2],
+          #[mednafen-vb-libretro, mednafen-vb-libretro_ps2],
           #[mednafen-wswan-libretro, mednafen-wswan-libretro_ps2],
           #[mednafen-supergrafx-libretro, mednafen-supergrafx-libretro_ps2],
           #[neocd_libretro, neocd_libretro_ps2],
