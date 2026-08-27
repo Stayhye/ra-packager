@@ -27,17 +27,23 @@ cmake .. \
     -DTHREADS_HAVE_PTHREAD_ARG=OFF \
     -DCMAKE_BUILD_TYPE=Release
 
-# Patch ogg type checking now that the dependency has been populated
-if [ -f "_deps/ogg-src/cmake/CheckSizes.cmake" ]; then
-    cat << 'EOF' > "_deps/ogg-src/cmake/CheckSizes.cmake"
-set(SIZE16 2)
-set(USIZE16 2)
-set(SIZE32 4)
-set(USIZE32 4)
-set(SIZE64 8)
-set(USIZE64 8)
+# Patch ogg generated config_types.h with valid C type definitions for MIPS/PS2
+OGG_CONFIG_FILE=$(find build -name "config_types.h" | head -n 1)
+if [ -n "$OGG_CONFIG_FILE" ]; then
+    cat << 'EOF' > "$OGG_CONFIG_FILE"
+#ifndef _OGG_TYPES_H
+#define _OGG_TYPES_H
+#include <sys/types.h>
+#include <stdint.h>
+typedef int16_t ogg_int16_t;
+typedef uint16_t ogg_uint16_t;
+typedef int32_t ogg_int32_t;
+typedef uint32_t ogg_uint32_t;
+typedef int64_t ogg_int64_t;
+typedef uint64_t ogg_uint64_t;
+#endif
 EOF
-    # Re-run cmake to pick up the patched check
+    # Re-run cmake to lock in the correct configuration
     cmake .. || { exit 1; }
 fi
 
