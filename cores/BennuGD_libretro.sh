@@ -25,7 +25,7 @@ export CXXFLAGS="-O3 -G0 -ffat-lto-objects"
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
     -DTHREADS_HAVE_PTHREAD_ARG=OFF \
-    -DCMAKE_BUILD_TYPE=Release || { exit 1; }
+    -DCMAKE_BUILD_TYPE=Release || { exit 1; } 
 
 # Build the project core target
 make -j $PROC_NR || { exit 1; }
