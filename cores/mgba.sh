@@ -21,6 +21,7 @@ mkdir -p build && cd build
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
     -DBUILD_LIBRETRO=ON \
+    -DENABLE_LTO=OFF \
     -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
 make -j $PROC_NR || { exit 1; }
