@@ -18,7 +18,7 @@
 ./generate_retroarch.sh libretro-mame libretro-mame_ps2 || { exit 1; }
 
 #bsnes_libretro
-./cores/bsnes_libretro.sh || { exit 1; } 
+./cores/bsnes_libretro.sh || { exit 1; }
 ./generate_retroarch.sh bsnes_libretro bsnes_libretro_ps2 || { exit 1; }
 
 #BennuGD_libretro
