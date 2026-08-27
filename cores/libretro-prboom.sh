@@ -7,7 +7,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 ## Download the source code.
 REPO_URL="https://github.com/Stayhye/libretro-prboom"
 REPO_FOLDER="libretro-prboom"
-BRANCH_NAME="ps2-gcc9"
+BRANCH_NAME="ps2-support"
 if test ! -d "$REPO_FOLDER"; then
 	git clone --depth 1 -b $BRANCH_NAME $REPO_URL && cd $REPO_FOLDER || { exit 1; }
 else
