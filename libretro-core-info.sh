@@ -18,3 +18,4 @@ fi
 cp *.info ../RA/info/
 
 cd .. || { exit 1; }  
+
