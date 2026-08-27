@@ -1,5 +1,5 @@
 #!/bin/bash
-# package.sh by Francisco Javier Trujillo Mata (fjtrujy@gmail.com)
+# package.sh for BennuGD_libretro on PS2
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
@@ -19,24 +19,20 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 ## Configure and compile using CMake for PS2/libretro
 mkdir -p build && cd build
 
-export CFLAGS="-O3 -fno-lto -ffat-lto-objects"
-export CXXFLAGS="-O3 -fno-lto -ffat-lto-objects"
+export CFLAGS="-O3 -G0 -ffat-lto-objects"
+export CXXFLAGS="-O3 -G0 -ffat-lto-objects"
 
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
-    -DENABLE_LTO=OFF \
-    -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
-    -DCMAKE_AR="${PS2DEV}/ee/bin/mips64r5900el-ps2-elf-ar" \
-    -DCMAKE_RANLIB="${PS2DEV}/ee/bin/mips64r5900el-ps2-elf-ranlib" \
     -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
-# Build the project using standard cmake targets or default make target
+# Build the project core target
 make -j $PROC_NR || { exit 1; }
 
 cd ../.. || { exit 1; }
 
-## Locate and copy the generated static archive to both locations
-GENERATED_LIB=$(find "$REPO_FOLDER/build" -name "*libretro*.a" | head -n 1)
+## Locate and copy the generated static archive to target locations
+GENERATED_LIB=$(find "$REPO_FOLDER/build" -name "*.a" | head -n 1)
 
 if [ -z "$GENERATED_LIB" ]; then
     echo "Error: Could not find generated BennuGD libretro archive!"
