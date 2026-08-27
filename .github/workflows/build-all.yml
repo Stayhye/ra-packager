@@ -71,7 +71,9 @@ jobs:
           make \
           dos2unix \
           sdl12-compat-dev \
-          pkgconfig
+          pkgconfig \
+          alsa-lib-dev \
+          fontconfig-dev
     
     - name: Grant execute permissions and redirect Bitbucket to GitHub
       run: |
