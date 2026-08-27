@@ -42,7 +42,7 @@ EOF
 fi
 
 # Build the project core target
-make -j $PROC_NR || { exit 1; }
+make VERBOSE=1 -j $PROC_NR || { exit 1; }
 
 cd ../.. || { exit 1; }
 
