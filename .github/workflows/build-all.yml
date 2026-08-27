@@ -62,7 +62,7 @@ jobs:
     - name: Install dependencies
       run: |
         apk add build-base git bash
-        apk add --no-cache cmake make build-base
+        apk add --no-cache cmake make build-base dos2unix
     
     - name: Grant execute permissions and redirect Bitbucket to GitHub
       run: |
