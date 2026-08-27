@@ -17,9 +17,8 @@ git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
 ## Compile core using native platform=ps2 support
-## Compile core using native platform=ps2 support
-make -j $PROC_NR platform=ps2 TARGET=arcade TOOLS=0 NO_QT=1 USE_QT=0 clean || { exit 1; }
-make -j $PROC_NR platform=ps2 TARGET=arcade TOOLS=0 NO_QT=1 USE_QT=0 || { exit 1; }
+make -j $PROC_NR platform=ps2 TARGET=arcade TOOLS=0 DEBUG=0 clean || { exit 1; }
+make -j $PROC_NR platform=ps2 TARGET=arcade TOOLS=0 DEBUG=0 || { exit 1; }
 
 cd .. || { exit 1; }
 
