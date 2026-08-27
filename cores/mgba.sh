@@ -18,17 +18,19 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 
 ## Configure and compile using CMake for PS2/libretro
 mkdir -p build && cd build
+
+export CFLAGS="-O3 -fno-lto"
+export CXXFLAGS="-O3 -fno-lto"
+export LDFLAGS="-fno-lto"
+
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
     -DBUILD_LIBRETRO=ON \
     -DENABLE_LTO=OFF \
     -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
-    -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG" \
-    -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG" \
     -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
 make -j $PROC_NR || { exit 1; }
-
 
 cd ../.. || { exit 1; }
 
