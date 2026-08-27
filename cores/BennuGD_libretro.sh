@@ -16,21 +16,12 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Configure using CMake for PS2/libretro (this downloads deps via FetchContent)
+## Configure using CMake for PS2/libretro
 mkdir -p build && cd build
 
-export CFLAGS="-O3 -G0 -ffat-lto-objects"
-export CXXFLAGS="-O3 -G0 -ffat-lto-objects"
-
-cmake .. \
-    -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
-    -DTHREADS_HAVE_PTHREAD_ARG=OFF \
-    -DCMAKE_BUILD_TYPE=Release
-
-# Patch ogg generated config_types.h with valid C type definitions for MIPS/PS2
-OGG_CONFIG_FILE=$(find build -name "config_types.h" | head -n 1)
-if [ -n "$OGG_CONFIG_FILE" ]; then
-    cat << 'EOF' > "$OGG_CONFIG_FILE"
+# Pre-create ogg build directory structure and write correct types header to bypass CheckSizes.cmake
+mkdir -p _deps/ogg-build/include/ogg
+cat << 'EOF' > "_deps/ogg-build/include/ogg/config_types.h"
 #ifndef _OGG_TYPES_H
 #define _OGG_TYPES_H
 #include <sys/types.h>
@@ -43,12 +34,17 @@ typedef int64_t ogg_int64_t;
 typedef uint64_t ogg_uint64_t;
 #endif
 EOF
-    # Re-run cmake to lock in the correct configuration
-    cmake .. || { exit 1; }
-fi
 
-# Build sequentially to capture the exact compiler/linker error output
-make VERBOSE=1 || { exit 1; }
+export CFLAGS="-O3 -G0 -ffat-lto-objects"
+export CXXFLAGS="-O3 -G0 -ffat-lto-objects"
+
+cmake .. \
+    -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
+    -DTHREADS_HAVE_PTHREAD_ARG=OFF \
+    -DCMAKE_BUILD_TYPE=Release || { exit 1; }
+
+# Build using parallel cores with verbose logs enabled
+make -j $PROC_NR VERBOSE=1 || { exit 1; }
 
 cd ../.. || { exit 1; }
 
