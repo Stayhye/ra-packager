@@ -17,4 +17,4 @@ fi
 ## Copy *info files
 cp *.info ../RA/info/
 
-cd .. || { exit 1; }
+cd .. || { exit 1; } 
