@@ -41,8 +41,8 @@ EOF
     cmake .. || { exit 1; }
 fi
 
-# Build the project core target
-make VERBOSE=1 -j $PROC_NR || { exit 1; }
+# Build sequentially to capture the exact compiler/linker error output
+make VERBOSE=1 || { exit 1; }
 
 cd ../.. || { exit 1; }
 
