@@ -62,9 +62,16 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apk add build-base git bash
-        apk add --no-cache cmake make build-base dos2unix
-        apk update && apk add sdl-dev pkgconfig build-base
+        apk update
+        apk add --no-cache \
+          build-base \
+          git \
+          bash \
+          cmake \
+          make \
+          dos2unix \
+          sdl12-compat-dev \
+          pkgconfig
     
     - name: Grant execute permissions and redirect Bitbucket to GitHub
       run: |
