@@ -16,7 +16,7 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Configure and compile using CMake for PS2/libretro
+## Configure using CMake for PS2/libretro (this downloads deps via FetchContent)
 mkdir -p build && cd build
 
 export CFLAGS="-O3 -G0 -ffat-lto-objects"
@@ -25,7 +25,21 @@ export CXXFLAGS="-O3 -G0 -ffat-lto-objects"
 cmake .. \
     -DCMAKE_TOOLCHAIN_FILE="${PS2DEV}/share/ps2dev.cmake" \
     -DTHREADS_HAVE_PTHREAD_ARG=OFF \
-    -DCMAKE_BUILD_TYPE=Release || { exit 1; } 
+    -DCMAKE_BUILD_TYPE=Release
+
+# Patch ogg type checking now that the dependency has been populated
+if [ -f "_deps/ogg-src/cmake/CheckSizes.cmake" ]; then
+    cat << 'EOF' > "_deps/ogg-src/cmake/CheckSizes.cmake"
+set(SIZE16 2)
+set(USIZE16 2)
+set(SIZE32 4)
+set(USIZE32 4)
+set(SIZE64 8)
+set(USIZE64 8)
+EOF
+    # Re-run cmake to pick up the patched check
+    cmake .. || { exit 1; }
+fi
 
 # Build the project core target
 make -j $PROC_NR || { exit 1; }
