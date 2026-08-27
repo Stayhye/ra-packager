@@ -23,9 +23,12 @@ cmake .. \
     -DBUILD_LIBRETRO=ON \
     -DENABLE_LTO=OFF \
     -DCMAKE_INTERPROCEDURAL_OPTIMIZATION=OFF \
+    -DCMAKE_C_FLAGS_RELEASE="-O3 -DNDEBUG" \
+    -DCMAKE_CXX_FLAGS_RELEASE="-O3 -DNDEBUG" \
     -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
 make -j $PROC_NR || { exit 1; }
+
 
 cd ../.. || { exit 1; }
 
