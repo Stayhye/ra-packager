@@ -71,7 +71,7 @@
 
 #gw-libretro
 ./cores/gw-libretro.sh || { exit 1; }
-./generate_retroarch.sh gw-libretro gw-libretro_ps2 || { exit 1; }
+./generate_retroarch.sh gw-libretro gw-libretro_ps2 || { exit 1; } 
 
 #fbalpha2012_cps2
 ./cores/fbalpha2012_cps2.sh || { exit 1; }
