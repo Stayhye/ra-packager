@@ -3,7 +3,7 @@
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
-REPO_URL="https://github.com/Stayhye/beetle-vb-libretro"
+REPO_URL="https://github.com/Stayhye/beetle-vb-libretro" 
 REPO_FOLDER="mednafen-vb-libretro"
 BRANCH_NAME="master"
 
