@@ -5,7 +5,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 ## Download the source code.
-REPO_URL="https://github.com/libretro/libretro-core-info"  
+REPO_URL="https://github.com/libretro/libretro-core-info"
 REPO_FOLDER="libretro-core-info"
 BRANCH_NAME="master"
 if test ! -d "$REPO_FOLDER"; then
