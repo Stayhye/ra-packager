@@ -27,4 +27,3 @@ cp -f "$REPO_FOLDER/mednafen_vb_libretro_ps2.a" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p beetle-vb-libretro
 cp -f "$REPO_FOLDER/mednafen_vb_libretro_ps2.a" mednafen_vb_libretro_ps2.a || { exit 1; }
-
