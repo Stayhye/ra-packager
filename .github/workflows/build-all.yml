@@ -18,7 +18,6 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
         core_opts: [
-          [libretro-handy, libretro_handy_ps2]]
           #[bsnes-libretro, bsnes_libretro_ps2],
           #[dice-libretro, dice_libretro_ps2],
           #[ecwolf, ecwolf_libretro_ps2],
@@ -34,7 +33,7 @@ jobs:
           #[libretro-fceumm, fceumm_libretro_ps2],
           #[libretro-cap32, cap32_libretro_ps2],
           #[libretro-mame, libretro-mame_ps2],
-          #[mame2000-libretro, mame2000-libretro_ps2],
+          [mame2000-libretro, mame2000-libretro_ps2],
           #[mame2010-libretro, mame2010-libretro_ps2],
           #[mame2003-libretro, mame2003_libretro_ps2],
           #[mame2003-plus-libretro, mame2003-plus-libretro_ps2], <--NOT WORKING
@@ -43,7 +42,7 @@ jobs:
           #[mednafen-pce-fast-libretro, mednafen_pce_fast_libretro_ps2],
           #[mednafen-lynx-libretro, mednafen-lynx-libretro_ps2],
           #[mednafen-ngp-libretro, mednafen-ngp-libretro_ps2],
-          [mednafen-vb-libretro, mednafen-vb-libretro_ps2],
+          #[mednafen-vb-libretro, mednafen-vb-libretro_ps2],
           #[mednafen-wswan-libretro, mednafen-wswan-libretro_ps2],
           #[mednafen-supergrafx-libretro, mednafen-supergrafx-libretro_ps2],
           #[neocd_libretro, neocd_libretro_ps2],

@@ -25,6 +25,10 @@
 ./cores/bsnes_libretro.sh || { exit 1; }
 ./generate_retroarch.sh bsnes_libretro bsnes_libretro_ps2 || { exit 1; }
 
+#BennuGD_libretro
+./cores/BennuGD_libretro.sh || { exit 1; }
+./generate_retroarch.sh BennuGD_libretro BennuGD_libretro_ps2 || { exit 1; }
+
 #neocd_libretro
 ./cores/neocd_libretro.sh || { exit 1; }
 ./generate_retroarch.sh neocd_libretro neocd_libretro_ps2 || { exit 1; }
