@@ -77,6 +77,10 @@
 ./cores/fbalpha2012_cps2.sh || { exit 1; }
 ./generate_retroarch.sh fbalpha2012_cps2 fbalpha2012_cps2_libretro_ps2 || { exit 1; }
 
+#fbalpha2012_cps1
+./cores/fbalpha2012_cps1.sh || { exit 1; }
+./generate_retroarch.sh fbalpha2012_cps1 fbalpha2012_cps1_libretro_ps2 || { exit 1; }
+
 #genesis_plus_gx_libretro
 ./cores/genesis_plus_gx_libretro.sh || { exit 1; }
 ./generate_retroarch.sh genesis_plus_gx_libretro genesis_plus_gx_libretro_ps2 || { exit 1; }
