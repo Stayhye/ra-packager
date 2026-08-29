@@ -2,12 +2,12 @@
 # package.sh by Francisco Javier Trujillo Mata (fjtrujy@gmail.com)
 
 ## Determine the maximum number of processes that Make can work with.
-PROC_NR=$(getconf _NPROCESSORS_ONLN)
+PROC_NR=$(getconf _NPROCESSORS_ONLN) 
 
 ## Download the source code.
 ##REPO_URL="https://github.com/fjtrujy/libretro-prboom"
 ##REPO_URL="https://github.com/libretro/libretro-prboom"
-REPO_URL="https://github.com/Stayhye/libretro-prboom" 
+REPO_URL="https://github.com/Stayhye/libretro-prboom"
 REPO_FOLDER="libretro-prboom"
 ##BRANCH_NAME="fix-dynamic-platforms"
 BRANCH_NAME="master"
