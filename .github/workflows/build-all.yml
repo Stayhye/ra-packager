@@ -29,7 +29,7 @@ jobs:
           #[genesis_plus_gx_libretro, genesis_plus_gx_libretro_ps2],
           #[gpsp, gpsp_libretro_ps2],
           #[gw-libretro, gw-libretro_ps2],
-          #[libretro-prboom, prboom_libretro_ps2],
+          [libretro-prboom, prboom_libretro_ps2],
           #[libretro-samples, test_libretro_ps2],
           #[libretro-lutro, lutro_libretro_ps2],
           #[libretro-fceumm, fceumm_libretro_ps2],
@@ -37,7 +37,7 @@ jobs:
           #[libretro-mame, libretro-mame_ps2],
           #[mame2000-libretro, mame2000-libretro_ps2],
           #[mame2010-libretro, mame2010-libretro_ps2],
-          [mame2003-libretro, mame2003_libretro_ps2],
+          #[mame2003-libretro, mame2003_libretro_ps2],
           #[mame2003-plus-libretro, mame2003-plus-libretro_ps2], <--NOT WORKING
           #[mgba, mgba_libretro_ps2], <--NOT WORKING
           #[mednafen-pce-libretro, mednafen_pce_libretro_ps2],
