@@ -10,7 +10,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 REPO_URL="https://github.com/Stayhye/libretro-prboom" 
 REPO_FOLDER="libretro-prboom"
 ##BRANCH_NAME="fix-dynamic-platforms"
-BRANCH_NAME="master" 
+BRANCH_NAME="master"
 ##BRANCH_NAME="ps2-support"
 if test ! -d "$REPO_FOLDER"; then 
 	git clone --depth 1 -b $BRANCH_NAME $REPO_URL && cd $REPO_FOLDER || { exit 1; }
