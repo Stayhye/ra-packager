@@ -7,7 +7,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 ## Download the source code.
 ##REPO_URL="https://github.com/fjtrujy/libretro-prboom"
 ##REPO_URL="https://github.com/libretro/libretro-prboom"
-REPO_URL="https://github.com/Stayhye/libretro-prboom"
+REPO_URL="https://github.com/Stayhye/libretro-prboom" 
 REPO_FOLDER="libretro-prboom"
 ##BRANCH_NAME="fix-dynamic-platforms"
 BRANCH_NAME="master"
