@@ -6,7 +6,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 ## Download the source code.
 REPO_URL="https://github.com/Stayhye/RACE"
-REPO_FOLDER="RACE"
+REPO_FOLDER="RACE_libretro"
 BRANCH_NAME="master"
 
 if test ! -d "$REPO_FOLDER"; then
