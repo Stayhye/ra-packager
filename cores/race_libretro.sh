@@ -6,7 +6,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 ## Download the source code.
 REPO_URL="https://github.com/Stayhye/RACE"
-REPO_FOLDER="RACE"
+REPO_FOLDER="race"
 BRANCH_NAME="master"
 
 if test ! -d "$REPO_FOLDER"; then 
@@ -33,7 +33,7 @@ fi
 
 cp -f "$REPO_FOLDER/$ARCHIVE_NAME" ./libretro_ps2.a || { exit 1; }
 
-mkdir -p rece_libretro
-if [ "$REPO_FOLDER/$ARCHIVE_NAME" != "race_libretro/race_libretro_ps2.a" ]; then
-    cp -f "$REPO_FOLDER/$ARCHIVE_NAME" race_libretro/race_libretro_ps2.a || { exit 1; }
+mkdir -p rece
+if [ "$REPO_FOLDER/$ARCHIVE_NAME" != "race/race_libretro_ps2.a" ]; then
+    cp -f "$REPO_FOLDER/$ARCHIVE_NAME" race/race_libretro_ps2.a || { exit 1; }
 fi
