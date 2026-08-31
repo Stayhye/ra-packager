@@ -11,7 +11,7 @@
 
 #race
 ./cores/race.sh || { exit 1; }
-./generate_retroarch.sh race race_libretro_ps2 || { exit 1; }
+./generate_retroarch.sh race_libretro race_libretro_ps2 || { exit 1; }
 
 #geargrafx
 ./cores/geargrafx.sh || { exit 1; }
