@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/beetle-gba-libretro"
-REPO_FOLDER="mednafen-gba-libretro"
+REPO_FOLDER="mednafen_gba_libretro"
 BRANCH_NAME="master"
 
 if test ! -d "$REPO_FOLDER"; then
