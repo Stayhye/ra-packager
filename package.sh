@@ -69,6 +69,11 @@
 ./cores/mednafen-lynx-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mednafen-lynx-libretro mednafen-lynx-libretro_ps2 || { exit 1; }
 
+#mednafen_gba_libretro
+./cores/mednafen_gba_libretro.sh || { exit 1; }
+./generate_retroarch.sh mednafen_gba_libretro mednafen_gba_libretro_ps2 || { exit 1; }
+
+
 #mednafen-ngp-libretro
 ./cores/mednafen-ngp-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mednafen-ngp-libretro mednafen-ngp-libretro_ps2 || { exit 1; }
