@@ -16,7 +16,7 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Overwrite or create the correct PS2 Makefile dynamically
+# Overwrite the repo Makefile with our custom PS2 Makefile *after* checkout
 cat << 'EOF' > Makefile
 SYSTEM   = cps2
 platform = ps2
@@ -41,7 +41,7 @@ endif
 
 DEFINES  += -D__LIBRETRO__ -DPS2
 DEFINES  += -DRELEASE=0 -DINLINE='static __inline'
-DEFINES  += -Ddriver=njemu_driver -Ddriver_t=njemu_driver_t 
+DEFINES  += -Ddriver=njemu_driver -Ddriver_t=njemu_driver_t
 
 ## CPS1 ##
 ifeq ($(SYSTEM), cps1)
