@@ -16,7 +16,7 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# 1. Create the ps2 directory and a compatibility header to replace psp.h/psptypes.h
+# 1. Create the ps2 directory and a robust compatibility header
 mkdir -p ps2
 cat << 'EOF' > ps2/ps2.h
 #ifndef __PS2_H__
@@ -49,6 +49,38 @@ typedef s64 s64_t;
 #include <sifrpc.h>
 #include <loadfile.h>
 #include <malloc.h>
+#include <string.h>
+
+/* PSP Control Mappings for PS2 Compatibility */
+#define PSP_CTRL_CROSS      0x0001
+#define PSP_CTRL_CIRCLE     0x0002
+#define PSP_CTRL_SQUARE     0x0004
+#define PSP_CTRL_TRIANGLE   0x0008
+#define PSP_CTRL_LTRIGGER   0x0010
+#define PSP_CTRL_RTRIGGER   0x0020
+#define PSP_CTRL_START      0x0040
+#define PSP_CTRL_SELECT     0x0080
+#define PSP_CTRL_UP         0x0100
+#define PSP_CTRL_DOWN       0x0200
+#define PSP_CTRL_LEFT       0x0400
+#define PSP_CTRL_RIGHT      0x0800
+
+/* Frontend / Loop constants */
+#define PAD_WAIT_INFINITY   0
+#define LOOP_BROWSER        1
+extern int Loop;
+
+/* Memory & System definitions */
+#define MEM_ALIGN           64
+void fatalerror(const char *fmt, ...);
+int poll_gamepad(void);
+
+/* Text / UI Localization Macro fallback */
+#define TEXT(x) x
+#define DRIVER_FOR_x_NOT_FOUND "Driver for %s not found"
+#define ROMSET_x_PARENT_x "Romset %s (parent %s)"
+#define ROMSET_x "Romset %s"
+#define COULD_NOT_ALLOCATE_MEMORY_0x8000BYTE "Could not allocate memory 0x8000 bytes"
 
 #endif
 EOF
