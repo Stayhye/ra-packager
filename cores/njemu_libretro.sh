@@ -1,5 +1,5 @@
 #!/bin/bash
-# package.sh for NJEMU-libretro (PS2)
+# package.sh for NJEMU-libretro (converting PSP codebase to PS2)
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
@@ -16,12 +16,36 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Patch emumain.h to use PS2 headers instead of PSP headers when building for PS2
+# 1. Create the ps2 directory and a compatibility header to replace psp.h/psptypes.h
+mkdir -p ps2
+cat << 'EOF' > ps2/ps2.h
+#ifndef __PS2_H__
+#define __PS2_H__
+
+#include <tamtypes.h>
+#include <kernel.h>
+#include <sifrpc.h>
+#include <loadfile.h>
+#include <malloc.h>
+
+typedef u8  u8_t;
+typedef u16 u16_t;
+typedef u32 u32_t;
+typedef u64 u64_t;
+typedef s8  s8_t;
+typedef s16 s16_t;
+typedef s32 s32_t;
+typedef s64 s64_t;
+
+#endif
+EOF
+
+# 2. Patch emumain.h to include our new ps2.h when -DPS2 is defined
 if [ -f "emumain.h" ]; then
     sed -i 's|#include "psp/psp.h"|#ifdef PS2\n#include "ps2/ps2.h"\n#else\n#include "psp/psp.h"\n#endif|g' emumain.h
 fi
 
-# Overwrite the repo Makefile with our custom PS2 Makefile
+# 3. Overwrite the repo Makefile with our custom PS2 Makefile
 cat << 'EOF' > Makefile
 SYSTEM   = cps2
 platform = ps2
