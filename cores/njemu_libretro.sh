@@ -22,11 +22,18 @@ cat << 'EOF' > ps2/ps2.h
 #ifndef __PS2_H__
 #define __PS2_H__
 
-#include <tamtypes.h>
-#include <kernel.h>
-#include <sifrpc.h>
-#include <loadfile.h>
-#include <malloc.h>
+#ifndef _EE
+#define _EE
+#endif
+
+typedef unsigned char      u8;
+typedef unsigned short     u16;
+typedef unsigned int       u32;
+typedef unsigned long long u64;
+typedef signed char        s8;
+typedef signed short       s16;
+typedef signed int         s32;
+typedef signed long long   s64;
 
 typedef u8  u8_t;
 typedef u16 u16_t;
@@ -36,6 +43,12 @@ typedef s8  s8_t;
 typedef s16 s16_t;
 typedef s32 s32_t;
 typedef s64 s64_t;
+
+#include <tamtypes.h>
+#include <kernel.h>
+#include <sifrpc.h>
+#include <loadfile.h>
+#include <malloc.h>
 
 #endif
 EOF
