@@ -17,6 +17,10 @@
 ./cores/geargrafx.sh || { exit 1; }
 ./generate_retroarch.sh geargrafx geargrafx_libretro_ps2 || { exit 1; }
 
+#njemu_libretro
+./cores/njemu-libretro.sh || { exit 1; }
+./generate_retroarch.sh njemu_libretro njemu_libretro_ps2 || { exit 1; }
+
 #libretro-mame
 ./cores/libretro-mame.sh || { exit 1; }
 ./generate_retroarch.sh libretro-mame libretro-mame_ps2 || { exit 1; }

@@ -19,8 +19,9 @@ jobs:
         docker_owner: [ps2dev]
         core_opts: [
           #[race_libretro, race_libretro_ps2],
+          [njemu_libretro, njemu_libretro_ps2],
           #[libretro-handy, handy_libretro_ps2],
-          [bsnes-libretro, bsnes_libretro_ps2],
+          #[bsnes-libretro, bsnes_libretro_ps2],
           #[dice-libretro, dice_libretro_ps2],
           #[ecwolf, ecwolf_libretro_ps2],
           #[fbalpha2012_cps1, fbalpha2012_cps1_libretro_ps2],
