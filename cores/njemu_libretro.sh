@@ -16,7 +16,12 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Overwrite the repo Makefile with our custom PS2 Makefile *after* checkout
+# Patch emumain.h to use PS2 headers instead of PSP headers when building for PS2
+if [ -f "emumain.h" ]; then
+    sed -i 's|#include "psp/psp.h"|#ifdef PS2\n#include "ps2/ps2.h"\n#else\n#include "psp/psp.h"\n#endif|g' emumain.h
+fi
+
+# Overwrite the repo Makefile with our custom PS2 Makefile
 cat << 'EOF' > Makefile
 SYSTEM   = cps2
 platform = ps2
