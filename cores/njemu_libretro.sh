@@ -41,7 +41,7 @@ endif
 
 DEFINES  += -D__LIBRETRO__ -DPS2
 DEFINES  += -DRELEASE=0 -DINLINE='static __inline'
-DEFINES  += -Ddriver=njemu_driver -Ddriver_t=njemu_driver_t
+DEFINES  += -Ddriver=njemu_driver -Ddriver_t=njemu_driver_t 
 
 ## CPS1 ##
 ifeq ($(SYSTEM), cps1)
