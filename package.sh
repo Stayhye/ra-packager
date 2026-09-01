@@ -9,6 +9,10 @@
 ./cores/ecwolf.sh || { exit 1; }
 ./generate_retroarch.sh ecwolf ecwolf_libretro_ps2 || { exit 1; }
 
+#tgbdual_libretro
+./cores/tgbdual_libretro.sh || { exit 1; }
+./generate_retroarch.sh tgbdual_libretro tgbdual_libretro_ps2 || { exit 1; }
+
 #race
 ./cores/race_libretro.sh || { exit 1; }
 ./generate_retroarch.sh race race_libretro_ps2 || { exit 1; }
