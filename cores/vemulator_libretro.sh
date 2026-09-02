@@ -16,9 +16,9 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Create ps2/sys/mman.h inside the repository folder
-mkdir -p ps2/sys
-cat << 'EOF' > ps2/sys/mman.h
+# Create sys/mman.h directly in the repository root so the existing -I. flag finds it automatically
+mkdir -p sys
+cat << 'EOF' > sys/mman.h
 #ifndef __PS2_SYS_MMAN_H__
 #define __PS2_SYS_MMAN_H__
 
@@ -54,12 +54,6 @@ static inline int msync(void *addr, size_t length, int flags) {
 
 #endif
 EOF
-
-# Ensure -Ips2 is added to the Makefile so the compiler finds the mock sys/mman.h
-if [ -f "Makefile" ]; then
-    sed -i 's|CFLAGS += |CFLAGS += -Ips2 |g' Makefile
-    sed -i 's|CXXFLAGS += |CXXFLAGS += -Ips2 |g' Makefile
-fi
 
 ## Compile core using native platform=ps2 support
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
