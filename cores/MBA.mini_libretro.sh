@@ -16,16 +16,29 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Use standard variable assignment in the Makefile to add ports include paths for zlib without breaking existing include directories
+# Fix GCC version check script/makefile command that crashes bc (e.g. empty or floating point version string)
 if [ -f "makefile" ]; then
-    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include -Isrc/emu |g' makefile
-    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include -Isrc/emu |g' makefile
+    sed -i 's/shell gcc/shell echo 11/g' makefile
+    sed -i 's/shell g++/shell echo 11/g' makefile
+    sed -i 's/`gcc/`echo 11/g' makefile
+    sed -i 's/`g++/`echo 11/g' makefile
 elif [ -f "Makefile" ]; then
-    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include -Isrc/emu |g' Makefile
-    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include -Isrc/emu |g' Makefile
+    sed -i 's/shell gcc/shell echo 11/g' Makefile
+    sed -i 's/shell g++/shell echo 11/g' Makefile
+    sed -i 's/`gcc/`echo 11/g' Makefile
+    sed -i 's/`g++/`echo 11/g' Makefile
 fi
 
-## Compile core using native platform=ps2 support without overriding entire INCPATH/CFLAGS variables
+# Ensure include paths for emulator core and zlib are fully registered in the makefile
+if [ -f "makefile" ]; then
+    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include -Isrc/emu -Isrc/lib/util |g' makefile
+    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include -Isrc/emu -Isrc/lib/util |g' makefile
+elif [ -f "Makefile" ]; then
+    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include -Isrc/emu -Isrc/lib/util |g' Makefile
+    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include -Isrc/emu -Isrc/lib/util |g' Makefile
+fi
+
+## Compile core using native platform=ps2 support
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
