@@ -11,6 +11,41 @@ if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
 fi
 
+mkdir -p ps2/sys
+cat << 'EOF' > ps2/sys/mman.h
+#ifndef __PS2_SYS_MMAN_H__
+#define __PS2_SYS_MMAN_H__
+
+#define PROT_READ       0x1
+#define PROT_WRITE      0x2
+#define MAP_SHARED      0x01
+#define MAP_PRIVATE     0x02
+#define MAP_ANONYMOUS   0x20
+#define MAP_FAILED      ((void *)-1)
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+static inline void* mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset) {
+    return MAP_FAILED;
+}
+
+static inline int munmap(void *addr, size_t length) {
+    return -1;
+}
+
+static inline int msync(void *addr, size_t length, int flags) {
+    return -1;
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
+EOF
+
 cd $REPO_FOLDER || { exit 1; }
 git fetch origin
 git reset --hard origin/${BRANCH_NAME}
