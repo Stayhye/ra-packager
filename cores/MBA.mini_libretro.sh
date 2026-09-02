@@ -16,26 +16,17 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Fix GCC version check script/makefile command that crashes bc (e.g. empty or floating point version string)
-if [ -f "makefile" ]; then
-    sed -i 's/shell gcc/shell echo 11/g' makefile
-    sed -i 's/shell g++/shell echo 11/g' makefile
-    sed -i 's/`gcc/`echo 11/g' makefile
-    sed -i 's/`g++/`echo 11/g' makefile
-elif [ -f "Makefile" ]; then
-    sed -i 's/shell gcc/shell echo 11/g' Makefile
-    sed -i 's/shell g++/shell echo 11/g' Makefile
-    sed -i 's/`gcc/`echo 11/g' Makefile
-    sed -i 's/`g++/`echo 11/g' Makefile
+# Copy zlib headers directly into src/emu/ so they are found immediately by the MAME build system
+if [ -d "/usr/local/ps2dev/ports/include" ]; then
+    cp -f /usr/local/ps2dev/ports/include/zlib.h src/emu/ 2>/dev/null || true
+    cp -f /usr/local/ps2dev/ports/include/zconf.h src/emu/ 2>/dev/null || true
 fi
 
-# Ensure include paths for emulator core and zlib are fully registered in the makefile
+# Ensure ports library path is available for linking
 if [ -f "makefile" ]; then
-    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include -Isrc/emu -Isrc/lib/util |g' makefile
-    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include -Isrc/emu -Isrc/lib/util |g' makefile
+    echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> makefile
 elif [ -f "Makefile" ]; then
-    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include -Isrc/emu -Isrc/lib/util |g' Makefile
-    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include -Isrc/emu -Isrc/lib/util |g' Makefile
+    echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> Makefile
 fi
 
 ## Compile core using native platform=ps2 support
