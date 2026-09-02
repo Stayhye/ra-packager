@@ -16,7 +16,7 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Create a robust, full zlib compatibility header in src/emu/ to supply all missing types, constants, and function prototypes
+# Create zlib.h compatibility header in src/emu/
 cat << 'EOF' > src/emu/zlib.h
 #ifndef __ZLIB_H__
 #define __ZLIB_H__
@@ -132,18 +132,26 @@ if [ -f "src/emu/validity.c" ]; then
     sed -i 's|UINT8.*your_ptr64_flag_is_wrong.*;|// &|g' src/emu/validity.c
 fi
 
+# Patch retrodir.c to fallback to standard stat/dirent definitions if 64-bit variants are incomplete or missing
+if [ -f "src/osd/retro/retrodir.c" ]; then
+    sed -i 's|typedef struct stat64 sdl_stat;|typedef struct stat sdl_stat;|g' src/osd/retro/retrodir.c
+    sed -i 's|typedef struct dirent64 sdl_dirent;|typedef struct dirent sdl_dirent;|g' src/osd/retro/retrodir.c
+    sed -i 's|#define sdl_stat_fn stat64|#define sdl_stat_fn stat|g' src/osd/retro/retrodir.c
+    sed -i 's|#define sdl_readdir readdir64|#define sdl_readdir readdir|g' src/osd/retro/retrodir.c
+fi
+
 # Disable -Werror and add compiler flags to handle modern GCC strictness on PS2 toolchain
 if [ -f "makefile" ]; then
     sed -i 's|-Werror||g' makefile
     sed -i 's|INCPATH  +=|INCPATH  += -Isrc/emu -I/usr/local/ps2dev/ports/include |g' makefile
-    echo "CFLAGS += -Wno-error -Wno-template-id-cdtor -Wno-mismatched-new-delete -Wno-narrowing" >> makefile
-    echo "CXXFLAGS += -Wno-error -Wno-template-id-cdtor -Wno-mismatched-new-delete -Wno-narrowing" >> makefile
+    echo "CFLAGS += -Wno-error -Wno-template-id-cdtor -Wno-mismatched-new-delete -Wno-narrowing -Wno-return-type" >> makefile
+    echo "CXXFLAGS += -Wno-error -Wno-template-id-cdtor -Wno-mismatched-new-delete -Wno-narrowing -Wno-return-type" >> makefile
     echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> makefile
 elif [ -f "Makefile" ]; then
     sed -i 's|-Werror||g' Makefile
     sed -i 's|INCPATH  +=|INCPATH  += -Isrc/emu -I/usr/local/ps2dev/ports/include |g' Makefile
-    echo "CFLAGS += -Wno-error -Wno-template-id-cdtor -Wno-mismatched-new-delete -Wno-narrowing" >> Makefile
-    echo "CXXFLAGS += -Wno-error -Wno-template-id-cdtor -Wno-mismatched-new-delete -Wno-narrowing" >> Makefile
+    echo "CFLAGS += -Wno-error -Wno-template-id-cdtor -Wno-mismatched-new-delete -Wno-narrowing -Wno-return-type" >> Makefile
+    echo "CXXFLAGS += -Wno-error -Wno-template-id-cdtor -Wno-mismatched-new-delete -Wno-narrowing -Wno-return-type" >> Makefile
     echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> Makefile
 fi
 
