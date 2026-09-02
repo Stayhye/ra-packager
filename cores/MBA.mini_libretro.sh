@@ -16,11 +16,43 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Copy zlib headers directly into src/emu/ and patch hash.c to use local include resolution
-if [ -d "/usr/local/ps2dev/ports/include" ]; then
-    cp -f /usr/local/ps2dev/ports/include/zlib.h src/emu/ 2>/dev/null || true
-    cp -f /usr/local/ps2dev/ports/include/zconf.h src/emu/ 2>/dev/null || true
-fi
+# Create a self-contained zlib.h compatibility header in src/emu/ to satisfy hash.c without external dependencies
+cat << 'EOF' > src/emu/zlib.h
+#ifndef __ZLIB_H__
+#define __ZLIB_H__
+
+#include <stddef.h>
+#include <stdint.h>
+
+typedef unsigned long uLong;
+typedef unsigned char Bytef;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+static inline uLong crc32(uLong crc, const Bytef *buf, unsigned int len) {
+    // Simple standalone CRC32 implementation for hashing fallback
+    unsigned int i;
+    unsigned long c = ~crc;
+    for (i = 0; i < len; i++) {
+        c ^= buf[i];
+        for (int j = 0; j < 8; j++) {
+            if (c & 1)
+                c = (c >> 1) ^ 0xEDB88320L;
+            else
+                c = c >> 1;
+        }
+    }
+    return ~c;
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
+EOF
 
 if [ -f "src/emu/hash.c" ]; then
     sed -i 's|#include <zlib.h>|#include "zlib.h"|g' src/emu/hash.c
@@ -28,10 +60,10 @@ fi
 
 # Inject ports include and library paths into Makefile
 if [ -f "makefile" ]; then
-    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include |g' makefile
+    sed -i 's|INCPATH  +=|INCPATH  += -Isrc/emu -I/usr/local/ps2dev/ports/include |g' makefile
     echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> makefile
 elif [ -f "Makefile" ]; then
-    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include |g' Makefile
+    sed -i 's|INCPATH  +=|INCPATH  += -Isrc/emu -I/usr/local/ps2dev/ports/include |g' Makefile
     echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> Makefile
 fi
 
