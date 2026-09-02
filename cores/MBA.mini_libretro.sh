@@ -157,7 +157,7 @@ fi
 
 ## Compile core using native platform=ps2 support
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -j $PROC_NR platform=ps2 || { exit 1; }
+make -j $PROC_NR platform=ps2 || { exit 1; } 
 
 cd .. || { exit 1; }  
 
