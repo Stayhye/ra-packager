@@ -16,16 +16,22 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Copy zlib headers directly into src/emu/ so they are found immediately by the MAME build system
+# Copy zlib headers directly into src/emu/ and patch hash.c to use local include resolution
 if [ -d "/usr/local/ps2dev/ports/include" ]; then
     cp -f /usr/local/ps2dev/ports/include/zlib.h src/emu/ 2>/dev/null || true
     cp -f /usr/local/ps2dev/ports/include/zconf.h src/emu/ 2>/dev/null || true
 fi
 
-# Ensure ports library path is available for linking
+if [ -f "src/emu/hash.c" ]; then
+    sed -i 's|#include <zlib.h>|#include "zlib.h"|g' src/emu/hash.c
+fi
+
+# Inject ports include and library paths into Makefile
 if [ -f "makefile" ]; then
+    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include |g' makefile
     echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> makefile
 elif [ -f "Makefile" ]; then
+    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include |g' Makefile
     echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> Makefile
 fi
 
