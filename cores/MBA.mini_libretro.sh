@@ -155,13 +155,13 @@ elif [ -f "Makefile" ]; then
     echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> Makefile
 fi
 
-# Patch retrofile.c to use standard 32-bit file functions (stat, open, fstat, pread, pwrite) instead of 64-bit variants which are not fully exposed in the PS2 newlib environment
+# Patch retrofile.c to use standard 32-bit file functions via clean pread64/pwrite64 wrapper macros
 if [ -f "src/osd/retro/retrofile.c" ]; then
     sed -i 's|struct stat64|struct stat|g' src/osd/retro/retrofile.c
     sed -i 's|open64|open|g' src/osd/retro/retrofile.c
     sed -i 's|fstat64|fstat|g' src/osd/retro/retrofile.c
-    sed -i 's|pread64|lseek(file->handle, offset, SEEK_SET); read|g' src/osd/retro/retrofile.c
-    sed -i 's|pwrite64|lseek(file->handle, offset, SEEK_SET); write|g' src/osd/retro/retrofile.c
+    sed -i '1i #define pread64(fd, buf, count, offset) (lseek((fd), (offset), SEEK_SET), read((fd), (buf), (count)))' src/osd/retro/retrofile.c
+    sed -i '1i #define pwrite64(fd, buf, count, offset) (lseek((fd), (offset), SEEK_SET), write((fd), (buf), (count)))' src/osd/retro/retrofile.c
 fi
 
 ## Compile core using native platform=ps2 support
