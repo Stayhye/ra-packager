@@ -16,24 +16,18 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Explicitly override CFLAGS, CXXFLAGS, and INCPATH in the makefile for zlib/ports
+# Use standard variable assignment in the Makefile to add ports include paths for zlib without breaking existing include directories
 if [ -f "makefile" ]; then
-    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include|g' makefile
-    sed -i 's|CXXFLAGS +=|CXXFLAGS += -I/usr/local/ps2dev/ports/include|g' makefile
-    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include|g' makefile
-    echo "CFLAGS += -I/usr/local/ps2dev/ports/include" >> makefile
-    echo "CXXFLAGS += -I/usr/local/ps2dev/ports/include" >> makefile
+    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include -Isrc/emu |g' makefile
+    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include -Isrc/emu |g' makefile
 elif [ -f "Makefile" ]; then
-    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include|g' Makefile
-    sed -i 's|CXXFLAGS +=|CXXFLAGS += -I/usr/local/ps2dev/ports/include|g' Makefile
-    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include|g' Makefile
-    echo "CFLAGS += -I/usr/local/ps2dev/ports/include" >> Makefile
-    echo "CXXFLAGS += -I/usr/local/ps2dev/ports/include" >> Makefile
+    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include -Isrc/emu |g' Makefile
+    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include -Isrc/emu |g' Makefile
 fi
 
-## Compile core using native platform=ps2 support with direct make variable overrides
-make -j $PROC_NR platform=ps2 CFLAGS="-O2 -I/usr/local/ps2dev/ports/include" CXXFLAGS="-O2 -I/usr/local/ps2dev/ports/include" INCPATH="-I/usr/local/ps2dev/ports/include" clean || { exit 1; }
-make -j $PROC_NR platform=ps2 CFLAGS="-O2 -I/usr/local/ps2dev/ports/include" CXXFLAGS="-O2 -I/usr/local/ps2dev/ports/include" INCPATH="-I/usr/local/ps2dev/ports/include" || { exit 1; }
+## Compile core using native platform=ps2 support without overriding entire INCPATH/CFLAGS variables
+make -j $PROC_NR platform=ps2 clean || { exit 1; }
+make -j $PROC_NR platform=ps2 || { exit 1; }
 
 cd .. || { exit 1; }
 
