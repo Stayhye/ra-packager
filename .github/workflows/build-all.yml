@@ -58,7 +58,8 @@ jobs:
           #[stella2014-libretro, stella2014_libretro_ps2],
           #[snes9x2002, snes9x2002_libretro_ps2],
           #[snes9x2010-libretro, snes9x2010_libretro_ps2], <--NOT WORKING
-          [tgbdual_libretro, tgbdual_libretro_ps2],
+          #[tgbdual_libretro, tgbdual_libretro_ps2],
+          [vemulator_libretro, vemulator_libretro_ps2],
           #[zc210-libretro, zc210-libretro_ps2],
         
          ]

@@ -13,6 +13,10 @@
 ./cores/tgbdual_libretro.sh || { exit 1; }
 ./generate_retroarch.sh tgbdual_libretro tgbdual_libretro_ps2 || { exit 1; }
 
+#vemulator_libretro
+./cores/vemulator_libretro.sh || { exit 1; }
+./generate_retroarch.sh vemulator_libretro vemulator_libretro_ps2 || { exit 1; }
+
 #race
 ./cores/race_libretro.sh || { exit 1; }
 ./generate_retroarch.sh race race_libretro_ps2 || { exit 1; }
