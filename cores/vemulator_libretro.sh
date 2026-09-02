@@ -11,13 +11,22 @@ if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
 fi
 
+cd $REPO_FOLDER || { exit 1; }
+git fetch origin
+git reset --hard origin/${BRANCH_NAME}
+git checkout ${BRANCH_NAME} || { exit 1; } 
+
+# Create ps2/sys/mman.h inside the repository folder
 mkdir -p ps2/sys
 cat << 'EOF' > ps2/sys/mman.h
 #ifndef __PS2_SYS_MMAN_H__
 #define __PS2_SYS_MMAN_H__
 
+#include <sys/types.h>
+
 #define PROT_READ       0x1
 #define PROT_WRITE      0x2
+#define PROT_EXEC       0x4
 #define MAP_SHARED      0x01
 #define MAP_PRIVATE     0x02
 #define MAP_ANONYMOUS   0x20
@@ -46,10 +55,11 @@ static inline int msync(void *addr, size_t length, int flags) {
 #endif
 EOF
 
-cd $REPO_FOLDER || { exit 1; }
-git fetch origin
-git reset --hard origin/${BRANCH_NAME}
-git checkout ${BRANCH_NAME} || { exit 1; } 
+# Ensure -Ips2 is added to the Makefile so the compiler finds the mock sys/mman.h
+if [ -f "Makefile" ]; then
+    sed -i 's|CFLAGS += |CFLAGS += -Ips2 |g' Makefile
+    sed -i 's|CXXFLAGS += |CXXFLAGS += -Ips2 |g' Makefile
+fi
 
 ## Compile core using native platform=ps2 support
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
@@ -61,4 +71,4 @@ cd .. || { exit 1; }
 cp -f "$REPO_FOLDER/vemulator_libretro_ps2.a" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p vemulator_libretro
-cp -f "$REPO_FOLDER/vemulator_libretro_ps2.a" vemulator_libretro_ps2.a || { exit 1; }
+cp -f "$REPO_FOLDER/vemulator_libretro_ps2.a" vemulator_libretro/vemulator_libretro_ps2.a || { exit 1; }
