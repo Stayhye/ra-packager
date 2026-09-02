@@ -39,6 +39,7 @@ jobs:
           #[mame2010-libretro, mame2010-libretro_ps2],
           #[mame2003-libretro, mame2003_libretro_ps2],
           #[mame2003-plus-libretro, mame2003-plus-libretro_ps2], <--NOT WORKING
+          [MBA.mini_libretro, MBA.mini_libretro_ps2],
           #[mgba, mgba_libretro_ps2],
           #[mednafen_gba_libretro, mednafen_gba_libretro_ps2],
           #[mednafen-pce-libretro, mednafen_pce_libretro_ps2],
@@ -59,7 +60,7 @@ jobs:
           #[snes9x2002, snes9x2002_libretro_ps2],
           #[snes9x2010-libretro, snes9x2010_libretro_ps2], <--NOT WORKING
           #[tgbdual_libretro, tgbdual_libretro_ps2],
-          [vemulator_libretro, vemulator_libretro_ps2],
+          #[vemulator_libretro, vemulator_libretro_ps2],
           #[zc210-libretro, zc210-libretro_ps2],
         
          ]
