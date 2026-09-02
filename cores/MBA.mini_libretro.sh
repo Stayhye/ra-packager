@@ -16,22 +16,24 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Inject PS2dev ports include and library paths into MAME-style makefile variables
+# Explicitly override CFLAGS, CXXFLAGS, and INCPATH in the makefile for zlib/ports
 if [ -f "makefile" ]; then
-    sed -i 's|INCPATH \+=|INCPATH += -I/usr/local/ps2dev/ports/include |g' makefile
-    sed -i 's|LIBS \+=|LIBS += -L/usr/local/ps2dev/ports/lib |g' makefile
-    echo "CCOMFLAGS += -I/usr/local/ps2dev/ports/include" >> makefile
-    echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> makefile
+    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include|g' makefile
+    sed -i 's|CXXFLAGS +=|CXXFLAGS += -I/usr/local/ps2dev/ports/include|g' makefile
+    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include|g' makefile
+    echo "CFLAGS += -I/usr/local/ps2dev/ports/include" >> makefile
+    echo "CXXFLAGS += -I/usr/local/ps2dev/ports/include" >> makefile
 elif [ -f "Makefile" ]; then
-    sed -i 's|INCPATH \+=|INCPATH += -I/usr/local/ps2dev/ports/include |g' Makefile
-    sed -i 's|LIBS \+=|LIBS += -L/usr/local/ps2dev/ports/lib |g' Makefile
-    echo "CCOMFLAGS += -I/usr/local/ps2dev/ports/include" >> Makefile
-    echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> Makefile
+    sed -i 's|CFLAGS   +=|CFLAGS   += -I/usr/local/ps2dev/ports/include|g' Makefile
+    sed -i 's|CXXFLAGS +=|CXXFLAGS += -I/usr/local/ps2dev/ports/include|g' Makefile
+    sed -i 's|INCPATH  +=|INCPATH  += -I/usr/local/ps2dev/ports/include|g' Makefile
+    echo "CFLAGS += -I/usr/local/ps2dev/ports/include" >> Makefile
+    echo "CXXFLAGS += -I/usr/local/ps2dev/ports/include" >> Makefile
 fi
 
-## Compile core using native platform=ps2 support with explicit include overrides
-make -j $PROC_NR platform=ps2 INCPATH="-I/usr/local/ps2dev/ports/include" clean || { exit 1; }
-make -j $PROC_NR platform=ps2 INCPATH="-I/usr/local/ps2dev/ports/include" || { exit 1; }
+## Compile core using native platform=ps2 support with direct make variable overrides
+make -j $PROC_NR platform=ps2 CFLAGS="-O2 -I/usr/local/ps2dev/ports/include" CXXFLAGS="-O2 -I/usr/local/ps2dev/ports/include" INCPATH="-I/usr/local/ps2dev/ports/include" clean || { exit 1; }
+make -j $PROC_NR platform=ps2 CFLAGS="-O2 -I/usr/local/ps2dev/ports/include" CXXFLAGS="-O2 -I/usr/local/ps2dev/ports/include" INCPATH="-I/usr/local/ps2dev/ports/include" || { exit 1; }
 
 cd .. || { exit 1; }
 
