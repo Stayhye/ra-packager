@@ -16,20 +16,22 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Inject PS2dev ports include and library paths into Makefile for zlib/dependencies
-if [ -f "Makefile" ]; then
-    echo "CFLAGS += -I/usr/local/ps2dev/ports/include" >> Makefile
-    echo "CXXFLAGS += -I/usr/local/ps2dev/ports/include" >> Makefile
-    echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> Makefile
-elif [ -f "makefile" ]; then
-    echo "CFLAGS += -I/usr/local/ps2dev/ports/include" >> makefile
-    echo "CXXFLAGS += -I/usr/local/ps2dev/ports/include" >> makefile
+# Inject PS2dev ports include and library paths into MAME-style makefile variables
+if [ -f "makefile" ]; then
+    sed -i 's|INCPATH \+=|INCPATH += -I/usr/local/ps2dev/ports/include |g' makefile
+    sed -i 's|LIBS \+=|LIBS += -L/usr/local/ps2dev/ports/lib |g' makefile
+    echo "CCOMFLAGS += -I/usr/local/ps2dev/ports/include" >> makefile
     echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> makefile
+elif [ -f "Makefile" ]; then
+    sed -i 's|INCPATH \+=|INCPATH += -I/usr/local/ps2dev/ports/include |g' Makefile
+    sed -i 's|LIBS \+=|LIBS += -L/usr/local/ps2dev/ports/lib |g' Makefile
+    echo "CCOMFLAGS += -I/usr/local/ps2dev/ports/include" >> Makefile
+    echo "LDFLAGS += -L/usr/local/ps2dev/ports/lib" >> Makefile
 fi
 
-## Compile core using native platform=ps2 support
-make -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -j $PROC_NR platform=ps2 || { exit 1; }
+## Compile core using native platform=ps2 support with explicit include overrides
+make -j $PROC_NR platform=ps2 INCPATH="-I/usr/local/ps2dev/ports/include" clean || { exit 1; }
+make -j $PROC_NR platform=ps2 INCPATH="-I/usr/local/ps2dev/ports/include" || { exit 1; }
 
 cd .. || { exit 1; }
 
