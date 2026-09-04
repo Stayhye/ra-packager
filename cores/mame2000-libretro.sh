@@ -19,16 +19,10 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 ## Compile core using native platform=ps2 support from the root directory
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-## Inspect binary size and sections locally in the script
+## Inspect binary size and sections locally in the script (without destroying symbols)
 FOUND_ARCHIVE=$(find . -name "*_ps2.a" | head -n 1)
 if [ -n "$FOUND_ARCHIVE" ]; then
-    echo "=== File Size Before Strip ==="
-    ls -lh "$FOUND_ARCHIVE"
-    
-    echo "=== Stripping Unneeded Symbols ==="
-    mips64r5900el-ps2-elf-strip --strip-all "$FOUND_ARCHIVE"
-    
-    echo "=== File Size After Strip ==="
+    echo "=== File Size ==="
     ls -lh "$FOUND_ARCHIVE"
     
     echo "=== Section Breakdown ==="
