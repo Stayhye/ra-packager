@@ -62,7 +62,6 @@ jobs:
           #[tgbdual_libretro, tgbdual_libretro_ps2],
           #[vemulator_libretro, vemulator_libretro_ps2],
           #[zc210-libretro, zc210-libretro_ps2],
-        
          ]
       fail-fast: false
 
@@ -105,6 +104,10 @@ jobs:
         rm -rf ecwolf/deps/SDL deps/SDL
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
+
+    - name: Strip ELF binary
+      run: |
+        find RA/ -name "*.elf" -exec mips64r5900el-ps2-elf-strip --strip-all {} + || true
 
     - name: Get short SHA
       id: slug
