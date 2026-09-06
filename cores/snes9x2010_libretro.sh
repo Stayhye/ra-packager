@@ -34,7 +34,7 @@ if [ -n "$FOUND_ARCHIVE" ]; then
     mips64r5900el-ps2-elf-nm --size-sort -S "$FOUND_ARCHIVE" | tail -n 20
 fi
 
-## Return back to the workspace root
+## Return back to the workspace root  
 cd .. || { exit 1; }
 
 ## Find and copy the generated archive
