@@ -47,6 +47,4 @@ fi
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p snes9x2010_libretro
-if [ "$FOUND_ARCHIVE" != "snes9x2010_libretro/snes9x2010_libretro_ps2.a" ]; then
-    cp -f "$FOUND_ARCHIVE" snes9x2010_libretro/snes9x2010_libretro_ps2.a || { exit 1; }
-fi
+cp -f "$FOUND_ARCHIVE" snes9x2010_libretro_ps2.a || { exit 1; }
