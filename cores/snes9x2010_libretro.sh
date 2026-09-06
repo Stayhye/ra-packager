@@ -3,7 +3,7 @@ Bash
 #!/bin/bash
 # package.sh 
 
-PROC_NR=$(getconf _NPROCESSORS_ONLN)
+PROC_NR=$(getconf _NPROCESSORS_ONLN) 
 
 REPO_URL="https://github.com/Stayhye/snes9x2010"
 REPO_FOLDER="snes9x2010_libretro"
