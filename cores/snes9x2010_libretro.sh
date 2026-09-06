@@ -30,7 +30,7 @@ if [ -n "$FOUND_ARCHIVE" ]; then
     echo "=== Section Breakdown ==="
     mips64r5900el-ps2-elf-size -A "$FOUND_ARCHIVE"
     
-    echo "=== Top 20 Largest Symbols ==="
+    echo "=== Top 20 Largest Symbols ===" 
     mips64r5900el-ps2-elf-nm --size-sort -S "$FOUND_ARCHIVE" | tail -n 20
 fi
 
