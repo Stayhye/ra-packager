@@ -3,7 +3,7 @@
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
-REPO_URL="https://github.com/Stayhye/geolith-libretro.git"   
+REPO_URL="https://github.com/Stayhye/geolith-libretro.git"    
 REPO_FOLDER="geolith-libretro"
 BRANCH_NAME="master"
 
@@ -16,7 +16,8 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core using native platform=ps2 support from the root directory
+## Enter the libretro folder where the Makefile is located and compile
+cd libretro || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
 ## Inspect binary size and sections locally in the script (without destroying symbols)
@@ -32,10 +33,10 @@ if [ -n "$FOUND_ARCHIVE" ]; then
     mips64r5900el-ps2-elf-nm --size-sort -S "$FOUND_ARCHIVE" | tail -n 20
 fi
 
-## Return back to the workspace root
-cd .. || { exit 1; }
+## Return back to the workspace root (out of libretro and repo folder)
+cd ../.. || { exit 1; }
 
-## Find and copy the generated archive
+## Find and copy the generated archive from within the repository structure
 FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_ps2.a" | head -n 1)
 if [ -z "$FOUND_ARCHIVE" ]; then
     echo "Error: Could not find generated static archive (*_ps2.a)"
