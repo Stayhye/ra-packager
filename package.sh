@@ -9,6 +9,10 @@
 ./cores/ecwolf.sh || { exit 1; }
 ./generate_retroarch.sh ecwolf ecwolf_libretro_ps2 || { exit 1; }
 
+#dosbox-libretro
+./cores/dosbox-libretro.sh || { exit 1; }
+./generate_retroarch.sh dosbox_libretro dosbox_libretro_ps2 || { exit 1; }
+
 #geolith-libretro
 ./cores/geolith-libretro.sh || { exit 1; }
 ./generate_retroarch.sh geolith_libretro geolith_libretro_ps2 || { exit 1; }
