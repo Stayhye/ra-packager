@@ -18,14 +18,15 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 
 cd libretro || { exit 1; }
 
-# Dynamically patch the Makefile to include PS2SDK ports zlib path for the PS2 platform block
+# Dynamically patch Makefile to include zlib search paths for the PS2 target
 if [ -f "Makefile" ]; then
     sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include\n    CXXFLAGS += -I$(PS2SDK)/ports/include' Makefile || true
 fi
 
-make -j $PROC_NR platform=ps2 || { exit 1; }
+# Compile core with LTO explicitly disabled to prevent slim bytecode generation (.a stub failures)
+make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 || { exit 1; }
 
-## Inspect binary size and sections locally in the script (without destroying symbols)
+## Inspect binary size and sections locally in the script
 FOUND_ARCHIVE=$(find . -name "*_ps2.a" | head -n 1)
 if [ -n "$FOUND_ARCHIVE" ]; then
     echo "=== File Size ==="
