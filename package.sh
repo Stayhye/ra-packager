@@ -9,6 +9,10 @@
 ./cores/ecwolf.sh || { exit 1; }
 ./generate_retroarch.sh ecwolf ecwolf_libretro_ps2 || { exit 1; }
 
+#quasi88-libretro
+./cores/quasi88-libretro.sh || { exit 1; }
+./generate_retroarch.sh quasi88_libretro quasi88_libretro_ps2 || { exit 1; }
+
 #tgbdual_libretro
 ./cores/tgbdual_libretro.sh || { exit 1; }
 ./generate_retroarch.sh tgbdual_libretro tgbdual_libretro_ps2 || { exit 1; }
