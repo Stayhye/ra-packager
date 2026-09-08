@@ -16,9 +16,14 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Enter the libretro folder and compile with the ps2sdk ports zlib include path passed to make
 cd libretro || { exit 1; }
-make -j $PROC_NR platform=ps2 EXTRA_CFLAGS="-I$(PS2SDK)/ports/include" || { exit 1; }
+
+# Dynamically patch the Makefile to include PS2SDK ports zlib path for the PS2 platform block
+if [ -f "Makefile" ]; then
+    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include\n    CXXFLAGS += -I$(PS2SDK)/ports/include' Makefile || true
+fi
+
+make -j $PROC_NR platform=ps2 || { exit 1; }
 
 ## Inspect binary size and sections locally in the script (without destroying symbols)
 FOUND_ARCHIVE=$(find . -name "*_ps2.a" | head -n 1)
