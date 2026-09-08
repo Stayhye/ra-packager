@@ -18,19 +18,19 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 
 cd libretro || { exit 1; }
 
-# Dynamically patch Makefile to include zlib search paths for the PS2 target
+# Patch Makefile to inject zlib search path and force-disable LTO across compilation flags and ar/ranlib tool selection
 if [ -f "Makefile" ]; then
-    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include\n    CXXFLAGS += -I$(PS2SDK)/ports/include' Makefile || true
+    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include -fno-lto\n    CXXFLAGS += -I$(PS2SDK)/ports/include -fno-lto\n    LDFLAGS += -fno-lto\n    AR = mips64r5900el-ps2-elf-ar\n    RANLIB = mips64r5900el-ps2-elf-ranlib' Makefile || true
 fi
 
-# Compile core with LTO explicitly disabled to prevent slim bytecode generation (.a stub failures)
+# Compile core cleanly with LTO disabled entirely
 make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 || { exit 1; }
 
 ## Inspect binary size and sections locally in the script
 FOUND_ARCHIVE=$(find . -name "*_ps2.a" | head -n 1)
 
 ## Return back to the workspace root
-cd ../.. || { exit 1; }
+cd .. || { exit 1; }
 
 ## Find and copy the generated archive
 FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_ps2.a" | head -n 1)
@@ -42,4 +42,4 @@ fi
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p geolith_libretro
-cp -f "$FOUND_ARCHIVE" geolith_libretro_ps2.a || { exit 1; }
+cp -f "$FOUND_ARCHIVE" geolith_libretro/geolith_libretro_ps2.a || { exit 1; }
