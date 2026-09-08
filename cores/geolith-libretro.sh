@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/geolith-libretro.git"    
-REPO_FOLDER="geolith-libretro"
+REPO_FOLDER="geolith_libretro"
 BRANCH_NAME="master"
 
 if test ! -d "$REPO_FOLDER"; then
