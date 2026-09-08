@@ -33,8 +33,8 @@ if [ -n "$FOUND_ARCHIVE" ]; then
     mips64r5900el-ps2-elf-nm --size-sort -S "$FOUND_ARCHIVE" | tail -n 20
 fi
 
-## Return back to the workspace root (out of libretro and repo folder)
-cd ../.. || { exit 1; }
+## Return back to the workspace root
+cd .. || { exit 1; }
 
 ## Find and copy the generated archive from within the repository structure
 FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_ps2.a" | head -n 1)
