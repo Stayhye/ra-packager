@@ -16,9 +16,9 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Enter the libretro folder where the Makefile is located and compile
+## Enter the libretro folder and compile with the ps2sdk ports zlib include path passed to make
 cd libretro || { exit 1; }
-make -j $PROC_NR platform=ps2 || { exit 1; }
+make -j $PROC_NR platform=ps2 EXTRA_CFLAGS="-I$(PS2SDK)/ports/include" || { exit 1; }
 
 ## Inspect binary size and sections locally in the script (without destroying symbols)
 FOUND_ARCHIVE=$(find . -name "*_ps2.a" | head -n 1)
@@ -34,9 +34,9 @@ if [ -n "$FOUND_ARCHIVE" ]; then
 fi
 
 ## Return back to the workspace root
-cd .. || { exit 1; }
+cd ../.. || { exit 1; }
 
-## Find and copy the generated archive from within the repository structure
+## Find and copy the generated archive
 FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_ps2.a" | head -n 1)
 if [ -z "$FOUND_ARCHIVE" ]; then
     echo "Error: Could not find generated static archive (*_ps2.a)"
