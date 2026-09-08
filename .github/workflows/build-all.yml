@@ -25,7 +25,7 @@ jobs:
           #[fbalpha2012_cps2, fbalpha2012_cps2_libretro_ps2],
           #[gambatte-libretro, gambatte_libretro_ps2],
           #[geargrafx, geargrafx_libretro_ps2],
-          [geolith-libretro, geolith-libretro_ps2],
+          [geolith-libretro, geolith_libretro_ps2],
           #[genesis_plus_gx_libretro, genesis_plus_gx_libretro_ps2],
           #[gpsp, gpsp_libretro_ps2],
           #[gw-libretro, gw-libretro_ps2],
