@@ -21,7 +21,7 @@ jobs:
           #[bsnes-libretro, bsnes_libretro_ps2],
           #[dice-libretro, dice_libretro_ps2],
           #[ecwolf, ecwolf_libretro_ps2],
-          #[fbalpha2012_cps1, fbalpha2012_cps1_libretro_ps2],
+          [fbalpha2012_cps1, fbalpha2012_cps1_libretro_ps2],
           #[fbalpha2012_cps2, fbalpha2012_cps2_libretro_ps2],
           #[gambatte-libretro, gambatte_libretro_ps2],
           #[geargrafx, geargrafx_libretro_ps2],
