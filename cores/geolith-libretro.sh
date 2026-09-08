@@ -16,44 +16,36 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
+# Recursively strip any occurrence of -flto from all Makefiles and config files to avoid LTO plugin requirements
+find . -type f \( -name "Makefile*" -o -name "*.mk" -o -name "config.mk" \) -exec sed -i 's/-flto//g' {} + || true
+
 cd libretro || { exit 1; }
 
-# Patch Makefile to inject zlib paths and strip out all occurrences of -flto across build flags
+# Patch Makefile to inject zlib search path and explicitly force AR/RANLIB and disable LTO flags
 if [ -f "Makefile" ]; then
-    sed -i 's/-flto//g' Makefile || true
-    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include\n    CXXFLAGS += -I$(PS2SDK)/ports/include\n    AR = mips64r5900el-ps2-elf-ar\n    RANLIB = mips64r5900el-ps2-elf-ranlib' Makefile || true
+    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include\n    CXXFLAGS += -I$(PS2SDK)/ports/include\n    AR = mips64r5900el-ps2-elf-ar\n    RANLIB = mips64r5900el-ps2-elf-ranlib\n    HAVE_LTO = 0' Makefile || true
 fi
 
-# Clean previous build artifacts that contain LTO wrapper bytecode
+# Clean previous build artifacts completely
 make clean platform=ps2 || true
 
-# Compile core cleanly without LTO
-make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 || { exit 1; }
+# Compile core with LTO disabled entirely across all option variables
+make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 || { exit 1; }
 
 ## Inspect binary size and sections locally in the script
-FOUND_ARCHIVE=$(find . -name "*_ps2.a" | head -n 1)
-if [ -n "$FOUND_ARCHIVE" ]; then
-    echo "=== File Size ==="
-    ls -lh "$FOUND_ARCHIVE"
-    
-    echo "=== Section Breakdown ==="
-    mips64r5900el-ps2-elf-size -A "$FOUND_ARCHIVE"
-    
-    echo "=== Top 20 Largest Symbols ==="
-    mips64r5900el-ps2-elf-nm --size-sort -S "$FOUND_ARCHIVE" | tail -n 20
-fi
+FOUND_ARCHIVE=$(find . -name "*.a" | head -n 1)
 
 ## Return back to the workspace root
 cd ../.. || { exit 1; }
 
 ## Find and copy the generated archive
-FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_ps2.a" | head -n 1)
+FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*.a" | head -n 1)
 if [ -z "$FOUND_ARCHIVE" ]; then
-    echo "Error: Could not find generated static archive (*_ps2.a)"
+    echo "Error: Could not find generated static archive (*.a)"
     exit 1
 fi
 
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
-mkdir -p geolith_libretro
-cp -f "$FOUND_ARCHIVE" geolith_libretro/geolith_libretro_ps2.a || { exit 1; }
+mkdir -p geolith-libretro
+cp -f "$FOUND_ARCHIVE" geolith-libretro/geolith_libretro_ps2.a || { exit 1; }
