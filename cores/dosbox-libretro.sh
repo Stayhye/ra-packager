@@ -19,8 +19,6 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Recursively strip any occurrence of -flto from all Makefiles and config files to avoid LTO plugin requirements
 find . -type f \( -name "Makefile*" -o -name "*.mk" -o -name "config.mk" \) -exec sed -i 's/-flto//g' {} + || true
 
-cd libretro || { exit 1; }
-
 # Patch Makefile to inject zlib search path and explicitly force AR/RANLIB and disable LTO flags
 if [ -f "Makefile" ]; then
     sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include\n    CXXFLAGS += -I$(PS2SDK)/ports/include\n    AR = mips64r5900el-ps2-elf-ar\n    RANLIB = mips64r5900el-ps2-elf-ranlib\n    HAVE_LTO = 0' Makefile || true
