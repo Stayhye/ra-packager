@@ -42,4 +42,4 @@ fi
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p geolith_libretro
-cp -f "$FOUND_ARCHIVE" geolith_libretro/geolith_libretro_ps2.a || { exit 1; }
+cp -f "$FOUND_ARCHIVE" geolith_libretro_ps2.a || { exit 1; }
