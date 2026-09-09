@@ -16,22 +16,24 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-# Recursively strip any occurrence of -flto from all Makefiles and config files to avoid LTO plugin requirements
+# Recursively strip any occurrence of -flto from all Makefiles and config files
 find . -type f \( -name "Makefile*" -o -name "*.mk" -o -name "config.mk" \) -exec sed -i 's/-flto//g' {} + || true
 
-# Patch Makefile to inject zlib search path and explicitly force AR/RANLIB and disable LTO flags
+# Patch Makefile to inject PS2 paths, compilation flags, and prevent endian.h missing errors
 if [ -f "Makefile" ]; then
-    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include\n    CXXFLAGS += -I$(PS2SDK)/ports/include\n    AR = mips64r5900el-ps2-elf-ar\n    RANLIB = mips64r5900el-ps2-elf-ranlib\n    HAVE_LTO = 0' Makefile || true
+    sed -i '/ifeq ($(platform), ps2)/a \
+	CFLAGS += -I$(PS2SDK)/ports/include -D__LITTLE_ENDIAN__=1\n\
+	CXXFLAGS += -I$(PS2SDK)/ports/include -D__linux__ -D__mips__ -D_MIPS_ARCH_R5900 -DARCH_LITTLE_ENDIAN -D__LITTLE_ENDIAN__=1 -DNO_DLFCN\n\
+	AR = mips64r5900el-ps2-elf-ar\n\
+	RANLIB = mips64r5900el-ps2-elf-ranlib\n\
+	HAVE_LTO = 0' Makefile || true
 fi
 
 # Clean previous build artifacts completely
 make clean platform=ps2 || true
 
-# Compile core with LTO disabled entirely across all option variables
+# Compile core with LTO disabled entirely
 make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 || { exit 1; }
-
-## Inspect binary size and sections locally in the script
-FOUND_ARCHIVE=$(find . -name "*.a" | head -n 1)
 
 ## Return back to the workspace root
 cd ../.. || { exit 1; }
