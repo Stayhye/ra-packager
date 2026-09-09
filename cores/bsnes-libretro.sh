@@ -19,7 +19,7 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Recursively strip any occurrence of -flto and -Werror from all Makefiles and config files
 find . -type f \( -name "Makefile*" -o -name "*.mk" -o -name "config.mk" \) -exec sed -i 's/-flto//g; s/-Werror//g' {} + || true
 
-# Create a robust local stub include directory for missing POSIX memory and directory mapping APIs
+# Create a robust local stub include directory for missing POSIX memory, directory, group, and file APIs
 mkdir -p stub_include/sys
 mkdir -p stub_include/netinet
 
@@ -50,9 +50,36 @@ cat << 'EOF' > stub_include/dirent.h
 #endif
 EOF
 
+cat << 'EOF' > stub_include/grp.h
+#ifndef _STUB_GRP_H
+#define _STUB_GRP_H
+struct group { int gr_gid; };
+inline struct group* getgrnam(const char*) { return nullptr; }
+#endif
+EOF
+
+cat << 'EOF' > stub_include/unistd.h
+#ifndef _STUB_UNISTD_H
+#define _STUB_UNISTD_H
+#include_next <unistd.h>
+#ifndef ftruncate
+#define ftruncate(fd, size) (0)
+#endif
+#endif
+EOF
+
+cat << 'EOF' > stub_include/stdio.h
+#ifndef _STUB_STDIO_H
+#define _STUB_STDIO_H
+#include_next <stdio.h>
+#ifndef fileno
+#define fileno(stream) (-1)
+#endif
+#endif
+EOF
+
 touch stub_include/dlfcn.h
 touch stub_include/pwd.h
-touch stub_include/grp.h
 touch stub_include/poll.h
 touch stub_include/netdb.h
 touch stub_include/netinet/in.h
