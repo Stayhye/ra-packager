@@ -19,10 +19,19 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Recursively strip any occurrence of -flto from all Makefiles and config files
 find . -type f \( -name "Makefile*" -o -name "*.mk" -o -name "config.mk" \) -exec sed -i 's/-flto//g' {} + || true
 
-# Patch Makefile to inject PS2 paths, compilation flags, and prevent endian.h missing errors
+# Patch nall/intrinsics.hpp to force MIPS architecture detection and avoid endian.h
+if [ -f "nall/intrinsics.hpp" ]; then
+    sed -i '/#include <endian.h>/i \
+#define ARCH_MIPS 1\n\
+#define ARCH_LITTLE_ENDIAN 1\n\
+#define __LITTLE_ENDIAN__ 1\n' nall/intrinsics.hpp || true
+    sed -i 's/#include <endian.h>/\/\/#include <endian.h>/g' nall/intrinsics.hpp || true
+fi
+
+# Patch Makefile to inject PS2 paths, compilation flags, and disable LTO
 if [ -f "Makefile" ]; then
     sed -i '/ifeq ($(platform), ps2)/a \
-	CFLAGS += -I$(PS2SDK)/ports/include -D__LITTLE_ENDIAN__=1\n\
+	CFLAGS += -I$(PS2SDK)/ports/include\n\
 	CXXFLAGS += -I$(PS2SDK)/ports/include -D__linux__ -D__mips__ -D_MIPS_ARCH_R5900 -DARCH_LITTLE_ENDIAN -D__LITTLE_ENDIAN__=1 -DNO_DLFCN\n\
 	AR = mips64r5900el-ps2-elf-ar\n\
 	RANLIB = mips64r5900el-ps2-elf-ranlib\n\
