@@ -50,12 +50,17 @@ if [ -f "nall/intrinsics.hpp" ]; then
     sed -i 's/#include <endian.h>/\/\/#include <endian.h>/g' nall/intrinsics.hpp || true
 fi
 
-# Patch Makefile to inject stub include path, PS2 paths, compilation flags (ignoring reorder/pointer warnings), and disable LTO
+# Patch nall/primitives/integer.hpp to fix parentheses warning/error
+if [ -f "nall/primitives/integer.hpp" ]; then
+    sed -i 's/1ull << Precision - 1/1ull << (Precision - 1)/g' nall/primitives/integer.hpp || true
+fi
+
+# Patch Makefile to inject stub include path, PS2 paths, compilation flags, and disable LTO
 if [ -f "Makefile" ]; then
     STUB_DIR="$(pwd)/stub_include"
     sed -i "/ifeq (\$(platform), ps2)/a \\
-	CFLAGS += -I\$(PS2SDK)/ports/include -I${STUB_DIR} -DPLATFORM_PS2=1 -D__LITTLE_ENDIAN__=1 -Wno-error\\n\\
-	CXXFLAGS += -I\$(PS2SDK)/ports/include -I${STUB_DIR} -DPLATFORM_PS2=1 -D__linux__ -D__mips__ -D_MIPS_ARCH_R5900 -DARCH_LITTLE_ENDIAN -D__LITTLE_ENDIAN__=1 -DNO_DLFCN -Wno-error -Wno-reorder\\n\\
+	CFLAGS += -I\$(PS2SDK)/ports/include -I${STUB_DIR} -DPLATFORM_PS2=1 -D__LITTLE_ENDIAN__=1 -w\\n\\
+	CXXFLAGS += -I\$(PS2SDK)/ports/include -I${STUB_DIR} -DPLATFORM_PS2=1 -D__linux__ -D__mips__ -D_MIPS_ARCH_R5900 -DARCH_LITTLE_ENDIAN -D__LITTLE_ENDIAN__=1 -DNO_DLFCN -w\\n\\
 	AR = mips64r5900el-ps2-elf-ar\\n\\
 	RANLIB = mips64r5900el-ps2-elf-ranlib\\n\\
 	HAVE_LTO = 0" Makefile || true
@@ -64,7 +69,7 @@ fi
 # Clean previous build artifacts completely
 make clean platform=ps2 || true
 
-# Compile core with LTO disabled entirely
+# Compile core with LTO disabled entirely and warnings suppressed
 make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 || { exit 1; }
 
 ## Return back to the workspace root
