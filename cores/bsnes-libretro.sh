@@ -28,11 +28,13 @@ if [ -f "nall/intrinsics.hpp" ]; then
     sed -i 's/#include <endian.h>/\/\/#include <endian.h>/g' nall/intrinsics.hpp || true
 fi
 
-# Patch nall/platform.hpp to bypass missing dlfcn.h, pwd.h, and grp.h on PS2
+# Patch nall/platform.hpp to bypass missing dlfcn.h, pwd.h, grp.h, and socket headers on PS2
 if [ -f "nall/platform.hpp" ]; then
     sed -i 's/#include <dlfcn.h>/#if !defined(PLATFORM_PS2)\n  #include <dlfcn.h>\n#endif/' nall/platform.hpp || true
     sed -i '/#include <pwd.h>/d' nall/platform.hpp || true
     sed -i '/#include <grp.h>/d' nall/platform.hpp || true
+    sed -i '/#include <sys\/socket.h>/i #if !defined(PLATFORM_PS2)' nall/platform.hpp || true
+    sed -i '/#include <poll.h>/a #endif' nall/platform.hpp || true
 fi
 
 # Patch Makefile to inject PS2 paths, compilation flags, platform definition, and disable LTO
