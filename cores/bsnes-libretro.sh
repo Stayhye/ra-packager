@@ -37,6 +37,11 @@ if [ -f "nall/platform.hpp" ]; then
     sed -i '/#include <poll.h>/a #endif' nall/platform.hpp || true
 fi
 
+# Patch nall/dl.hpp to guard dlfcn.h inclusion on PS2 / NO_DLFCN
+if [ -f "nall/dl.hpp" ]; then
+    sed -i 's/#include <dlfcn.h>/#if !defined(PLATFORM_PS2) \&\& !defined(NO_DLFCN)\n#include <dlfcn.h>\n#endif/' nall/dl.hpp || true
+fi
+
 # Patch Makefile to inject PS2 paths, compilation flags, platform definition, and disable LTO
 if [ -f "Makefile" ]; then
     sed -i '/ifeq ($(platform), ps2)/a \
