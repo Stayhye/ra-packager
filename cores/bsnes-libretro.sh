@@ -19,8 +19,10 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Recursively strip any occurrence of -flto from all Makefiles and config files
 find . -type f \( -name "Makefile*" -o -name "*.mk" -o -name "config.mk" \) -exec sed -i 's/-flto//g' {} + || true
 
-# Create a local stub include directory to satisfy missing POSIX/Linux headers on PS2 newlib
+# Create a local stub include directory with all required missing POSIX headers
 mkdir -p stub_include/sys
+mkdir -p stub_include/netinet
+
 echo "#ifndef _SYS_MMAN_H" > stub_include/sys/mman.h
 echo "#define _SYS_MMAN_H" >> stub_include/sys/mman.h
 echo "#define PROT_READ 1" >> stub_include/sys/mman.h
@@ -34,8 +36,8 @@ touch stub_include/dlfcn.h
 touch stub_include/pwd.h
 touch stub_include/grp.h
 touch stub_include/poll.h
-
-mkdir -p stub_include/sys
+touch stub_include/netdb.h
+touch stub_include/netinet/in.h
 touch stub_include/sys/socket.h
 touch stub_include/sys/wait.h
 
