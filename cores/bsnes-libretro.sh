@@ -19,7 +19,7 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Recursively strip any occurrence of -flto and -Werror from all Makefiles and config files
 find . -type f \( -name "Makefile*" -o -name "*.mk" -o -name "config.mk" \) -exec sed -i 's/-flto//g; s/-Werror//g' {} + || true
 
-# Create a robust local stub include directory for missing POSIX memory, directory, user/group, and dynamic loading APIs
+# Create a clean stub include directory
 mkdir -p stub_include/sys
 mkdir -p stub_include/netinet
 
@@ -37,73 +37,12 @@ inline int munmap(void* addr, size_t length) { return -1; }
 #endif
 EOF
 
-cat << 'EOF' > stub_include/dirent.h
-#ifndef _STUB_DIRENT_H
-#define _STUB_DIRENT_H
-#include_next <dirent.h>
-#ifndef dirfd
-#define dirfd(dir) (-1)
-#endif
-#ifndef fstatat
-#define fstatat(dirfd, path, buf, flags) stat(path, buf)
-#endif
-#endif
-EOF
-
-cat << 'EOF' > stub_include/grp.h
-#ifndef _STUB_GRP_H
-#define _STUB_GRP_H
-struct group { int gr_gid; char* gr_name; };
-inline struct group* getgrnam(const char*) { return nullptr; }
-inline struct group* getgrgid(int) { return nullptr; }
-#endif
-EOF
-
-cat << 'EOF' > stub_include/pwd.h
-#ifndef _STUB_PWD_H
-#define _STUB_PWD_H
-struct passwd { int pw_uid; char* pw_name; char* pw_dir; };
-inline struct passwd* getpwuid(int) { return nullptr; }
-inline struct passwd* getpwnam(const char*) { return nullptr; }
-#endif
-EOF
-
-cat << 'EOF' > stub_include/dlfcn.h
-#ifndef _STUB_DLFCN_H
-#define _STUB_DLFCN_H
-#define RTLD_LAZY 1
-#define RTLD_NOW 2
-struct Dl_info { const char* dli_fname; void* dli_fbase; const char* dli_sname; void* dli_saddr; };
-inline void* dlopen(const char*, int) { return nullptr; }
-inline int dlclose(void*) { return 0; }
-inline void* dlsym(void*, const char*) { return nullptr; }
-inline int dladdr(const void*, Dl_info*) { return 0; }
-#endif
-EOF
-
-cat << 'EOF' > stub_include/unistd.h
-#ifndef _STUB_UNISTD_H
-#define _STUB_UNISTD_H
-#include_next <unistd.h>
-#ifndef ftruncate
-#define ftruncate(fd, size) (0)
-#endif
-#ifndef realpath
-#define realpath(path, resolved) (NULL)
-#endif
-#endif
-EOF
-
-cat << 'EOF' > stub_include/stdio.h
-#ifndef _STUB_STDIO_H
-#define _STUB_STDIO_H
-#include_next <stdio.h>
-#ifndef fileno
-#define fileno(stream) (-1)
-#endif
-#endif
-EOF
-
+touch stub_include/dlfcn.h
+touch stub_include/pwd.h
+touch stub_include/grp.h
+touch stub_include/dirent.h
+touch stub_include/unistd.h
+touch stub_include/stdio.h
 touch stub_include/poll.h
 touch stub_include/netdb.h
 touch stub_include/netinet/in.h
@@ -119,12 +58,12 @@ if [ -f "nall/intrinsics.hpp" ]; then
     sed -i 's/#include <endian.h>/\/\/#include <endian.h>/g' nall/intrinsics.hpp || true
 fi
 
-# Patch nall/primitives/integer.hpp to fix parentheses warning/error
+# Patch nall/primitives/integer.hpp to fix parentheses warning
 if [ -f "nall/primitives/integer.hpp" ]; then
     sed -i 's/1ull << Precision - 1/1ull << (Precision - 1)/g' nall/primitives/integer.hpp || true
 fi
 
-# Patch Makefile to inject stub include path, PS2 paths, compilation flags, and disable LTO
+# Patch Makefile to inject stub include path, PS2 paths, and disable LTO / warnings-as-errors
 if [ -f "Makefile" ]; then
     STUB_DIR="$(pwd)/stub_include"
     sed -i "/ifeq (\$(platform), ps2)/a \\
