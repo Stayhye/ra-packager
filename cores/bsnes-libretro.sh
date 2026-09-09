@@ -19,18 +19,36 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Recursively strip any occurrence of -flto and -Werror from all Makefiles and config files
 find . -type f \( -name "Makefile*" -o -name "*.mk" -o -name "config.mk" \) -exec sed -i 's/-flto//g; s/-Werror//g' {} + || true
 
-# Create a local stub include directory with all required missing POSIX headers
+# Create a robust local stub include directory for missing POSIX memory and directory mapping APIs
 mkdir -p stub_include/sys
 mkdir -p stub_include/netinet
 
-echo "#ifndef _SYS_MMAN_H" > stub_include/sys/mman.h
-echo "#define _SYS_MMAN_H" >> stub_include/sys/mman.h
-echo "#define PROT_READ 1" >> stub_include/sys/mman.h
-echo "#define MAP_SHARED 1" >> stub_include/sys/mman.h
-echo "#define MAP_FAILED ((void*)-1)" >> stub_include/sys/mman.h
-echo "inline void* mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) { return MAP_FAILED; }" >> stub_include/sys/mman.h
-echo "inline int munmap(void* addr, size_t length) { return -1; }" >> stub_include/sys/mman.h
-echo "#endif" >> stub_include/sys/mman.h
+cat << 'EOF' > stub_include/sys/mman.h
+#ifndef _SYS_MMAN_H
+#define _SYS_MMAN_H
+#define PROT_READ 1
+#define PROT_WRITE 2
+#define PROT_EXEC 4
+#define MAP_SHARED 1
+#define MAP_PRIVATE 2
+#define MAP_FAILED ((void*)-1)
+inline void* mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) { return MAP_FAILED; }
+inline int munmap(void* addr, size_t length) { return -1; }
+#endif
+EOF
+
+cat << 'EOF' > stub_include/dirent.h
+#ifndef _STUB_DIRENT_H
+#define _STUB_DIRENT_H
+#include_next <dirent.h>
+#ifndef dirfd
+#define dirfd(dir) (-1)
+#endif
+#ifndef fstatat
+#define fstatat(dirfd, path, buf, flags) stat(path, buf)
+#endif
+#endif
+EOF
 
 touch stub_include/dlfcn.h
 touch stub_include/pwd.h
