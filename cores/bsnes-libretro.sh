@@ -19,7 +19,7 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Recursively strip any occurrence of -flto and -Werror from all Makefiles and config files
 find . -type f \( -name "Makefile*" -o -name "*.mk" -o -name "config.mk" \) -exec sed -i 's/-flto//g; s/-Werror//g' {} + || true
 
-# Create a robust local stub include directory for missing POSIX memory, directory, group, and file APIs
+# Create a robust local stub include directory for missing POSIX memory, directory, user/group, and dynamic loading APIs
 mkdir -p stub_include/sys
 mkdir -p stub_include/netinet
 
@@ -53,8 +53,31 @@ EOF
 cat << 'EOF' > stub_include/grp.h
 #ifndef _STUB_GRP_H
 #define _STUB_GRP_H
-struct group { int gr_gid; };
+struct group { int gr_gid; char* gr_name; };
 inline struct group* getgrnam(const char*) { return nullptr; }
+inline struct group* getgrgid(int) { return nullptr; }
+#endif
+EOF
+
+cat << 'EOF' > stub_include/pwd.h
+#ifndef _STUB_PWD_H
+#define _STUB_PWD_H
+struct passwd { int pw_uid; char* pw_name; char* pw_dir; };
+inline struct passwd* getpwuid(int) { return nullptr; }
+inline struct passwd* getpwnam(const char*) { return nullptr; }
+#endif
+EOF
+
+cat << 'EOF' > stub_include/dlfcn.h
+#ifndef _STUB_DLFCN_H
+#define _STUB_DLFCN_H
+#define RTLD_LAZY 1
+#define RTLD_NOW 2
+struct Dl_info { const char* dli_fname; void* dli_fbase; const char* dli_sname; void* dli_saddr; };
+inline void* dlopen(const char*, int) { return nullptr; }
+inline int dlclose(void*) { return 0; }
+inline void* dlsym(void*, const char*) { return nullptr; }
+inline int dladdr(const void*, Dl_info*) { return 0; }
 #endif
 EOF
 
@@ -64,6 +87,9 @@ cat << 'EOF' > stub_include/unistd.h
 #include_next <unistd.h>
 #ifndef ftruncate
 #define ftruncate(fd, size) (0)
+#endif
+#ifndef realpath
+#define realpath(path, resolved) (NULL)
 #endif
 #endif
 EOF
@@ -78,8 +104,6 @@ cat << 'EOF' > stub_include/stdio.h
 #endif
 EOF
 
-touch stub_include/dlfcn.h
-touch stub_include/pwd.h
 touch stub_include/poll.h
 touch stub_include/netdb.h
 touch stub_include/netinet/in.h
