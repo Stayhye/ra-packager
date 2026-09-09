@@ -19,6 +19,26 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Recursively strip any occurrence of -flto from all Makefiles and config files
 find . -type f \( -name "Makefile*" -o -name "*.mk" -o -name "config.mk" \) -exec sed -i 's/-flto//g' {} + || true
 
+# Create a local stub include directory to satisfy missing POSIX/Linux headers on PS2 newlib
+mkdir -p stub_include/sys
+echo "#ifndef _SYS_MMAN_H" > stub_include/sys/mman.h
+echo "#define _SYS_MMAN_H" >> stub_include/sys/mman.h
+echo "#define PROT_READ 1" >> stub_include/sys/mman.h
+echo "#define MAP_SHARED 1" >> stub_include/sys/mman.h
+echo "#define MAP_FAILED ((void*)-1)" >> stub_include/sys/mman.h
+echo "inline void* mmap(void* addr, size_t length, int prot, int flags, int fd, off_t offset) { return MAP_FAILED; }" >> stub_include/sys/mman.h
+echo "inline int munmap(void* addr, size_t length) { return -1; }" >> stub_include/sys/mman.h
+echo "#endif" >> stub_include/sys/mman.h
+
+touch stub_include/dlfcn.h
+touch stub_include/pwd.h
+touch stub_include/grp.h
+touch stub_include/poll.h
+
+mkdir -p stub_include/sys
+touch stub_include/sys/socket.h
+touch stub_include/sys/wait.h
+
 # Patch nall/intrinsics.hpp to force MIPS architecture and avoid endian.h
 if [ -f "nall/intrinsics.hpp" ]; then
     sed -i '/#include <endian.h>/i \
@@ -28,28 +48,15 @@ if [ -f "nall/intrinsics.hpp" ]; then
     sed -i 's/#include <endian.h>/\/\/#include <endian.h>/g' nall/intrinsics.hpp || true
 fi
 
-# Patch nall/platform.hpp to bypass missing dlfcn.h, pwd.h, grp.h, and socket headers on PS2
-if [ -f "nall/platform.hpp" ]; then
-    sed -i 's/#include <dlfcn.h>/#if !defined(PLATFORM_PS2)\n  #include <dlfcn.h>\n#endif/' nall/platform.hpp || true
-    sed -i '/#include <pwd.h>/d' nall/platform.hpp || true
-    sed -i '/#include <grp.h>/d' nall/platform.hpp || true
-    sed -i '/#include <sys\/socket.h>/i #if !defined(PLATFORM_PS2)' nall/platform.hpp || true
-    sed -i '/#include <poll.h>/a #endif' nall/platform.hpp || true
-fi
-
-# Patch nall/dl.hpp to guard dlfcn.h inclusion on PS2 / NO_DLFCN
-if [ -f "nall/dl.hpp" ]; then
-    sed -i 's/#include <dlfcn.h>/#if !defined(PLATFORM_PS2) \&\& !defined(NO_DLFCN)\n#include <dlfcn.h>\n#endif/' nall/dl.hpp || true
-fi
-
-# Patch Makefile to inject PS2 paths, compilation flags, platform definition, and disable LTO
+# Patch Makefile to inject stub include path, PS2 paths, compilation flags, and disable LTO
 if [ -f "Makefile" ]; then
-    sed -i '/ifeq ($(platform), ps2)/a \
-	CFLAGS += -I$(PS2SDK)/ports/include -DPLATFORM_PS2=1 -D__LITTLE_ENDIAN__=1\n\
-	CXXFLAGS += -I$(PS2SDK)/ports/include -DPLATFORM_PS2=1 -D__linux__ -D__mips__ -D_MIPS_ARCH_R5900 -DARCH_LITTLE_ENDIAN -D__LITTLE_ENDIAN__=1 -DNO_DLFCN\n\
-	AR = mips64r5900el-ps2-elf-ar\n\
-	RANLIB = mips64r5900el-ps2-elf-ranlib\n\
-	HAVE_LTO = 0' Makefile || true
+    STUB_DIR="$(pwd)/stub_include"
+    sed -i "/ifeq (\$(platform), ps2)/a \\
+	CFLAGS += -I\$(PS2SDK)/ports/include -I${STUB_DIR} -DPLATFORM_PS2=1 -D__LITTLE_ENDIAN__=1\\n\\
+	CXXFLAGS += -I\$(PS2SDK)/ports/include -I${STUB_DIR} -DPLATFORM_PS2=1 -D__linux__ -D__mips__ -D_MIPS_ARCH_R5900 -DARCH_LITTLE_ENDIAN -D__LITTLE_ENDIAN__=1 -DNO_DLFCN\\n\\
+	AR = mips64r5900el-ps2-elf-ar\\n\\
+	RANLIB = mips64r5900el-ps2-elf-ranlib\\n\\
+	HAVE_LTO = 0" Makefile || true
 fi
 
 # Clean previous build artifacts completely
