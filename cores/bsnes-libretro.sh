@@ -37,10 +37,22 @@ inline int munmap(void* addr, size_t length) { return -1; }
 #endif
 EOF
 
+cat << 'EOF' > stub_include/dirent.h
+#ifndef _STUB_DIRENT_H
+#define _STUB_DIRENT_H
+#include_next <dirent.h>
+#ifndef dirfd
+#define dirfd(dir) (-1)
+#endif
+#ifndef fstatat
+#define fstatat(dirfd, path, buf, flags) stat(path, buf)
+#endif
+#endif
+EOF
+
 touch stub_include/dlfcn.h
 touch stub_include/pwd.h
 touch stub_include/grp.h
-touch stub_include/dirent.h
 touch stub_include/unistd.h
 touch stub_include/stdio.h
 touch stub_include/poll.h
