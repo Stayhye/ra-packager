@@ -19,9 +19,9 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Recursively strip any occurrence of -flto from all Makefiles and config files to avoid LTO plugin requirements
 find . -type f \( -name "Makefile*" -o -name "*.mk" -o -name "config.mk" \) -exec sed -i 's/-flto//g' {} + || true
 
-# Patch cpu.h to define POSIX feature macros and include setjmp.h for sigjmp_buf
+# Patch cpu.h to include setjmp.h and provide compatibility fallbacks for sigjmp_buf on bare-metal PS2 newlib
 if [ -f "i386c/ia32/cpu.h" ]; then
-    sed -i '1i #ifndef _POSIX_C_SOURCE\n#define _POSIX_C_SOURCE 200809L\n#endif\n#include <setjmp.h>' i386c/ia32/cpu.h || true
+    sed -i '1i #include <setjmp.h>\n#ifndef sigjmp_buf\ntypedef jmp_buf sigjmp_buf;\n#endif\n#ifndef sigsetjmp\n#define sigsetjmp(env, savemask) setjmp(env)\n#endif\n#ifndef siglongjmp\n#define siglongjmp(env, val) longjmp(env, val)\n#endif' i386c/ia32/cpu.h || true
 fi
 
 cd libretro || { exit 1; }
