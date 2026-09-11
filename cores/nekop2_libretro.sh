@@ -31,8 +31,9 @@ find . -name "retro_timers.h" -exec sed -i 's/SDL_Delay(msec);/usleep(1000 * mse
 # Patch memmap.h to avoid including <sys/mman.h> on PS2
 find . -name "memmap.h" -exec sed -i 's/#include <sys\/mman.h>/#ifndef PS2\n#include <sys\/mman.h>\n#endif/g' {} +
 
-# Patch features_cpu.c to handle missing kernel.h on PS2 environments
+# Patch features_cpu.c to handle missing kernel.h and timer.h on PS2 environments
 find . -name "features_cpu.c" -exec sed -i 's/#include <kernel.h>/\/\* #include <kernel.h> \*\//g' {} +
+find . -name "features_cpu.c" -exec sed -i 's/#include <timer.h>/\/\* #include <timer.h> \*\//g' {} +
 
 cd libretro || { exit 1; }
 
