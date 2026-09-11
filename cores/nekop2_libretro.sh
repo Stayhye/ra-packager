@@ -24,18 +24,22 @@ if [ -f "i386c/ia32/cpu.h" ]; then
     sed -i '1i #include <setjmp.h>\n#ifndef sigjmp_buf\ntypedef jmp_buf sigjmp_buf;\n#endif\n#ifndef sigsetjmp\n#define sigsetjmp(env, savemask) setjmp(env)\n#endif\n#ifndef siglongjmp\n#define siglongjmp(env, val) longjmp(env, val)\n#endif' i386c/ia32/cpu.h || true
 fi
 
+# Patch retro_timers.h to replace SDL dependency with standard unistd/usleep for PS2
+find . -name "retro_timers.h" -exec sed -i 's/#include <SDL\/SDL_timer.h>/#include <unistd.h>/g' {} +
+find . -name "retro_timers.h" -exec sed -i 's/SDL_Delay(msec);/usleep(1000 * msec);/g' {} +
+
 cd libretro || { exit 1; }
 
-# Patch Makefile to inject zlib search path, explicitly force AR/RANLIB, and disable LTO/SDL flags
+# Patch Makefile to inject zlib search path, explicitly force AR/RANLIB, and disable LTO flags
 if [ -f "Makefile" ]; then
-    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include -I$(PS2SDK)/ports/include/SDL\n    CXXFLAGS += -I$(PS2SDK)/ports/include -I$(PS2SDK)/ports/include/SDL\n    AR = mips64r5900el-ps2-elf-ar\n    RANLIB = mips64r5900el-ps2-elf-ranlib\n    HAVE_LTO = 0\n    HAVE_SDL = 0\n    HAVE_SDL2 = 0' Makefile || true
+    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include\n    CXXFLAGS += -I$(PS2SDK)/ports/include\n    AR = mips64r5900el-ps2-elf-ar\n    RANLIB = mips64r5900el-ps2-elf-ranlib\n    HAVE_LTO = 0' Makefile || true
 fi
 
 # Clean previous build artifacts completely
 make clean platform=ps2 || true
 
-# Compile core with LTO and SDL disabled entirely across all option variables
-make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 HAVE_SDL=0 HAVE_SDL2=0 || { exit 1; }
+# Compile core with LTO disabled entirely across all option variables
+make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 || { exit 1; }
 
 ## Inspect binary size and sections locally in the script (without destroying symbols)
 FOUND_ARCHIVE=$(find . -name "*_ps2.a" | head -n 1)
