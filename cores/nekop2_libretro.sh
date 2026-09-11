@@ -33,9 +33,9 @@ find . -name "memmap.h" -exec sed -i 's/#include <sys\/mman.h>/#ifndef PS2\n#inc
 
 cd libretro || { exit 1; }
 
-# Patch Makefile to inject zlib search path, explicitly force AR/RANLIB, disable LTO, and disable MMAP
+# Patch Makefile to inject zlib and PS2SDK include paths, explicitly force AR/RANLIB, disable LTO, and disable MMAP
 if [ -f "Makefile" ]; then
-    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include -DHAVE_MMAP=0\n    CXXFLAGS += -I$(PS2SDK)/ports/include -DHAVE_MMAP=0\n    AR = mips64r5900el-ps2-elf-ar\n    RANLIB = mips64r5900el-ps2-elf-ranlib\n    HAVE_LTO = 0\n    HAVE_MMAP = 0' Makefile || true
+    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include -I$(PS2SDK)/ee/include -I$(PS2SDK)/common/include -DHAVE_MMAP=0\n    CXXFLAGS += -I$(PS2SDK)/ports/include -I$(PS2SDK)/ee/include -I$(PS2SDK)/common/include -DHAVE_MMAP=0\n    AR = mips64r5900el-ps2-elf-ar\n    RANLIB = mips64r5900el-ps2-elf-ranlib\n    HAVE_LTO = 0\n    HAVE_MMAP = 0' Makefile || true
 fi
 
 # Clean previous build artifacts completely
