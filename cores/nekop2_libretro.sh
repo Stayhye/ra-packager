@@ -18,6 +18,8 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
+cd libretro || { exit 1; }
+
 ## Compile core using native platform=ps2 support from the root directory
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
