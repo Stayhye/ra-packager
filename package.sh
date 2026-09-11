@@ -9,6 +9,10 @@
 ./cores/ecwolf.sh || { exit 1; }
 ./generate_retroarch.sh ecwolf ecwolf_libretro_ps2 || { exit 1; }
 
+#nekop2_libretro
+./cores/nekop2_libretro.sh || { exit 1; }
+./generate_retroarch.sh nekop2_libretro nekop2_libretro_ps2 || { exit 1; }
+
 #dosbox-libretro
 ./cores/dosbox-libretro.sh || { exit 1; }
 ./generate_retroarch.sh dosbox_libretro dosbox_libretro_ps2 || { exit 1; }
