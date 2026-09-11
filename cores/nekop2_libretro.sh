@@ -26,16 +26,16 @@ fi
 
 cd libretro || { exit 1; }
 
-# Patch Makefile to inject zlib search path and explicitly force AR/RANLIB and disable LTO flags
+# Patch Makefile to inject zlib search path, explicitly force AR/RANLIB, and disable LTO/SDL flags
 if [ -f "Makefile" ]; then
-    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include\n    CXXFLAGS += -I$(PS2SDK)/ports/include\n    AR = mips64r5900el-ps2-elf-ar\n    RANLIB = mips64r5900el-ps2-elf-ranlib\n    HAVE_LTO = 0' Makefile || true
+    sed -i '/ifeq ($(platform), ps2)/a \    CFLAGS += -I$(PS2SDK)/ports/include -I$(PS2SDK)/ports/include/SDL\n    CXXFLAGS += -I$(PS2SDK)/ports/include -I$(PS2SDK)/ports/include/SDL\n    AR = mips64r5900el-ps2-elf-ar\n    RANLIB = mips64r5900el-ps2-elf-ranlib\n    HAVE_LTO = 0\n    HAVE_SDL = 0\n    HAVE_SDL2 = 0' Makefile || true
 fi
 
 # Clean previous build artifacts completely
 make clean platform=ps2 || true
 
-# Compile core with LTO disabled entirely across all option variables
-make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 || { exit 1; }
+# Compile core with LTO and SDL disabled entirely across all option variables
+make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 HAVE_SDL=0 HAVE_SDL2=0 || { exit 1; }
 
 ## Inspect binary size and sections locally in the script (without destroying symbols)
 FOUND_ARCHIVE=$(find . -name "*_ps2.a" | head -n 1)
