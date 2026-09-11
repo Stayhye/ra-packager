@@ -50,27 +50,15 @@ make clean platform=ps2 || true
 # Compile core with LTO and MMAP disabled entirely across all option variables
 make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 HAVE_MMAP=0 || { exit 1; }
 
-## Inspect binary size and sections locally in the script (without destroying symbols)
-FOUND_ARCHIVE=$(find . -name "*_ps2.a" | head -n 1)
-if [ -n "$FOUND_ARCHIVE" ]; then
-    echo "=== File Size ==="
-    ls -lh "$FOUND_ARCHIVE"
-    
-    echo "=== Section Breakdown ==="
-    mips64r5900el-ps2-elf-size -A "$FOUND_ARCHIVE"
-    
-    echo "=== Top 20 Largest Symbols ===" 
-    mips64r5900el-ps2-elf-nm --size-sort -S "$FOUND_ARCHIVE" | tail -n 20
-fi
-
 ## Return back to the workspace root  
 cd "$WORKSPACE_ROOT" || { exit 1; }
 
-## Find and copy the generated archive
-FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_ps2.a" | head -n 1)
+## Find and copy the generated archive using a generic pattern (*.a) from the repo folder
+FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*.a" | head -n 1)
 if [ -z "$FOUND_ARCHIVE" ]; then
-    echo "Error: Could not find generated static archive (*_ps2.a)"
+    echo "Error: Could not find generated static archive (*.a)"
     exit 1
 fi
 
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
+echo "Successfully built and copied to ./libretro_ps2.a"
