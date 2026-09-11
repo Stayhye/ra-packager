@@ -53,12 +53,13 @@ make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 HAVE_MMAP=0 || { exit 1
 ## Return back to the workspace root  
 cd "$WORKSPACE_ROOT" || { exit 1; }
 
-## Find and copy the generated archive using a generic pattern (*.a) from the repo folder
+## Find and copy the generated archive to both expected locations
 FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*.a" | head -n 1)
 if [ -z "$FOUND_ARCHIVE" ]; then
     echo "Error: Could not find generated static archive (*.a)"
     exit 1
 fi
 
+cp -f "$FOUND_ARCHIVE" "$REPO_FOLDER/nekop2_libretro_ps2.a" || { exit 1; }
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
-echo "Successfully built and copied to ./libretro_ps2.a"
+echo "Successfully built and copied archive."
