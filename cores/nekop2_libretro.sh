@@ -7,11 +7,13 @@ REPO_URL="https://github.com/Stayhye/libretro-meowPC98"
 REPO_FOLDER="nekop2_libretro"
 BRANCH_NAME="master"
 
+WORKSPACE_ROOT=$(pwd)
+
 if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
 fi
 
-cd $REPO_FOLDER || { exit 1; }
+cd "$WORKSPACE_ROOT/$REPO_FOLDER" || { exit 1; }
 git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
@@ -62,7 +64,7 @@ if [ -n "$FOUND_ARCHIVE" ]; then
 fi
 
 ## Return back to the workspace root  
-cd .. || { exit 1; }
+cd "$WORKSPACE_ROOT" || { exit 1; }
 
 ## Find and copy the generated archive
 FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_ps2.a" | head -n 1)
