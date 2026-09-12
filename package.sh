@@ -9,6 +9,10 @@
 ./cores/ecwolf.sh || { exit 1; }
 ./generate_retroarch.sh ecwolf ecwolf_libretro_ps2 || { exit 1; }
 
+#vecx_libretro
+./cores/vecx_libretro.sh || { exit 1; }
+./generate_retroarch.sh vecx_libretro vecx_libretro_ps2 || { exit 1; }
+
 #nekop2_libretro
 ./cores/nekop2_libretro.sh || { exit 1; }
 ./generate_retroarch.sh nekop2_libretro nekop2_libretro_ps2 || { exit 1; }

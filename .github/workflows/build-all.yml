@@ -22,6 +22,7 @@ jobs:
           #[dice-libretro, dice_libretro_ps2],
           #[dosbox-libretro, dosbox_libretro_ps2],
           [nekop2_libretro, nekop2_libretro_ps2],
+          [vecx_libretro, vecx_libretro_ps2],
           #[bsnes-libretro, bsnes_libretro_ps2],
           #[ecwolf, ecwolf_libretro_ps2],
           #[fbalpha2012_cps1, fbalpha2012_cps1_libretro_ps2],
