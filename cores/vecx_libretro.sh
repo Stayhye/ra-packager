@@ -1,7 +1,7 @@
 #!/bin/bash
 # package.sh by Francisco Javier Trujillo Mata (fjtrujy@gmail.com)
 
-# Install missing host OpenGL headers required by libretro-common during cross-compilation
+# Install host OpenGL headers required by libretro-common's parser during cross-compilation
 if command -v apt-get &> /dev/null; then
     sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev mesa-common-dev || true
 fi
