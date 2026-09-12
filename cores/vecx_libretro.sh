@@ -1,6 +1,11 @@
 #!/bin/bash
 # package.sh by Francisco Javier Trujillo Mata (fjtrujy@gmail.com)
 
+# Install missing host OpenGL headers required by libretro-common during cross-compilation
+if command -v apt-get &> /dev/null; then
+    sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev mesa-common-dev || true
+fi
+
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/libretro-vecx"
@@ -17,8 +22,8 @@ git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
 ## Compile core using native platform=ps2 support
-make -j $PROC_NR platform=ps2 HAVE_OPENGL=0 clean || { exit 1; }
-make -j $PROC_NR platform=ps2 HAVE_OPENGL=0 || { exit 1; }
+make -j $PROC_NR platform=ps2 clean || { exit 1; }
+make -j $PROC_NR platform=ps2 || { exit 1; }
 
 cd .. || { exit 1; }
 
