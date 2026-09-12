@@ -1,9 +1,13 @@
 #!/bin/bash
 # package.sh by Francisco Javier Trujillo Mata (fjtrujy@gmail.com)
 
-# Install host OpenGL headers required by libretro-common's parser during cross-compilation
+# Install host OpenGL headers required by libretro-common's parser (compatible with root containers and sudo)
 if command -v apt-get &> /dev/null; then
-    sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev mesa-common-dev || true
+    if [ "$EUID" -eq 0 ]; then
+        apt-get update && apt-get install -y libgl1-mesa-dev mesa-common-dev || true
+    elif command -v sudo &> /dev/null; then
+        sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev mesa-common-dev || true
+    fi
 fi
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
