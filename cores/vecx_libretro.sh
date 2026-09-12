@@ -36,9 +36,9 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core using native platform=ps2 support, injecting fake GL headers via CFLAGS/CPPFLAGS
-make -j $PROC_NR platform=ps2 CFLAGS="-I$FAKE_GL_PATH" CPPFLAGS="-I$FAKE_GL_PATH" clean || { exit 1; }
-make -j $PROC_NR platform=ps2 CFLAGS="-I$FAKE_GL_PATH" CPPFLAGS="-I$FAKE_GL_PATH" || { exit 1; }
+## Compile core using native platform=ps2 support, injecting fake GL headers and einline macro definition via CFLAGS/CPPFLAGS
+make -j $PROC_NR platform=ps2 CFLAGS="-I$FAKE_GL_PATH -Deinline=inline" CPPFLAGS="-I$FAKE_GL_PATH -Deinline=inline" clean || { exit 1; }
+make -j $PROC_NR platform=ps2 CFLAGS="-I$FAKE_GL_PATH -Deinline=inline" CPPFLAGS="-I$FAKE_GL_PATH -Deinline=inline" || { exit 1; }
 
 cd .. || { exit 1; }
 
