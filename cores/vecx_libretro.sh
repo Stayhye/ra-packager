@@ -1,6 +1,15 @@
 #!/bin/bash
 # package.sh by Francisco Javier Trujillo Mata (fjtrujy@gmail.com)
 
+# 1. Install host OpenGL headers required by libretro-common's glsym generator
+if command -v apt-get &> /dev/null; then
+    if [ "$EUID" -eq 0 ]; then
+        apt-get update && apt-get install -y libgl1-mesa-dev mesa-common-dev || true
+    elif command -v sudo &> /dev/null; then
+        sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev mesa-common-dev || true
+    fi
+fi
+
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/libretro-vecx"
@@ -11,35 +20,20 @@ if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
 fi
 
-# Create a local dummy GL headers directory to bypass host dependency checks during cross-compilation
-mkdir -p fake_gl/GL
-cat << 'EOF' > fake_gl/GL/gl.h
-#ifndef GL_GL_H
-#define GL_GL_H
-typedef unsigned int GLenum;
-typedef unsigned int GLuint;
-typedef int GLint;
-typedef int GLsizei;
-typedef unsigned char GLboolean;
-typedef void GLvoid;
-typedef float GLfloat;
-#define GL_FALSE 0
-#define GL_TRUE 1
-#endif
-EOF
-touch fake_gl/GL/glext.h
-touch fake_gl/GL/glcorearb.h
-FAKE_GL_PATH="$(pwd)/fake_gl"
-
 cd $REPO_FOLDER || { exit 1; }
 git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 git submodule update --init --recursive || { exit 1; }
 
-## Compile core using native platform=ps2 support, injecting fake GL headers and fixing inline definition via CFLAGS
-make -j $PROC_NR platform=ps2 CFLAGS="-I$FAKE_GL_PATH -Dinline=__inline__" CPPFLAGS="-I$FAKE_GL_PATH -Dinline=__inline__" clean || { exit 1; }
-make -j $PROC_NR platform=ps2 CFLAGS="-I$FAKE_GL_PATH -Dinline=__inline__" CPPFLAGS="-I$FAKE_GL_PATH -Dinline=__inline__" || { exit 1; }
+# 2. Fix legacy 'einline' macro definition for modern GCC compilers in e6809.c
+if [ -f "e6809.c" ] && ! grep -q "#define einline" e6809.c; then
+    sed -i '1i #define einline static inline' e6809.c
+fi
+
+## Compile core using native platform=ps2 support
+make -j $PROC_NR platform=ps2 clean || { exit 1; }
+make -j $PROC_NR platform=ps2 || { exit 1; }
 
 cd .. || { exit 1; }
 
