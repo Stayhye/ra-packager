@@ -1,15 +1,6 @@
 #!/bin/bash
 # package.sh by Francisco Javier Trujillo Mata (fjtrujy@gmail.com)
 
-# Install host OpenGL headers required by libretro-common's parser (compatible with root containers and sudo)
-if command -v apt-get &> /dev/null; then
-    if [ "$EUID" -eq 0 ]; then
-        apt-get update && apt-get install -y libgl1-mesa-dev mesa-common-dev || true
-    elif command -v sudo &> /dev/null; then
-        sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev mesa-common-dev || true
-    fi
-fi
-
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/libretro-vecx"
@@ -20,14 +11,34 @@ if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
 fi
 
+# Create a local dummy GL headers directory to bypass host dependency checks during cross-compilation
+mkdir -p fake_gl/GL
+cat << 'EOF' > fake_gl/GL/gl.h
+#ifndef GL_GL_H
+#define GL_GL_H
+typedef unsigned int GLenum;
+typedef unsigned int GLuint;
+typedef int GLint;
+typedef int GLsizei;
+typedef unsigned char GLboolean;
+typedef void GLvoid;
+typedef float GLfloat;
+#define GL_FALSE 0
+#define GL_TRUE 1
+#endif
+EOF
+touch fake_gl/GL/glext.h
+touch fake_gl/GL/glcorearb.h
+FAKE_GL_PATH="$(pwd)/fake_gl"
+
 cd $REPO_FOLDER || { exit 1; }
 git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core using native platform=ps2 support
-make -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -j $PROC_NR platform=ps2 || { exit 1; }
+## Compile core using native platform=ps2 support, injecting fake GL headers via CFLAGS/CPPFLAGS
+make -j $PROC_NR platform=ps2 CFLAGS="-I$FAKE_GL_PATH" CPPFLAGS="-I$FAKE_GL_PATH" clean || { exit 1; }
+make -j $PROC_NR platform=ps2 CFLAGS="-I$FAKE_GL_PATH" CPPFLAGS="-I$FAKE_GL_PATH" || { exit 1; }
 
 cd .. || { exit 1; }
 
