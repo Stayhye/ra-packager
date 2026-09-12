@@ -26,9 +26,14 @@ git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 git submodule update --init --recursive || { exit 1; }
 
-# 2. Fix legacy 'einline' macro definition for modern GCC compilers in e6809.c
+# 2. Fix legacy 'einline' macro definition in e6809.c
 if [ -f "e6809.c" ] && ! grep -q "#define einline" e6809.c; then
     sed -i '1i #define einline static inline' e6809.c
+fi
+
+# 3. Explicitly disable OpenGL in the Makefile for the PS2 block to prevent glsym headers from triggering host checks
+if grep -q "else ifeq ($(platform), ps2)" Makefile.libretro; then
+    sed -i '/else ifeq ($(platform), ps2)/a \\tCFLAGS += -DHAVE_OPENGL=0 -DHAVE_OPENGLES=0\n\tCXXFLAGS += -DHAVE_OPENGL=0 -DHAVE_OPENGLES=0' Makefile.libretro
 fi
 
 ## Compile core using native platform=ps2 support
