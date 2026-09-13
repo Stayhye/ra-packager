@@ -19,12 +19,12 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Discard any manual edits to src/memory.h to ensure clean upstream code state
 git checkout src/memory.h 2>/dev/null || true
 
-# Comprehensive warning suppression flags for modern toolchains building legacy code
-EXTRA_FLAGS="-Wno-cast-align -Wno-format -Wno-strict-aliasing -Wno-error"
+# Inject warning suppression flags directly into the Makefile's CFLAGS without breaking include paths
+sed -i 's/CFLAGS +=/CFLAGS += -Wno-cast-align -Wno-format -Wno-strict-aliasing -Wno-error/g' Makefile
 
-## Compile core using native platform=ps2 support, passing flags directly to make
-make -j $PROC_NR platform=ps2 clean CFLAGS="$EXTRA_FLAGS" CXXFLAGS="$EXTRA_FLAGS" || { exit 1; } 
-make -j $PROC_NR platform=ps2 CFLAGS="$EXTRA_FLAGS" CXXFLAGS="$EXTRA_FLAGS" || { exit 1; } 
+## Compile core using native platform=ps2 support 
+make -j $PROC_NR platform=ps2 clean || { exit 1; } 
+make -j $PROC_NR platform=ps2 || { exit 1; } 
 
 cd .. || { exit 1; } 
 
