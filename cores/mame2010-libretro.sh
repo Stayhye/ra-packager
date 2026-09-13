@@ -20,6 +20,19 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 ## Compile core using native platform=ps2 support from the root directory
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
+## Inspect binary size and sections locally in the script (without destroying symbols)
+FOUND_ARCHIVE=$(find . -name "*_ps2.a" | head -n 1)
+if [ -n "$FOUND_ARCHIVE" ]; then
+    echo "=== File Size ==="
+    ls -lh "$FOUND_ARCHIVE"
+    
+    echo "=== Section Breakdown ==="
+    mips64r5900el-ps2-elf-size -A "$FOUND_ARCHIVE"
+    
+    echo "=== Top 20 Largest Symbols ==="
+    mips64r5900el-ps2-elf-nm --size-sort -S "$FOUND_ARCHIVE" | tail -n 20
+fi
+
 ## Return back to the workspace root
 cd .. || { exit 1; }
 
@@ -32,5 +45,5 @@ fi
 
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
-mkdir -p mame2010-libretro
-cp -f "$FOUND_ARCHIVE" mame2010-libretro/mame2010-libretro_ps2.a || { exit 1; }
+mkdir -p mame2010_libretro
+cp -f "$FOUND_ARCHIVE" mame2000_libretro/mame2000_libretro_ps2.a || { exit 1; }
