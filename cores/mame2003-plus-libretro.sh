@@ -16,11 +16,10 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME} 
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
-# Discard any manual edits to src/memory.h to ensure clean upstream code state
-git checkout src/memory.h 2>/dev/null || true
-
-# Inject warning suppression flags directly into the Makefile's CFLAGS without breaking include paths
-sed -i 's/CFLAGS +=/CFLAGS += -Wno-cast-align -Wno-format -Wno-strict-aliasing -Wno-error/g' Makefile
+# Target the PS2 platform block and add -Wformat alongside suppressions to stop the security warning flood
+sed -i '/ifeq ($(platform),ps2)/,/endif/ {
+    /CFLAGS +=/s/$/ -Wno-cast-align -Wformat -Wno-format-security -Wno-strict-aliasing -Wno-error/
+}' Makefile
 
 ## Compile core using native platform=ps2 support 
 make -j $PROC_NR platform=ps2 clean || { exit 1; } 
