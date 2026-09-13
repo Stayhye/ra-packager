@@ -16,6 +16,10 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME} 
 git checkout ${BRANCH_NAME} || { exit 1; } 
 
+# Append flags to ignore alignment and format string warnings in legacy code
+export CFLAGS="$CFLAGS -Wno-cast-align -Wno-format -Wno-strict-aliasing"
+export CXXFLAGS="$CXXFLAGS -Wno-cast-align -Wno-format -Wno-strict-aliasing"
+
 ## Compile core using native platform=ps2 support 
 make -j $PROC_NR platform=ps2 clean || { exit 1; } 
 make -j $PROC_NR platform=ps2 || { exit 1; } 
