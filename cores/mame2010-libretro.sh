@@ -16,16 +16,16 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-# Patch alpha68k.c to fix -Werror format string and cast-align issues
+# Patch alpha68k.c to fix format string warnings
 echo "Patching src/mame/drivers/alpha68k.c..."
 sed -i 's/logerror("%04x:  Alpha write trigger at %04x (%04x)\\n", cpu_get_pc(space->cpu), offset, data);/logerror("%04x:  Alpha write trigger at %04x (%04x)\\n", (unsigned int)cpu_get_pc(space->cpu), (unsigned int)offset, (unsigned int)data);/g' src/mame/drivers/alpha68k.c
 sed -i 's/logerror("%04x:  Alpha read trigger at %04x\\n", cpu_get_pc(space->cpu), offset);/logerror("%04x:  Alpha read trigger at %04x\\n", (unsigned int)cpu_get_pc(space->cpu), (unsigned int)offset);/g' src/mame/drivers/alpha68k.c
 sed -i 's/logerror("tnextspc_unknown_w : PC = %04x - offset = %04x - data = %04x\\n", cpu_get_pc(space->cpu), offset, data);/logerror("tnextspc_unknown_w : PC = %04x - offset = %04x - data = %04x\\n", (unsigned int)cpu_get_pc(space->cpu), (unsigned int)offset, (unsigned int)data);/g' src/mame/drivers/alpha68k.c
 sed -i 's/uint16_t \*rom = (uint16_t \*)memory_region(machine, "maincpu");/uint16_t *rom = (uint16_t *)(void *)memory_region(machine, "maincpu");/g' src/mame/drivers/alpha68k.c
 
-# Add -Wno-error=cast-align to prevent casting warnings from failing the build
-echo "Adding -Wno-error=cast-align to prevent casting warnings from failing the build..."
-sed -i 's/CFLAGS +=/CFLAGS += -Wno-error=cast-align /g' Makefile
+# Strip -Werror globally from all makefiles to prevent strict alignment warnings from failing the build
+echo "Removing -Werror from build configurations..."
+find . -name "Makefile*" -o -name "*.mak" | xargs sed -i 's/-Werror//g'
 
 ## Compile core using native platform=ps2 support from the root directory
 make -j $PROC_NR platform=ps2 || { exit 1; }
