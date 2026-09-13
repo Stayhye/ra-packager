@@ -5,7 +5,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/mame2010-libretro.git"
 ##REPO_URL="https://github.com/libretro/mame2000-libretro.git"
-REPO_FOLDER="mame2010_libretro"
+REPO_FOLDER="mame2010-libretro"
 BRANCH_NAME="master"
 
 if test ! -d "$REPO_FOLDER"; then
@@ -22,6 +22,15 @@ echo "Patching src/mame/drivers/alpha68k.c..."
 sed -i 's/logerror("%04x:  Alpha write trigger at %04x (%04x)\\n", cpu_get_pc(space->cpu), offset, data);/logerror("%04x:  Alpha write trigger at %04x (%04x)\\n", (unsigned int)cpu_get_pc(space->cpu), (unsigned int)offset, (unsigned int)data);/g' src/mame/drivers/alpha68k.c
 sed -i 's/logerror("%04x:  Alpha read trigger at %04x\\n", cpu_get_pc(space->cpu), offset);/logerror("%04x:  Alpha read trigger at %04x\\n", (unsigned int)cpu_get_pc(space->cpu), (unsigned int)offset);/g' src/mame/drivers/alpha68k.c
 sed -i 's/uint16_t \*rom = (uint16_t \*)memory_region(machine, "maincpu");/uint16_t *rom = (uint16_t *)(void *)memory_region(machine, "maincpu");/g' src/mame/drivers/alpha68k.c
+
+# Patch src/emu/mmry.h to fix cast-align warnings on direct read functions
+echo "Patching src/emu/mmry.h..."
+sed -i 's/return \*(uint16_t \*)&space->direct.decrypted\[byteaddress & space->direct.bytemask\];/return \*(uint16_t \*)(void *)&space->direct.decrypted[byteaddress & space->direct.bytemask];/g' src/emu/mmry.h
+sed -i 's/return \*(uint32_t \*)&space->direct.decrypted\[byteaddress & space->direct.bytemask\];/return \*(uint32_t \*)(void *)&space->direct.decrypted[byteaddress & space->direct.bytemask];/g' src/emu/mmry.h
+sed -i 's/return \*(uint64_t \*)&space->direct.decrypted\[byteaddress & space->direct.bytemask\];/return \*(uint64_t \*)(void *)&space->direct.decrypted[byteaddress & space->direct.bytemask];/g' src/emu/mmry.h
+sed -i 's/return \*(uint16_t \*)&space->direct.raw\[byteaddress & space->direct.bytemask\];/return \*(uint16_t \*)(void *)&space->direct.raw[byteaddress & space->direct.bytemask];/g' src/emu/mmry.h
+sed -i 's/return \*(uint32_t \*)&space->direct.raw\[byteaddress & space->direct.bytemask\];/return \*(uint32_t \*)(void *)&space->direct.raw[byteaddress & space->direct.bytemask];/g' src/emu/mmry.h
+sed -i 's/return \*(uint64_t \*)&space->direct.raw\[byteaddress & space->direct.bytemask\];/return \*(uint64_t \*)(void *)&space->direct.raw[byteaddress & space->direct.bytemask];/g' src/emu/mmry.h
 
 ## Compile core using native platform=ps2 support from the root directory
 make -j $PROC_NR platform=ps2 || { exit 1; }
