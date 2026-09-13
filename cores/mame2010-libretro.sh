@@ -20,9 +20,10 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 echo "Patching src/mame/drivers/alpha68k.c..."
 sed -i 's/logerror("%04x:  Alpha write trigger at %04x (%04x)\\n", cpu_get_pc(space->cpu), offset, data);/logerror("%04x:  Alpha write trigger at %04x (%04x)\\n", (unsigned int)cpu_get_pc(space->cpu), (unsigned int)offset, (unsigned int)data);/g' src/mame/drivers/alpha68k.c
 sed -i 's/logerror("%04x:  Alpha read trigger at %04x\\n", cpu_get_pc(space->cpu), offset);/logerror("%04x:  Alpha read trigger at %04x\\n", (unsigned int)cpu_get_pc(space->cpu), (unsigned int)offset);/g' src/mame/drivers/alpha68k.c
+sed -i 's/logerror("tnextspc_unknown_w : PC = %04x - offset = %04x - data = %04x\\n", cpu_get_pc(space->cpu), offset, data);/logerror("tnextspc_unknown_w : PC = %04x - offset = %04x - data = %04x\\n", (unsigned int)cpu_get_pc(space->cpu), (unsigned int)offset, (unsigned int)data);/g' src/mame/drivers/alpha68k.c
 sed -i 's/uint16_t \*rom = (uint16_t \*)memory_region(machine, "maincpu");/uint16_t *rom = (uint16_t *)(void *)memory_region(machine, "maincpu");/g' src/mame/drivers/alpha68k.c
 
-# Add -Wno-error=cast-align to prevent mmry.h casting warnings from failing the build
+# Add -Wno-error=cast-align to prevent casting warnings from failing the build
 echo "Adding -Wno-error=cast-align to prevent casting warnings from failing the build..."
 sed -i 's/CFLAGS +=/CFLAGS += -Wno-error=cast-align /g' Makefile
 
