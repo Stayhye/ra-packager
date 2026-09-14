@@ -53,7 +53,7 @@ jobs:
           #[mednafen-ngp-libretro, mednafen-ngp-libretro_ps2],
           #[mednafen-vb-libretro, mednafen-vb-libretro_ps2],
           #[mednafen-wswan-libretro, mednafen-wswan-libretro_ps2],
-          #[mednafen-supergrafx-libretro, mednafen-supergrafx-libretro_ps2],
+          [mednafen-supergrafx-libretro, mednafen-supergrafx-libretro_ps2],
           #[neocd_libretro, neocd_libretro_ps2],
           #[njemu_libretro, njemu_libretro_ps2], <--NOT WORKING/Building
           #[pokemini, pokemini_libretro_ps2],
@@ -67,7 +67,7 @@ jobs:
           #[snes9x2010_libretro, snes9x2010_libretro_ps2],
           #[tgbdual_libretro, tgbdual_libretro_ps2],
           #[vemulator_libretro, vemulator_libretro_ps2],
-          [zc210-libretro, zc210-libretro_ps2],
+          #[zc210-libretro, zc210-libretro_ps2],
          ]
       fail-fast: false
 
