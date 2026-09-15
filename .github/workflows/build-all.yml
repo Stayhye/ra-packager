@@ -55,7 +55,7 @@ jobs:
           [mednafen-wswan-libretro, mednafen-wswan-libretro_ps2],
           [mednafen-supergrafx-libretro, mednafen-supergrafx-libretro_ps2],
           [neocd_libretro, neocd_libretro_ps2],
-          [njemu_libretro, njemu_libretro_ps2], <--NOT WORKING/Building
+          [njemu_libretro, njemu_libretro_ps2],
           [pokemini, pokemini_libretro_ps2],
           [picodrive, picodrive_libretro_ps2],
           [potator, potator_libretro_ps2],
