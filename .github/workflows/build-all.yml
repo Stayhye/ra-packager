@@ -30,6 +30,7 @@ jobs:
           #[geolith-libretro, geolith_libretro_ps2],
           #[genesis_plus_gx_libretro, genesis_plus_gx_libretro_ps2],
           [gpsp, gpsp_libretro_ps2],
+          [gpsp_libretro, gpsp_libretro_ps2],
           #[gw-libretro, gw-libretro_ps2],
           #[libretro-cap32, cap32_libretro_ps2],
           #[libretro-fceumm, fceumm_libretro_ps2],
