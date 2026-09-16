@@ -17,4 +17,5 @@ git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL && cd $REPO_F
 
 ## Compile core
 make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
+make -f Makefile.libretro  -j $PROC_NR platform=ps2 || { exit 1; }
 
