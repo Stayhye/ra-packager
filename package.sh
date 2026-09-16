@@ -178,6 +178,10 @@
 ./cores/gpsp.sh || { exit 1; }
 ./generate_retroarch.sh gpsp gpsp_libretro_ps2 || { exit 1; }
 
+#gpsp_libretro
+./cores/gpsp_libretro.sh || { exit 1; }
+./generate_retroarch.sh gpsp_libretro gpsp_libretro_ps2 || { exit 1; }
+
 #mednafen-vb-libretro
 ./cores/mednafen-vb-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mednafen-vb-libretro mednafen-vb-libretro_ps2 || { exit 1; }
