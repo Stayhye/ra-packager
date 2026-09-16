@@ -12,11 +12,9 @@ REPO_FOLDER="PicoDrive_PS2_DVD"
 BRANCH_NAME="main"
 #BRANCH_NAME="master"
 
-if test ! -d "$REPO_FOLDER"; then
-	git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL && cd $REPO_FOLDER || { exit 1; }
-else
-	cd $REPO_FOLDER && git fetch origin && git reset --hard origin/${BRANCH_NAME} && git checkout ${BRANCH_NAME} || { exit 1; }
-fi
+
+git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL && cd $REPO_FOLDER || { exit 1; }
+
 
 ## Compile core
 make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
