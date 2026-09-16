@@ -57,7 +57,7 @@ jobs:
           #[njemu_libretro, njemu_libretro_ps2],
           #[pokemini, pokemini_libretro_ps2],
           #[picodrive, picodrive_libretro_ps2],
-          [PicoDrive_PS2_DVD, picodrive_libretro_ps2],
+          [picodrive, picodrive_libretro_ps2],
           #[potator, potator_libretro_ps2],
           #[QuickNES_Core, quicknes_libretro_ps2],
           #[quasi88-libretro, quasi88-libretro_ps2],
