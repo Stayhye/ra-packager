@@ -8,7 +8,9 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 #REPO_URL="https://github.com/libretro/picodrive"
 REPO_URL="https://github.com/Stayhye/PicoDrive_PS2_DVD"
 REPO_FOLDER="PicoDrive_PS2_DVD"
+#REPO_FOLDER="picodrive"
 BRANCH_NAME="main"
+#BRANCH_NAME="master"
 
 if test ! -d "$REPO_FOLDER"; then
 	git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL && cd $REPO_FOLDER || { exit 1; }
