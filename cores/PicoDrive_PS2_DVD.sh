@@ -7,7 +7,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 ## Download the source code.
 REPO_URL="https://github.com/libretro/picodrive"
 #REPO_URL="https://github.com/Stayhye/PicoDrive_PS2_DVD"
-#REPO_FOLDER="PicoDrive_PS2_DVD"
+#REPO_FOLDER="picodrive"
 REPO_FOLDER="picodrive"
 #BRANCH_NAME="main"
 BRANCH_NAME="master"
