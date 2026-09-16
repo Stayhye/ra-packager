@@ -30,4 +30,4 @@ FOUND_ARCHIVE=$(find . -name "*.a" | head -n 1)
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p mednafen_pce_libretro
-cp -f "$FOUND_ARCHIVE" mednafen_pce_libretro/mednafen_pce_libretro_ps2.a || { exit 1; }
+cp -f "$FOUND_ARCHIVE" /mednafen_pce_libretro_ps2.a || { exit 1; }
