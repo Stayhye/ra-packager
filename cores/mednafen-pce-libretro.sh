@@ -26,12 +26,6 @@ make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 || { exit 1; }
 ## Inspect binary size and sections locally in the script
 FOUND_ARCHIVE=$(find . -name "*.a" | head -n 1)
 
-## Find and copy the generated archive
-FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*.a" | head -n 1)
-if [ -z "$FOUND_ARCHIVE" ]; then
-    echo "Error: Could not find generated static archive (*.a)"
-    exit 1
-fi
 
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
