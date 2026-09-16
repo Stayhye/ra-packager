@@ -159,7 +159,7 @@
 #./generate_retroarch.sh picodrive picodrive_libretro_ps2 || { exit 1; }
 
 #picodrive
-./cores/picodrive.sh || { exit 1; }
+./cores/PicoDrive_PS2_DVD.sh || { exit 1; }
 ./generate_retroarch.sh PicoDrive_PS2_DVD picodrive_libretro_ps2 || { exit 1; }
 
 #mgba
