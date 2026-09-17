@@ -17,7 +17,7 @@ git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
 # Clean previous build artifacts completely
-make clean platform=ps2 || true
+make clean platform=ps2 || true 
 
 # Compile core with LTO disabled entirely across all option variables
 make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 || { exit 1; }
