@@ -16,9 +16,6 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-# Fix implicit declaration of ps2_clock in rthreads.c
-sed -i '/int scond_wait_timeout/i extern int ps2_clock(void);' libretro-common/rthreads/rthreads.c
-
 # Clean previous build artifacts completely
 make clean platform=ps2 || true
 
