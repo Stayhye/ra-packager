@@ -46,7 +46,7 @@ jobs:
           #[MBA.mini_libretro, MBA.mini_libretro_ps2],
           #[mgba, mgba_libretro_ps2],
           #[mednafen_gba_libretro, mednafen_gba_libretro_ps2],
-          #[mednafen_pce_libretro, mednafen_pce_libretro_ps2],
+          [mednafen_pce_libretro, mednafen_pce_libretro_ps2],
           #[mednafen-pce-fast-libretro, mednafen_pce_fast_libretro_ps2],
           #[mednafen-lynx-libretro, mednafen-lynx-libretro_ps2],
           #[mednafen-ngp-libretro, mednafen-ngp-libretro_ps2],
