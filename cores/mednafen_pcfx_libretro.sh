@@ -16,8 +16,11 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
+# Embed ps2_clock directly into rthreads.c so the static library is self-contained
+sed -i '/#elif defined(PS2)/i static int ps2_clock(void) { return (int)(clock() / (CLOCKS_PER_SEC / 1000)); }' libretro-common/rthreads/rthreads.c
+
 # Clean previous build artifacts completely
-make clean platform=ps2 || true 
+make clean platform=ps2 || true
 
 # Compile core with LTO disabled entirely across all option variables
 make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 || { exit 1; }
