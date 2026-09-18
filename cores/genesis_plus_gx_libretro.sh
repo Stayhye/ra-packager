@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/Genesis-Plus-GX"
-REPO_FOLDER="genesis_plus_gx_libretro"
+REPO_FOLDER="genesis_plus_gx"
 BRANCH_NAME="master"
 
 if test ! -d "$REPO_FOLDER"; then
