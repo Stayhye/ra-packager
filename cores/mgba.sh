@@ -18,7 +18,7 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 
 
 # Compile core with LTO disabled entirely across all option variables
-make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 || { exit 1; }
+make -j $PROC_NR platform=ps2 CFLAGS+="-D_GNU_SOURCE" || { exit 1; }
 
 ## Inspect binary size and sections locally in the script
 FOUND_ARCHIVE=$(find . -name "*.a" | head -n 1)
