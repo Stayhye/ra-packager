@@ -5,8 +5,8 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/mgba"
 REPO_FOLDER="mgba"
-#BRANCH_NAME="ps2"
-BRANCH_NAME="0.7-wip-OLD"
+BRANCH_NAME="ps2"
+
 
 if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
