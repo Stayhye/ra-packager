@@ -3,7 +3,7 @@
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
-REPO_URL="https://github.com/Stayhye/Genesis-Plus-GX-Paprium-PS2"
+REPO_URL="https://github.com/Stayhye/Genesis-Plus-GX"
 REPO_FOLDER="genesis_plus_gx_libretro"
 BRANCH_NAME="master"
 
