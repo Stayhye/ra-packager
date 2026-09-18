@@ -37,6 +37,10 @@
 ./cores/fbalpha2012_cps2.sh || { exit 1; }
 ./generate_retroarch.sh fbalpha2012_cps2 fbalpha2012_cps2_libretro_ps2 || { exit 1; }
 
+#fuse_libretro
+./cores/fuse_libretro.sh || { exit 1; }
+./generate_retroarch.sh fuse_libretro fuse_libretro_ps2 || { exit 1; }
+
 #gambatte-libretro.sh
 ./cores/gambatte-libretro.sh || { exit 1; }
 ./generate_retroarch.sh gambatte-libretro gambatte_libretro_ps2 || { exit 1; }
