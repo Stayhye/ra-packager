@@ -18,6 +18,7 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
         core_opts: [
+          [a5200, a5200_libretro_ps2],
           #[dice-libretro, dice_libretro_ps2],
           #[dosbox-libretro, dosbox_libretro_ps2],
           #[nekop2_libretro, nekop2_libretro_ps2],
@@ -37,7 +38,7 @@ jobs:
           #[libretro-handy, handy_libretro_ps2],
           #[libretro-lutro, lutro_libretro_ps2],
           #[libretro-mame, libretro-mame_ps2],
-          [libretro-prboom, prboom_libretro_ps2],
+          #[libretro-prboom, prboom_libretro_ps2],
           #[libretro-samples, test_libretro_ps2],
           #[mame2000-libretro, mame2000-libretro_ps2],
           #[mame2003-libretro, mame2003_libretro_ps2],
@@ -57,7 +58,6 @@ jobs:
           #[neocd_libretro, neocd_libretro_ps2],
           #[njemu_libretro, njemu_libretro_ps2],
           #[pokemini, pokemini_libretro_ps2],
-          #[picodrive, picodrive_libretro_ps2],
           #[picodrive, picodrive_libretro_ps2],
           #[potator, potator_libretro_ps2],
           #[QuickNES_Core, quicknes_libretro_ps2],
