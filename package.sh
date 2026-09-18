@@ -49,9 +49,9 @@
 ./cores/geargrafx.sh || { exit 1; }
 ./generate_retroarch.sh geargrafx geargrafx_libretro_ps2 || { exit 1; }
 
-#genesis_plus_gx_libretro
-./cores/genesis_plus_gx_libretro.sh || { exit 1; }
-./generate_retroarch.sh genesis_plus_gx_libretro genesis_plus_gx_libretro_ps2 || { exit 1; }
+#genesis_plus_gx
+./cores/genesis_plus_gx.sh || { exit 1; }
+./generate_retroarch.sh genesis_plus_gx genesis_plus_gx_libretro_ps2 || { exit 1; }
 
 #geolith-libretro
 ./cores/geolith-libretro.sh || { exit 1; }
