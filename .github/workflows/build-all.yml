@@ -18,6 +18,7 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
         core_opts: [
+          [2048_libretro, 2048_libretro_ps2],
           #[a5200, a5200_libretro_ps2],
           #[dice-libretro, dice_libretro_ps2],
           #[dosbox-libretro, dosbox_libretro_ps2],

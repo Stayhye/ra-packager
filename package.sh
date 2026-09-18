@@ -69,6 +69,10 @@
 ./cores/gw-libretro.sh || { exit 1; }
 ./generate_retroarch.sh gw-libretro gw-libretro_ps2 || { exit 1; } 
 
+#2048_libretro
+./cores/2048_libretro.sh || { exit 1; }
+./generate_retroarch.sh 2048_libretro 2048_libretro_ps2 || { exit 1; }
+
 #libretro-fceumm
 ./cores/libretro-fceumm.sh || { exit 1; }
 ./generate_retroarch.sh libretro-fceumm fceumm_libretro_ps2 || { exit 1; }
