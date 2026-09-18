@@ -7,8 +7,14 @@ REPO_URL="https://github.com/Stayhye/Genesis-Plus-GX"
 REPO_FOLDER="genesis_plus_gx"
 BRANCH_NAME="master"
 
-## Compile core using native platform=ps2 support
-git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL && cd $REPO_FOLDER || { exit 1; }
+if test ! -d "$REPO_FOLDER"; then
+    git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
+fi
+
+cd $REPO_FOLDER || { exit 1; }
+git fetch origin
+git reset --hard origin/${BRANCH_NAME}
+git checkout ${BRANCH_NAME} || { exit 1; }
 
 ## Compile core
 make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
