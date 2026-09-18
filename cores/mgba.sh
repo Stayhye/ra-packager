@@ -16,6 +16,8 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
+# Clean previous build artifacts completely
+make clean platform=ps2 || true
 
 # Compile core with LTO disabled entirely across all option variables
 make -j $PROC_NR platform=ps2 CFLAGS+="-D_GNU_SOURCE" || { exit 1; }
