@@ -5,85 +5,97 @@
 
 ./prepare_retroarch.sh || { exit 1; }
 
-#ecwolf
-./cores/ecwolf.sh || { exit 1; }
-./generate_retroarch.sh ecwolf ecwolf_libretro_ps2 || { exit 1; }
+#a5200
+./cores/a5200.sh || { exit 1; }
+./generate_retroarch.sh a5200 a5200_libretro_ps2 || { exit 1; }
 
-#vecx_libretro
-./cores/vecx_libretro.sh || { exit 1; }
-./generate_retroarch.sh vecx_libretro vecx_libretro_ps2 || { exit 1; }
-
-#mednafen_pcfx_libretro
-./cores/mednafen_pcfx_libretro.sh || { exit 1; }
-./generate_retroarch.sh mednafen_pcfx_libretro mednafen_pcfx_libretro_ps2 || { exit 1; }
-
-#nekop2_libretro
-./cores/nekop2_libretro.sh || { exit 1; }
-./generate_retroarch.sh nekop2_libretro nekop2_libretro_ps2 || { exit 1; }
-
-#dosbox-libretro
-./cores/dosbox-libretro.sh || { exit 1; }
-./generate_retroarch.sh dosbox_libretro dosbox_libretro_ps2 || { exit 1; }
-
-#geolith-libretro
-./cores/geolith-libretro.sh || { exit 1; }
-./generate_retroarch.sh geolith_libretro geolith_libretro_ps2 || { exit 1; }
-
-#quasi88-libretro
-./cores/quasi88-libretro.sh || { exit 1; }
-./generate_retroarch.sh quasi88_libretro quasi88_libretro_ps2 || { exit 1; }
-
-#tgbdual_libretro
-./cores/tgbdual_libretro.sh || { exit 1; }
-./generate_retroarch.sh tgbdual_libretro tgbdual_libretro_ps2 || { exit 1; }
-
-#vemulator_libretro
-./cores/vemulator_libretro.sh || { exit 1; }
-./generate_retroarch.sh vemulator_libretro vemulator_libretro_ps2 || { exit 1; }
-
-#MBA.mini_libretro
-./cores/MBA.mini_libretro.sh || { exit 1; }
-./generate_retroarch.sh MBA.mini_libretro MBA.mini_libretro_ps2 || { exit 1; }
-
-#race
-./cores/race_libretro.sh || { exit 1; }
-./generate_retroarch.sh race race_libretro_ps2 || { exit 1; }
-
-#geargrafx
-./cores/geargrafx.sh || { exit 1; }
-./generate_retroarch.sh geargrafx geargrafx_libretro_ps2 || { exit 1; }
-
-#njemu_libretro
-./cores/njemu-libretro.sh || { exit 1; }
-./generate_retroarch.sh njemu_libretro njemu_libretro_ps2 || { exit 1; }
-
-#libretro-mame
-./cores/libretro-mame.sh || { exit 1; }
-./generate_retroarch.sh libretro-mame libretro-mame_ps2 || { exit 1; }
-
-#libretro-handy
-./cores/libretro-handy.sh || { exit 1; }
-./generate_retroarch.sh handy_libretro handy_libretro_ps2 || { exit 1; }
+#beetle-wswan-libretro
+./cores/mednafen-wswan-libretro.sh || { exit 1; }
+./generate_retroarch.sh beetle-wswan-libretro mednafen-wswan-libretro_ps2 || { exit 1; }
 
 #bsnes-libretro
 ./cores/bsnes-libretro.sh || { exit 1; }
 ./generate_retroarch.sh bsnes-libretro bsnes_libretro_ps2 || { exit 1; }
 
-#neocd_libretro
-./cores/neocd_libretro.sh || { exit 1; }
-./generate_retroarch.sh neocd_libretro neocd_libretro_ps2 || { exit 1; }
-
-#scummvm_libretro
-./cores/scummvm_libretro.sh || { exit 1; }
-./generate_retroarch.sh scummvm_libretro scummvm_libretro_ps2 || { exit 1; }
-
-#zc210-libretro
-./cores/zc210-libretro.sh || { exit 1; }
-./generate_retroarch.sh zc210-libretro zc210-libretro_ps2 || { exit 1; }
-
 #dice-libretro
 ./cores/dice-libretro.sh || { exit 1; }
 ./generate_retroarch.sh dice-libretro dice-libretro_ps2 || { exit 1; }
+
+#dosbox-libretro
+./cores/dosbox-libretro.sh || { exit 1; }
+./generate_retroarch.sh dosbox_libretro dosbox_libretro_ps2 || { exit 1; }
+
+#ecwolf
+./cores/ecwolf.sh || { exit 1; }
+./generate_retroarch.sh ecwolf ecwolf_libretro_ps2 || { exit 1; }
+
+#fbalpha2012_cps1
+./cores/fbalpha2012_cps1.sh || { exit 1; }
+./generate_retroarch.sh fbalpha2012_cps1 fbalpha2012_cps1_libretro_ps2 || { exit 1; }
+
+#fbalpha2012_cps2
+./cores/fbalpha2012_cps2.sh || { exit 1; }
+./generate_retroarch.sh fbalpha2012_cps2 fbalpha2012_cps2_libretro_ps2 || { exit 1; }
+
+#gambatte-libretro.sh
+./cores/gambatte-libretro.sh || { exit 1; }
+./generate_retroarch.sh gambatte-libretro gambatte_libretro_ps2 || { exit 1; }
+
+#geargrafx
+./cores/geargrafx.sh || { exit 1; }
+./generate_retroarch.sh geargrafx geargrafx_libretro_ps2 || { exit 1; }
+
+#genesis_plus_gx_libretro
+./cores/genesis_plus_gx_libretro.sh || { exit 1; }
+./generate_retroarch.sh genesis_plus_gx_libretro genesis_plus_gx_libretro_ps2 || { exit 1; }
+
+#geolith-libretro
+./cores/geolith-libretro.sh || { exit 1; }
+./generate_retroarch.sh geolith_libretro geolith_libretro_ps2 || { exit 1; }
+
+#gpsp
+./cores/gpsp.sh || { exit 1; }
+./generate_retroarch.sh gpsp gpsp_libretro_ps2 || { exit 1; }
+
+#gpsp_libretro
+./cores/gpsp_libretro.sh || { exit 1; }
+./generate_retroarch.sh gpsp_libretro gpsp_libretro_ps2 || { exit 1; }
+
+#gw-libretro
+./cores/gw-libretro.sh || { exit 1; }
+./generate_retroarch.sh gw-libretro gw-libretro_ps2 || { exit 1; } 
+
+#libretro-fceumm
+./cores/libretro-fceumm.sh || { exit 1; }
+./generate_retroarch.sh libretro-fceumm fceumm_libretro_ps2 || { exit 1; }
+
+#libretro-handy
+./cores/libretro-handy.sh || { exit 1; }
+./generate_retroarch.sh handy_libretro handy_libretro_ps2 || { exit 1; }
+
+#libretro-lutro
+./cores/libretro-lutro.sh || { exit 1; }
+./generate_retroarch.sh libretro-lutro lutro_libretro_ps2 || { exit 1; }
+
+#libretro-mame
+./cores/libretro-mame.sh || { exit 1; }
+./generate_retroarch.sh libretro-mame libretro-mame_ps2 || { exit 1; }
+
+#libretro-prboom
+./cores/libretro-prboom.sh || { exit 1; }
+./generate_retroarch.sh libretro-prboom prboom_libretro_ps2 || { exit 1; }
+
+#libretro-samples
+./cores/libretro-samples.sh || { exit 1; }
+./generate_retroarch.sh libretro-samples test_libretro_ps2 || { exit 1; }
+
+#MBA.mini_libretro
+./cores/MBA.mini_libretro.sh || { exit 1; }
+./generate_retroarch.sh MBA.mini_libretro MBA.mini_libretro_ps2 || { exit 1; }
+
+#mame2000-libretro
+./cores/mame2000-libretro.sh || { exit 1; }
+./generate_retroarch.sh mame2000-libretro mame2000-libretro_ps2 || { exit 1; }
 
 #mame2003-libretro
 ./cores/mame2003-libretro.sh || { exit 1; }
@@ -97,110 +109,97 @@
 ./cores/mame2010-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mame2010-libretro mame2010-libretro_ps2 || { exit 1; }
 
-#mednafen-supergrafx-libretro
-./cores/mednafen-supergrafx-libretro.sh || { exit 1; }
-./generate_retroarch.sh mednafen-supergrafx-libretro mednafen-supergrafx-libretro_ps2 || { exit 1; }
-
 #mednafen-lynx-libretro
 ./cores/mednafen-lynx-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mednafen-lynx-libretro mednafen-lynx-libretro_ps2 || { exit 1; }
-
-#mednafen_gba_libretro
-./cores/mednafen_gba_libretro.sh || { exit 1; }
-./generate_retroarch.sh mednafen_gba_libretro mednafen_gba_libretro_ps2 || { exit 1; }
-
 
 #mednafen-ngp-libretro
 ./cores/mednafen-ngp-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mednafen-ngp-libretro mednafen-ngp-libretro_ps2 || { exit 1; }
 
-#pokemini
-./cores/pokemini.sh || { exit 1; }
-./generate_retroarch.sh pokemini pokemini_libretro_ps2 || { exit 1; }
-
-#gw-libretro
-./cores/gw-libretro.sh || { exit 1; }
-./generate_retroarch.sh gw-libretro gw-libretro_ps2 || { exit 1; } 
-
-#fbalpha2012_cps2
-./cores/fbalpha2012_cps2.sh || { exit 1; }
-./generate_retroarch.sh fbalpha2012_cps2 fbalpha2012_cps2_libretro_ps2 || { exit 1; }
-
-#fbalpha2012_cps1
-./cores/fbalpha2012_cps1.sh || { exit 1; }
-./generate_retroarch.sh fbalpha2012_cps1 fbalpha2012_cps1_libretro_ps2 || { exit 1; }
-
-#genesis_plus_gx_libretro
-./cores/genesis_plus_gx_libretro.sh || { exit 1; }
-./generate_retroarch.sh genesis_plus_gx_libretro genesis_plus_gx_libretro_ps2 || { exit 1; }
-
-#potator
-./cores/potator.sh || { exit 1; }
-./generate_retroarch.sh potator potator-libretro_ps2 || { exit 1; }
-
-#mednafen_pce_libretro
-./cores/mednafen_pce_libretro.sh || { exit 1; }
-./generate_retroarch.sh mednafen_pce_libretro mednafen_pce_libretro_ps2 || { exit 1; }
-
 #mednafen-pce-fast-libretro
 ./cores/mednafen-pce-fast-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mednafen_pce_fast_libretro mednafen_pce_fast_libretro_ps2 || { exit 1; }
 
-#beetle-wswan-libretro
-./cores/mednafen-wswan-libretro.sh || { exit 1; }
-./generate_retroarch.sh beetle-wswan-libretro mednafen-wswan-libretro_ps2 || { exit 1; }
-
-#libretro-prboom
-./cores/libretro-prboom.sh || { exit 1; }
-./generate_retroarch.sh libretro-prboom prboom_libretro_ps2 || { exit 1; }
-
-#libretro-samples
-./cores/libretro-samples.sh || { exit 1; }
-./generate_retroarch.sh libretro-samples test_libretro_ps2 || { exit 1; }
-
-#a5200
-./cores/a5200.sh || { exit 1; }
-./generate_retroarch.sh a5200 a5200_libretro_ps2 || { exit 1; }
-
-#picodrive
-./cores/picodrive.sh || { exit 1; }
-./generate_retroarch.sh picodrive picodrive_libretro_ps2 || { exit 1; }
-
-#mgba
-./cores/libretro-mgba.sh || { exit 1; }
-./generate_retroarch.sh mgba mgba_libretro_ps2 || { exit 1; }
-
-#gambatte-libretro.sh
-./cores/gambatte-libretro.sh || { exit 1; }
-./generate_retroarch.sh gambatte-libretro gambatte_libretro_ps2 || { exit 1; }
-
-#snes9x2002
-./cores/snes9x2002.sh || { exit 1; }
-./generate_retroarch.sh snes9x2002 snes9x2002_libretro_ps2 || { exit 1; }
-
-#libretro-lutro
-./cores/libretro-lutro.sh || { exit 1; }
-./generate_retroarch.sh libretro-lutro lutro_libretro_ps2 || { exit 1; }
-
-#gpsp
-./cores/gpsp.sh || { exit 1; }
-./generate_retroarch.sh gpsp gpsp_libretro_ps2 || { exit 1; }
-
-#gpsp_libretro
-./cores/gpsp_libretro.sh || { exit 1; }
-./generate_retroarch.sh gpsp_libretro gpsp_libretro_ps2 || { exit 1; }
+#mednafen-supergrafx-libretro
+./cores/mednafen-supergrafx-libretro.sh || { exit 1; }
+./generate_retroarch.sh mednafen-supergrafx-libretro mednafen-supergrafx-libretro_ps2 || { exit 1; }
 
 #mednafen-vb-libretro
 ./cores/mednafen-vb-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mednafen-vb-libretro mednafen-vb-libretro_ps2 || { exit 1; }
 
-#mame2000-libretro
-./cores/mame2000-libretro.sh || { exit 1; }
-./generate_retroarch.sh mame2000-libretro mame2000-libretro_ps2 || { exit 1; }
+#mednafen_gba_libretro
+./cores/mednafen_gba_libretro.sh || { exit 1; }
+./generate_retroarch.sh mednafen_gba_libretro mednafen_gba_libretro_ps2 || { exit 1; }
 
-#libretro-fceumm
-./cores/libretro-fceumm.sh || { exit 1; }
-./generate_retroarch.sh libretro-fceumm fceumm_libretro_ps2 || { exit 1; }
+#mednafen_pce_libretro
+./cores/mednafen_pce_libretro.sh || { exit 1; }
+./generate_retroarch.sh mednafen_pce_libretro mednafen_pce_libretro_ps2 || { exit 1; }
+
+#mednafen_pcfx_libretro
+./cores/mednafen_pcfx_libretro.sh || { exit 1; }
+./generate_retroarch.sh mednafen_pcfx_libretro mednafen_pcfx_libretro_ps2 || { exit 1; }
+
+#mgba
+./cores/libretro-mgba.sh || { exit 1; }
+./generate_retroarch.sh mgba mgba_libretro_ps2 || { exit 1; }
+
+#nekop2_libretro
+./cores/nekop2_libretro.sh || { exit 1; }
+./generate_retroarch.sh nekop2_libretro nekop2_libretro_ps2 || { exit 1; }
+
+#neocd_libretro
+./cores/neocd_libretro.sh || { exit 1; }
+./generate_retroarch.sh neocd_libretro neocd_libretro_ps2 || { exit 1; }
+
+#njemu_libretro
+./cores/njemu-libretro.sh || { exit 1; }
+./generate_retroarch.sh njemu_libretro njemu_libretro_ps2 || { exit 1; }
+
+#picodrive
+./cores/picodrive.sh || { exit 1; }
+./generate_retroarch.sh picodrive picodrive_libretro_ps2 || { exit 1; }
+
+#pokemini
+./cores/pokemini.sh || { exit 1; }
+./generate_retroarch.sh pokemini pokemini_libretro_ps2 || { exit 1; }
+
+#potator
+./cores/potator.sh || { exit 1; }
+./generate_retroarch.sh potator potator-libretro_ps2 || { exit 1; }
+
+#quasi88-libretro
+./cores/quasi88-libretro.sh || { exit 1; }
+./generate_retroarch.sh quasi88_libretro quasi88_libretro_ps2 || { exit 1; }
+
+#race
+./cores/race_libretro.sh || { exit 1; }
+./generate_retroarch.sh race race_libretro_ps2 || { exit 1; }
+
+#scummvm_libretro
+./cores/scummvm_libretro.sh || { exit 1; }
+./generate_retroarch.sh scummvm_libretro scummvm_libretro_ps2 || { exit 1; }
+
+#snes9x2002
+./cores/snes9x2002.sh || { exit 1; }
+./generate_retroarch.sh snes9x2002 snes9x2002_libretro_ps2 || { exit 1; }
+
+#tgbdual_libretro
+./cores/tgbdual_libretro.sh || { exit 1; }
+./generate_retroarch.sh tgbdual_libretro tgbdual_libretro_ps2 || { exit 1; }
+
+#vecx_libretro
+./cores/vecx_libretro.sh || { exit 1; }
+./generate_retroarch.sh vecx_libretro vecx_libretro_ps2 || { exit 1; }
+
+#vemulator_libretro
+./cores/vemulator_libretro.sh || { exit 1; }
+./generate_retroarch.sh vemulator_libretro vemulator_libretro_ps2 || { exit 1; }
+
+#zc210-libretro
+./cores/zc210-libretro.sh || { exit 1; }
+./generate_retroarch.sh zc210-libretro zc210-libretro_ps2 || { exit 1; }
 
 ## Copy info folder
 ./libretro-core-info.sh || { exit 1; }
