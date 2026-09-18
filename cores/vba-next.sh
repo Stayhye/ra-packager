@@ -16,9 +16,10 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-
-# Clean previous build artifacts completely
+# Thoroughly clean previous build artifacts
 make clean platform=ps2 || true
+find . -name "*.o" -delete
+find . -name "*.a" -delete
 
 # Compile core with LTO disabled entirely across all option variables
 make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 || { exit 1; }
@@ -26,8 +27,7 @@ make -j $PROC_NR platform=ps2 LTO=0 USE_LTO=0 HAVE_LTO=0 || { exit 1; }
 ## Inspect binary size and sections locally in the script
 FOUND_ARCHIVE=$(find . -name "*.a" | head -n 1)
 
-
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p vba_next_libretro
-cp -f "$FOUND_ARCHIVE" /vba_next_libretro_ps2.a || { exit 1; }
+cp -f "$FOUND_ARCHIVE" vba_next_libretro/vba_next_libretro_ps2.a || { exit 1; }
