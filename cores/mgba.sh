@@ -16,16 +16,6 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-# Clean previous build artifacts completely
-make clean platform=ps2 || true
-
-# Compile core with LTO disabled entirely across all option variables
-make -j $PROC_NR platform=ps2 CFLAGS+="-D_GNU_SOURCE" || { exit 1; }
-
-## Inspect binary size and sections locally in the script
-FOUND_ARCHIVE=$(find . -name "*.a" | head -n 1)
-
-cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
-
-mkdir -p mgba_libretro
-cp -f "$FOUND_ARCHIVE" mgba/mgba_libretro_ps2.a || { exit 1; }
+## Compile core
+make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
+make -f Makefile.libretro  -j $PROC_NR platform=ps2 || { exit 1; }
