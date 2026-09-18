@@ -68,6 +68,7 @@ jobs:
           #[snes9x2002, snes9x2002_libretro_ps2],
           #[snes9x2010_libretro, snes9x2010_libretro_ps2],
           #[tgbdual_libretro, tgbdual_libretro_ps2],
+          [vba-next, vba_next_libretro_ps2],
           #[vemulator_libretro, vemulator_libretro_ps2],
           #[zc210-libretro, zc210-libretro_ps2],
          ]

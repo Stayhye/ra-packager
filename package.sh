@@ -197,6 +197,10 @@
 ./cores/vecx_libretro.sh || { exit 1; }
 ./generate_retroarch.sh vecx_libretro vecx_libretro_ps2 || { exit 1; }
 
+#vba-next
+./cores/vba-next.sh || { exit 1; }
+./generate_retroarch.sh vba-next vba_next_libretro_ps2 || { exit 1; }
+
 #vemulator_libretro
 ./cores/vemulator_libretro.sh || { exit 1; }
 ./generate_retroarch.sh vemulator_libretro vemulator_libretro_ps2 || { exit 1; }
