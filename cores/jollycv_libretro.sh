@@ -7,7 +7,6 @@ REPO_URL="https://github.com/Stayhye/jollycv"
 REPO_FOLDER="jollycv_libretro"
 BRANCH_NAME="master"
 
-
 if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
 fi
@@ -22,5 +21,5 @@ cd libretro || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
 
-
-
+# Move back to the root repository folder ($REPO_FOLDER) so subsequent steps find the file
+cd ..
