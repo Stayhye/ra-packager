@@ -22,10 +22,5 @@ cd libretro || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
 
-## Locate the archive right here where it was built
-FOUND_ARCHIVE=$(ls *_ps2.a 2>/dev/null | head -n 1)
-if [ -z "$FOUND_ARCHIVE" ]; then
-    echo "Error: Could not find generated static archive (*_ps2.a)"
-    exit 1
-fi
+
 
