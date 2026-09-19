@@ -19,4 +19,8 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 
 ## Compile core
 make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
+
+# Fix conflicting types error for GetPrivateProfileInt in peace.c
+sed -i 's/uint32_t GetPrivateProfileInt/unsigned int GetPrivateProfileInt/g' libretro/peace.c
+
 make -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
