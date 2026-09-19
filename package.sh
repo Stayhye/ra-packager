@@ -79,7 +79,11 @@
 
 #2048_libretro
 ./cores/2048_libretro.sh || { exit 1; }
-./generate_retroarch.sh 2048_libretro 2048_libretro_ps2 || { exit 1; }
+./generate_retroarch.sh 2048_libretro 2048_libretro_ps2 || { exit 1; } 
+
+#jollycv
+./cores/jollycv.sh || { exit 1; }
+./generate_retroarch.sh jollycv jollycv_libretro_ps2 || { exit 1; }
 
 #libretro-fceumm
 ./cores/libretro-fceumm.sh || { exit 1; }
