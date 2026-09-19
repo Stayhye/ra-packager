@@ -16,6 +16,11 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
+# Fix missing python2 by routing it to python3/python via a local bin wrapper
+mkdir -p .local-bin
+ln -sf $(which python3 || which python) .local-bin/python2
+export PATH="$(pwd)/.local-bin:$PATH"
+
 ## Compile core using native platform=ps2 support with static linking and error suppression
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 STATIC_LINKING=1 NOWERROR=1 CFLAGS+="-Wno-error=class-memaccess -Wno-error=nonnull-compare" CXXFLAGS+="-Wno-error=class-memaccess -Wno-error=nonnull-compare" || { exit 1; }
