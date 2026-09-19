@@ -7,7 +7,11 @@
 
 #a5200
 ./cores/a5200.sh || { exit 1; }
-./generate_retroarch.sh a5200 a5200_libretro_ps2 || { exit 1; }
+./generate_retroarch.sh a5200 a5200_libretro_ps2 || { exit 1; } 
+
+#atari800_libretro
+./cores/atari800_libretro.sh || { exit 1; }
+./generate_retroarch.sh atari800_libretro atari800_libretro_ps2 || { exit 1; }
 
 #beetle-wswan-libretro
 ./cores/mednafen-wswan-libretro.sh || { exit 1; }
