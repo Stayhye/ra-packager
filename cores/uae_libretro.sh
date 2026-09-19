@@ -28,4 +28,7 @@ sed -i '/typedef uae_u32 uaecptr;/s/^/\/\//' sources/src/include/sysdeps.h
 # Fix timezone macro conflict
 sed -i '/#define timezone 0/s/^/\/\//' sources/src/include/sysdeps.h
 
+# Disable/remove uae_dlopen.c from the build since PS2 lacks dlfcn.h
+sed -i 's/sources\/src\/caps\/uae_dlopen\.c//g' Makefile
+
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
