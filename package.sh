@@ -177,6 +177,10 @@
 ./cores/njemu-libretro.sh || { exit 1; }
 ./generate_retroarch.sh njemu_libretro njemu_libretro_ps2 || { exit 1; }
 
+#px68k_libretro
+./cores/px68k_libretro.sh || { exit 1; }
+./generate_retroarch.sh px68k_libretro px68k_libretro_ps2 || { exit 1; } 
+
 #picodrive
 ./cores/picodrive.sh || { exit 1; }
 ./generate_retroarch.sh picodrive picodrive_libretro_ps2 || { exit 1; }
