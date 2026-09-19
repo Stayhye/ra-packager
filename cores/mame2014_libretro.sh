@@ -33,7 +33,12 @@ export PATH="$(pwd)/.local-bin:$PATH"
 find . -type f \( -name "Makefile*" -o -name "*.mak" \) -exec sed -i 's/\bpython2\b/python3/g' {} +
 
 ## Compile core using native platform=ps2 support with static linking and error suppression
-make -j $PROC_NR platform=ps2 clean || { exit 1; }
+make -j1 platform=ps2 clean || { exit 1; }
+
+# Stage 1: Run a quick non-parallel pass to safely generate mame.lst, headers, and directories without race conditions
+make platform=ps2 STATIC_LINKING=1 NOWERROR=1 CFLAGS+="-Wno-error=class-memaccess -Wno-error=nonnull-compare" CXXFLAGS+="-Wno-error=class-memaccess -Wno-error=nonnull-compare" || true
+
+# Stage 2: Run full parallel build now that all prerequisites are safely generated
 make -j $PROC_NR platform=ps2 STATIC_LINKING=1 NOWERROR=1 CFLAGS+="-Wno-error=class-memaccess -Wno-error=nonnull-compare" CXXFLAGS+="-Wno-error=class-memaccess -Wno-error=nonnull-compare" || { exit 1; }
 
 ## Inspect binary size and sections locally in the script
