@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/jollycv"
-REPO_FOLDER="libretro"
+REPO_FOLDER="jollycv_libretro"
 BRANCH_NAME="master"
 
 
