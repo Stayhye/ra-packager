@@ -28,7 +28,20 @@ sed -i '/typedef uae_u32 uaecptr;/s/^/\/\//' sources/src/include/sysdeps.h
 # Fix timezone macro conflict
 sed -i '/#define timezone 0/s/^/\/\//' sources/src/include/sysdeps.h
 
-# Disable/remove uae_dlopen.c from the build since PS2 lacks dlfcn.h
-sed -i 's/sources\/src\/caps\/uae_dlopen\.c//g' Makefile
+# Create a dummy dlfcn.h header to satisfy uae_dlopen.c on platforms without dynamic loading
+cat << 'EOF' > sources/src/include/dlfcn.h
+#ifndef DLFCN_H
+#define DLFCN_H
+
+#define RTLD_LAZY 1
+#define RTLD_NOW 2
+
+static inline void *dlopen(const char *file, int mode) { (void)file; (void)mode; return (void*)0; }
+static inline void *dlsym(void *handle, const char *name) { (void)handle; (void)name; return (void*)0; }
+static inline int dlclose(void *handle) { (void)handle; return 0; }
+static inline char *dlerror(void) { return "Dynamic loading not supported on PS2"; }
+
+#endif
+EOF
 
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
