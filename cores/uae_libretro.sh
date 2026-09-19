@@ -19,4 +19,10 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 
 ## Compile core
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
+
+# Fix conflicting integer types between sysdeps.h and types.h for PS2 toolchain
+sed -i '/typedef unsigned int uae_u32;/s/^/\/\//' sources/src/include/sysdeps.h
+sed -i '/typedef int uae_s32;/s/^/\/\//' sources/src/include/sysdeps.h
+sed -i '/typedef uae_u32 uaecptr;/s/^/\/\//' sources/src/include/sysdeps.h
+
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
