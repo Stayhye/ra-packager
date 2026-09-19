@@ -83,7 +83,7 @@
 
 #jollycv
 ./cores/jollycv.sh || { exit 1; }
-./generate_retroarch.sh jollycv jollycv_libretro_ps2 || { exit 1; }
+./generate_retroarch.sh jollycv_libretro jollycv_libretro_ps2 || { exit 1; }
 
 #libretro-fceumm
 ./cores/libretro-fceumm.sh || { exit 1; }
