@@ -16,10 +16,8 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-# Fix missing python2 by routing it to python3/python via a local bin wrapper
-mkdir -p .local-bin
-ln -sf $(which python3 || which python) .local-bin/python2
-export PATH="$(pwd)/.local-bin:$PATH"
+# Globally replace all hardcoded 'python2' references with 'python3' or 'python' in all Makefiles
+find . -type f \( -name "Makefile*" -o -name "*.mak" \) -exec sed -i 's/python2/python3/g' {} +
 
 ## Compile core using native platform=ps2 support with static linking and error suppression
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
