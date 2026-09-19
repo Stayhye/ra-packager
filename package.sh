@@ -203,7 +203,11 @@
 
 #race
 ./cores/race_libretro.sh || { exit 1; }
-./generate_retroarch.sh race race_libretro_ps2 || { exit 1; }
+./generate_retroarch.sh race race_libretro_ps2 || { exit 1; } 
+
+#retro8_libretro
+./cores/retro8_libretro.sh || { exit 1; }
+./generate_retroarch.sh retro8_libretro retro8_libretro_ps2 || { exit 1; }
 
 #scummvm_libretro
 ./cores/scummvm_libretro.sh || { exit 1; }
