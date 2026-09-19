@@ -215,7 +215,11 @@
 
 #tgbdual_libretro
 ./cores/tgbdual_libretro.sh || { exit 1; }
-./generate_retroarch.sh tgbdual_libretro tgbdual_libretro_ps2 || { exit 1; }
+./generate_retroarch.sh tgbdual_libretro tgbdual_libretro_ps2 || { exit 1; } 
+
+#uae_libretro
+./cores/uae_libretro.sh || { exit 1; }
+./generate_retroarch.sh uae_libretro uae_libretro_ps2 || { exit 1; }
 
 #vecx_libretro
 ./cores/vecx_libretro.sh || { exit 1; }
