@@ -16,8 +16,21 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-# Globally replace all hardcoded 'python2' references with 'python3' or 'python' in all Makefiles
-find . -type f \( -name "Makefile*" -o -name "*.mak" \) -exec sed -i 's/python2/python3/g' {} +
+# Ensure Python is available in the environment
+if ! command -v python3 &> /dev/null && ! command -v python &> /dev/null; then
+    echo "Python not found. Installing python3..."
+    apt-get update && apt-get install -y python3 || yum install -y python3 || apk add python3 || { echo "Failed to install Python"; exit 1; }
+fi
+
+# Find the working python binary and create local wrappers for python2 and python3
+PYTHON_BIN=$(command -v python3 || command -v python)
+mkdir -p .local-bin
+ln -sf "$PYTHON_BIN" .local-bin/python3
+ln -sf "$PYTHON_BIN" .local-bin/python2
+export PATH="$(pwd)/.local-bin:$PATH"
+
+# Replace any hardcoded python calls in makefiles to use python3
+find . -type f \( -name "Makefile*" -o -name "*.mak" \) -exec sed -i 's/\bpython2\b/python3/g' {} +
 
 ## Compile core using native platform=ps2 support with static linking and error suppression
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
