@@ -22,5 +22,5 @@ cd libretro || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
 
-cd .. || { exit 1; }
+cd ../.. || { exit 1; }
 
