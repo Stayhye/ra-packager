@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/jollycv"
-REPO_FOLDER="jollycv_libretro"
+REPO_FOLDER="libretro"
 BRANCH_NAME="master"
 
 
@@ -21,4 +21,6 @@ cd libretro || { exit 1; }
 ## Compile core
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
+
+
 
