@@ -26,6 +26,8 @@ sed -i '/typedef uae_u32 uaecptr;/s/^/\/\//' sources/src/include/sysdeps.h
 
 # Fix timezone macro conflict
 sed -i '/#define timezone 0/s/^/\/\//' sources/src/include/sysdeps.h
+# Completely drop any caps source files from Makefile.common to prevent undefined references to uae_dlopen/dlsym
+sed -i '/caps/d' Makefile.common
 
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
 
