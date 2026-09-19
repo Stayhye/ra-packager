@@ -1,9 +1,9 @@
 #!/bin/bash
-# package.sh
+# package.sh for MAME 2014 PS2
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
-REPO_URL="https://github.com/Stayhye/mame2014-libretro"   
+REPO_URL="https://github.com/Stayhye/mame2014-libretro"
 REPO_FOLDER="mame2014_libretro"
 BRANCH_NAME="master"
 
@@ -16,11 +16,12 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core using native platform=ps2 support from the root directory
-make -j $PROC_NR platform=ps2 || { exit 1; }
+## Compile core using native platform=ps2 support with static linking
+make -j $PROC_NR platform=ps2 clean || { exit 1; }
+make -j $PROC_NR platform=ps2 STATIC_LINKING=1 || { exit 1; }
 
-## Inspect binary size and sections locally in the script (without destroying symbols)
-FOUND_ARCHIVE=$(find . -name "*_ps2.a" | head -n 1)
+## Inspect binary size and sections locally in the script
+FOUND_ARCHIVE=$(find . -maxdepth 1 -name "*.a" | head -n 1)
 if [ -n "$FOUND_ARCHIVE" ]; then
     echo "=== File Size ==="
     ls -lh "$FOUND_ARCHIVE"
@@ -36,13 +37,15 @@ fi
 cd .. || { exit 1; }
 
 ## Find and copy the generated archive
-FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_ps2.a" | head -n 1)
+FOUND_ARCHIVE=$(find "$REPO_FOLDER" -maxdepth 1 -name "*.a" | head -n 1)
 if [ -z "$FOUND_ARCHIVE" ]; then
-    echo "Error: Could not find generated static archive (*_ps2.a)"
+    echo "Error: Could not find generated static archive (*.a)"
     exit 1
 fi
 
 cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
 mkdir -p mame2014_libretro
-cp -f "$FOUND_ARCHIVE" mame2014_libretro/mame2000_libretro_ps2.a || { exit 1; }
+cp -f "$FOUND_ARCHIVE" mame2014_libretro/mame2014_libretro_ps2.a || { exit 1; }
+
+echo "Successfully built and packaged MAME 2014 for PS2!"
