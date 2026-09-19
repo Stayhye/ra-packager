@@ -125,9 +125,9 @@
 ./cores/mame2003-plus-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mame2003-plus-libretro mame2003-plus-libretro_ps2 || { exit 1; }
 
-#mame2010-libretro
-./cores/mame2010-libretro.sh || { exit 1; }
-./generate_retroarch.sh mame2010-libretro mame2010-libretro_ps2 || { exit 1; }
+#mame2014-libretro
+./cores/mame2014_libretro.sh || { exit 1; }
+./generate_retroarch.sh mame2014_libretro mame2014_libretro_ps2 || { exit 1; }
 
 #mednafen-lynx-libretro
 ./cores/mednafen-lynx-libretro.sh || { exit 1; }
