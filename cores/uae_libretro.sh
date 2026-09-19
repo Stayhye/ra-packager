@@ -26,8 +26,31 @@ sed -i '/typedef uae_u32 uaecptr;/s/^/\/\//' sources/src/include/sysdeps.h
 
 # Fix timezone macro conflict
 sed -i '/#define timezone 0/s/^/\/\//' sources/src/include/sysdeps.h
-# Completely drop any caps source files from Makefile.common to prevent undefined references to uae_dlopen/dlsym
-sed -i '/caps/d' Makefile.common
+
+# Replace uae_dlopen.c with a safe PS2 stub so caps.c can compile without <dlfcn.h>
+cat << 'EOF' > sources/src/caps/uae_dlopen.c
+#include <stddef.h>
+
+void *uae_dlopen(const char *name) {
+    (void)name;
+    return NULL;
+}
+
+void *uae_dlsym(void *handle, const char *symbol) {
+    (void)handle;
+    (void)symbol;
+    return NULL;
+}
+
+void uae_dlclose(void *handle) {
+    (void)handle;
+}
+
+const char *uae_dlerror(void) {
+    return "Dynamic loading not supported on PS2";
+}
+EOF
 
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
+
 
