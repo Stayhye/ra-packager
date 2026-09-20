@@ -229,6 +229,10 @@
 ./cores/snes9x2002.sh || { exit 1; }
 ./generate_retroarch.sh snes9x2002 snes9x2002_libretro_ps2 || { exit 1; }
 
+#snes9x2005
+./cores/snes9x2005.sh || { exit 1; }
+./generate_retroarch.sh snes9x2005 snes9x2005_libretro_ps2 || { exit 1; }
+
 #tgbdual_libretro
 ./cores/tgbdual_libretro.sh || { exit 1; }
 ./generate_retroarch.sh tgbdual_libretro tgbdual_libretro_ps2 || { exit 1; } 
