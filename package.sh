@@ -47,7 +47,11 @@
 
 #fuse_libretro
 ./cores/fuse_libretro.sh || { exit 1; }
-./generate_retroarch.sh fuse_libretro fuse_libretro_ps2 || { exit 1; }
+./generate_retroarch.sh fuse_libretro fuse_libretro_ps2 || { exit 1; } 
+
+#fmsx_libretro
+./cores/fmsx_libretro.sh || { exit 1; }
+./generate_retroarch.sh fmsx_libretro fmsx_libretro_ps2 || { exit 1; } 
 
 #gambatte-libretro.sh
 ./cores/gambatte-libretro.sh || { exit 1; }
