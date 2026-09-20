@@ -17,6 +17,6 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core
+## Compile core with -fcommon to resolve GCC 15 multiple definition errors
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
+make -f Makefile -j $PROC_NR platform=ps2 CFLAGS="-fcommon" CXXFLAGS="-fcommon" || { exit 1; }
