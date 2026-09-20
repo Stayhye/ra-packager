@@ -18,6 +18,7 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
         core_opts: [
+          [81_libretro, 81_libretro_ps2],
           #[2048_libretro, 2048_libretro_ps2],
           #[atari800_libretro, atari800_libretro_ps2],
           #[a5200, a5200_libretro_ps2],

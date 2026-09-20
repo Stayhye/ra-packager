@@ -9,6 +9,10 @@
 ./cores/a5200.sh || { exit 1; }
 ./generate_retroarch.sh a5200 a5200_libretro_ps2 || { exit 1; } 
 
+#81_libretro
+./cores/81_libretro.sh || { exit 1; }
+./generate_retroarch.sh 81_libretro 81_libretro_ps2 || { exit 1; }
+
 #freeintv
 ./cores/freeintv.sh || { exit 1; }
 ./generate_retroarch.sh freeintv freeintv_libretro_ps2 || { exit 1; }
