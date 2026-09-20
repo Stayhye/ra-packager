@@ -18,5 +18,5 @@ git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
 ## Compile core
-make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
+make -f makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
+make -f makefile -j $PROC_NR platform=ps2 || { exit 1; }
