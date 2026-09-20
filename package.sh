@@ -5,6 +5,10 @@
 
 ./prepare_retroarch.sh || { exit 1; }
 
+#hatariB
+./cores/hatariB.sh || { exit 1; }
+./generate_retroarch.sh HatariB hatarib_libretro_ps2 || { exit 1; } 
+
 #a5200
 ./cores/a5200.sh || { exit 1; }
 ./generate_retroarch.sh a5200 a5200_libretro_ps2 || { exit 1; } 
