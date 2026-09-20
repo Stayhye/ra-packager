@@ -18,8 +18,8 @@ jobs:
       matrix:
         docker_owner: [ps2dev]
         core_opts: [
-          [hatariB, hatarib_libretro_ps2],
-          [81_libretro, 81_libretro_ps2],
+          #[hatariB, hatarib_libretro_ps2],
+          #[81_libretro, 81_libretro_ps2],
           #[2048_libretro, 2048_libretro_ps2],
           #[atari800_libretro, atari800_libretro_ps2],
           #[a5200, a5200_libretro_ps2],
@@ -63,7 +63,7 @@ jobs:
           #[mednafen-vb-libretro, mednafen-vb-libretro_ps2],
           #[mednafen-wswan-libretro, mednafen-wswan-libretro_ps2],
           #[mednafen-supergrafx-libretro, mednafen-supergrafx-libretro_ps2],
-          [mrboom_libretro, mrboom_libretro_ps2],
+          #[mrboom_libretro, mrboom_libretro_ps2],
           #[neocd_libretro, neocd_libretro_ps2],
           #[nekop2_libretro, nekop2_libretro_ps2],
           #[njemu_libretro, njemu_libretro_ps2],
@@ -79,7 +79,7 @@ jobs:
           #[stella2014-libretro, stella2014_libretro_ps2],
           #[snes9x2002, snes9x2002_libretro_ps2],
           [snes9x2005, snes9x2005_libretro_ps2],
-          #[snes9x2010_libretro, snes9x2010_libretro_ps2],
+          [snes9x2010_libretro, snes9x2010_libretro_ps2],
           #[tgbdual_libretro, tgbdual_libretro_ps2],
           #[uae_libretro, puae_libretro_ps2],
           #[vba-next, vba_next_libretro_ps2],
