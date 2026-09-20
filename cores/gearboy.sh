@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/gearboy"
-REPO_FOLDER="gearboy_libretro"
+REPO_FOLDER="gearboy"
 BRANCH_NAME="master"
 
 
