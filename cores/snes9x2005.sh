@@ -17,6 +17,6 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Compile core with -fcommon to resolve GCC 15 multiple definition errors
+## Compile core using EXTRA flags to preserve built-in include paths
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -f Makefile -j $PROC_NR platform=ps2 CFLAGS="-fcommon" CXXFLAGS="-fcommon" || { exit 1; }
+make -f Makefile -j $PROC_NR platform=ps2 EXTRA_CFLAGS="-fcommon" EXTRA_CXXFLAGS="-fcommon" || { exit 1; }
