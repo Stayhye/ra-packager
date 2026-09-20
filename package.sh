@@ -165,9 +165,13 @@
 ./cores/mednafen-supergrafx-libretro.sh || { exit 1; }
 ./generate_retroarch.sh mednafen-supergrafx-libretro mednafen-supergrafx-libretro_ps2 || { exit 1; }
 
+#mednafen_snes_libretro
+./cores/mednafen_snes_libretro.sh || { exit 1; }
+./generate_retroarch.sh mednafen_snes_libretro mednafen_snes_libretro_ps2 || { exit 1; } 
+
 #mednafen-vb-libretro
 ./cores/mednafen-vb-libretro.sh || { exit 1; }
-./generate_retroarch.sh mednafen-vb-libretro mednafen-vb-libretro_ps2 || { exit 1; }
+./generate_retroarch.sh mednafen-vb-libretro mednafen-vb-libretro_ps2 || { exit 1; } 
 
 #mednafen_gba_libretro
 ./cores/mednafen_gba_libretro.sh || { exit 1; }
