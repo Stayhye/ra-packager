@@ -57,6 +57,10 @@
 ./cores/gambatte-libretro.sh || { exit 1; }
 ./generate_retroarch.sh gambatte-libretro gambatte_libretro_ps2 || { exit 1; }
 
+#gearboy
+./cores/gearboy.sh || { exit 1; }
+./generate_retroarch.sh gearboy gearboy_libretro_ps2 || { exit 1; }
+
 #geargrafx
 ./cores/geargrafx.sh || { exit 1; }
 ./generate_retroarch.sh geargrafx geargrafx_libretro_ps2 || { exit 1; }
