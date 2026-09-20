@@ -62,6 +62,7 @@ jobs:
           #[mednafen-vb-libretro, mednafen-vb-libretro_ps2],
           #[mednafen-wswan-libretro, mednafen-wswan-libretro_ps2],
           #[mednafen-supergrafx-libretro, mednafen-supergrafx-libretro_ps2],
+          [mrboom-libretro, mrboom_libretro_ps2],
           #[neocd_libretro, neocd_libretro_ps2],
           #[nekop2_libretro, nekop2_libretro_ps2],
           #[njemu_libretro, njemu_libretro_ps2],
