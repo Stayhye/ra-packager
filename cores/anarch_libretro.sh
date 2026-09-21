@@ -8,14 +8,10 @@ REPO_URL="https://github.com/Stayhye/anarch-libretro"
 REPO_FOLDER="anarch_libretro"
 BRANCH_NAME="main"
 
-# Ensure ps2dev toolchain paths are fully exposed to the environment
+# Ensure ps2dev toolchain bin paths are fully exposed
 export PS2DEV=/usr/local/ps2dev
 export PS2SDK=$PS2DEV/ps2sdk
 export PATH=$PS2DEV/bin:$PS2SDK/bin:$PS2DEV/ee/bin:$PATH
-
-REPO_URL="https://github.com/Stayhye/anarch-libretro"
-REPO_FOLDER="anarch_libretro"
-BRANCH_NAME="main"
 
 if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
@@ -26,16 +22,17 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-## Create build directory for CMake
+## Clean build directory to avoid cache conflicts
+rm -rf build
 mkdir -p build && cd build || { exit 1; }
 
-## Configure using explicit toolchain definitions and environment bindings
+## Configure using CMake with absolute paths to compiler and archiver
 cmake .. \
     -DCMAKE_SYSTEM_NAME=Generic \
     -DCMAKE_SYSTEM_PROCESSOR=mips \
-    -DCMAKE_C_COMPILER=mips64r5900el-ps2-elf-gcc \
-    -DCMAKE_AR=mips64r5900el-ps2-elf-ar \
-    -DCMAKE_RANLIB=mips64r5900el-ps2-elf-ranlib \
+    -DCMAKE_C_COMPILER=/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc \
+    -DCMAKE_AR=/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar \
+    -DCMAKE_RANLIB=/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ranlib \
     -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
 cmake --build . -- -j $PROC_NR || { exit 1; }
