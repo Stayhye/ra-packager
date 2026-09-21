@@ -73,6 +73,10 @@
 ./cores/gearboy.sh || { exit 1; }
 ./generate_retroarch.sh gearboy gearboy_libretro_ps2 || { exit 1; }
 
+#gearlynx
+./cores/gearlynx.sh || { exit 1; }
+./generate_retroarch.sh gearlynx gearlynx_libretro_ps2 || { exit 1; }
+
 #geargrafx
 ./cores/geargrafx.sh || { exit 1; }
 ./generate_retroarch.sh geargrafx geargrafx_libretro_ps2 || { exit 1; }
