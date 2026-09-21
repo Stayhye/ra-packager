@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/anarch-libretro"
-REPO_FOLDER="anarch_libretro"
+REPO_FOLDER="anarch-libretro"
 BRANCH_NAME="main"
 
 if test ! -d "$REPO_FOLDER"; then
