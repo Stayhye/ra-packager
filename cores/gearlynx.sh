@@ -22,8 +22,6 @@ cd platforms/libretro || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
 
-## Return back to the workspace root
-cd ../.. || { exit 1; }
 
 ## Find and copy the generated archive
 FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*.a" | head -n 1)
