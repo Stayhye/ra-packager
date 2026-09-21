@@ -24,7 +24,7 @@ cd build
 cmake .. -DCMAKE_SYSTEM_NAME=PS2 -DCMAKE_BUILD_TYPE=Release
 cmake --build . -- -j $PROC_NR
 
-# Copy directly using the tracked workspace root path
-cp anarch_libretro_ps2.a "$WORKSPACE_ROOT/anarch_libretro_ps2.a"
+# Copy the compiled library to the root of the anarch_libretro folder
+cp build/anarch_libretro_ps2.a anarch_libretro_ps2.a
 
-echo "Successfully built and copied anarch_libretro_ps2.a to root."
+echo "Successfully built and placed anarch_libretro_ps2.a in repo root."
