@@ -35,8 +35,8 @@ cmake .. \
     -DCMAKE_RANLIB=/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ranlib \
     -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
-# Build explicitly targeting the libretro target sub-component
-cmake --build . --target bennugd_libretro -- -j $PROC_NR || { exit 1; }
+# Build with verbose output and without -j to see the exact linker error clearly
+cmake --build . --target bennugd_libretro --verbose || { exit 1; }
 
 ## Go back to the repository root folder
 cd ..
