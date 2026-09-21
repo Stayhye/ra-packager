@@ -22,7 +22,5 @@ cd platforms/libretro || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
 
-# Move the generated file up two levels so it sits alongside the gearboy folder
-mv gearboy_libretro_ps2.a ../../ || { exit 1; }
 
 cd ../..
