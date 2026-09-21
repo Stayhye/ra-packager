@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/Gearlynx"
-REPO_FOLDER="gearlynx"
+REPO_FOLDER="Gearlynx"
 BRANCH_NAME="main"
 
 
