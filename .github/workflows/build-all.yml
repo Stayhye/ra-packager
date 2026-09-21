@@ -33,7 +33,7 @@ jobs:
           #[fmsx_libretro, fmsx_libretro_ps2],
           #[gambatte-libretro, gambatte_libretro_ps2],
           #[geargrafx, geargrafx_libretro_ps2],
-          [geolith-libretro, geolith_libretro_ps2],
+          #[geolith-libretro, geolith_libretro_ps2],
           #[genesis_plus_gx, genesis_plus_gx_libretro_ps2],
           #[gearboy, gearboy_libretro_ps2],
           [gearlynx, gearlynx_libretro_ps2],
