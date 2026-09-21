@@ -23,4 +23,3 @@ make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
 
 
-cp -f gearlynx_libretro_ps2.a || { exit 1; }
