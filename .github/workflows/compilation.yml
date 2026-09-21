@@ -32,12 +32,12 @@ jobs:
 
     container: ${{ matrix.docker_owner }}/orbisdev:latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Install dependencies
       run: |
-        apk add build-base git bash python2
-    
+        apk update && apk add --no-cache build-base git bash python3
+      
     - name: Compile project
       run: |
         ./prepare_release.sh
@@ -47,7 +47,7 @@ jobs:
 
     - name: Get short SHA
       id: slug
-      run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
 
     - name: Upload artifacts
       if: ${{ success() }}
@@ -56,47 +56,19 @@ jobs:
         name: RA-${{ matrix.docker_owner }}-${{ steps.slug.outputs.sha8 }}
         path: RA/
 
-
-  # libretro-salamander:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       docker_owner: [orbisdev, orbisdev]
-
-  #   container: ${{ matrix.docker_owner }}/orbisdev:latest
-  #   steps:
-  #   - uses: actions/checkout@v2
-
-  #   - name: Install dependencies
-  #     run: |
-  #       apk add build-base git bash
-    
-  #   - name: Compile project
-  #     run: |
-  #       ./prepare_release.sh
-  #       ./prepare_retroarch.sh
-  #       ./generate_salamander.sh
-
-  #   - name: Get short SHA
-  #     id: slug
-  #     run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
-
-  #   - name: Upload artifacts
-  #     if: ${{ success() }}
-  #     uses: actions/upload-artifact@v2
-  #     with:
-  #       name: RA-${{ matrix.docker_owner }}-${{ steps.slug.outputs.sha8 }}
-  #       path: RA/
-
-
   libretro-info-core:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         docker_owner: [orbisdev]
 
+    container: ${{ matrix.docker_owner }}/orbisdev:latest
     steps:
     - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        apk update && apk add --no-cache build-base git bash python3
 
     - name: Compile project
       run: |
@@ -105,13 +77,11 @@ jobs:
 
     - name: Get short SHA
       id: slug
-      run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+      run: echo "sha8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_OUTPUT
 
     - name: Upload artifacts
       if: ${{ success() }}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: RA-${{ matrix.docker_owner }}-${{ steps.slug.outputs.sha8 }}
         path: RA/
-
-    
