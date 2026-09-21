@@ -23,13 +23,13 @@ mkdir -p build && cd build || { exit 1; }
 cmake .. -DCMAKE_SYSTEM_NAME=PS2 -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 cmake --build . -- -j $PROC_NR || { exit 1; }
 
-## Go back to the repository root folder
+## Go back to the repository root, then to the workspace root
+cd ..
 cd ..
 
 ## Copy and rename the compiled library to the workspace root directory
-if [ -f "build/anarch_libretro_ps2.a" ]; then
-    cp build/anarch_libretro_ps2.a ../anarch_libretro_ps2.a
+if [ -f "anarch_libretro/build/anarch_libretro_ps2.a" ]; then
+    cp anarch_libretro/build/anarch_libretro_ps2.a anarch_libretro_ps2.a
 else
-    # Fallback to catch any variant naming convention
-    find build -name "*.a" -exec cp {} ../anarch_libretro_ps2.a \;
+    find anarch_libretro -name "anarch_libretro_ps2.a" -exec cp {} . \;
 fi
