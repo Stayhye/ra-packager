@@ -25,6 +25,10 @@
 ./cores/freeintv.sh || { exit 1; }
 ./generate_retroarch.sh freeintv freeintv_libretro_ps2 || { exit 1; }
 
+#anarch-libretro
+./cores/anarch-libretro.sh || { exit 1; }
+./generate_retroarch.sh anarch-libretro anarch_libretro_ps2 || { exit 1; }
+
 #atari800_libretro
 ./cores/atari800_libretro.sh || { exit 1; }
 ./generate_retroarch.sh atari800_libretro atari800_libretro_ps2 || { exit 1; }
