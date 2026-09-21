@@ -5,7 +5,7 @@ set -e
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/BennuGD_libretro"
-REPO_FOLDER="BennuGD_libretro"
+REPO_FOLDER="bennugd_libretro"
 BRANCH_NAME="master"
 
 # Ensure ps2dev toolchain bin paths are fully exposed
