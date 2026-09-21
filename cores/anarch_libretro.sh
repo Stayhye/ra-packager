@@ -20,13 +20,19 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 ## Create build directory for CMake
 mkdir -p build && cd build || { exit 1; }
 
-## Configure using pure C toolchain variables (Anarch is C-only)
+## Set explicit environment toolchain bindings so make/ar resolve correctly
+export CC=mips64r5900el-ps2-elf-gcc
+export AR=mips64r5900el-ps2-elf-ar
+export RANLIB=mips64r5900el-ps2-elf-ranlib
+export STRIP=mips64r5900el-ps2-elf-strip
+
+## Configure using CMake with generic cross-compilation target
 cmake .. \
     -DCMAKE_SYSTEM_NAME=Generic \
     -DCMAKE_SYSTEM_PROCESSOR=mips \
-    -DCMAKE_C_COMPILER=mips64r5900el-ps2-elf-gcc \
-    -DCMAKE_AR=/usr/local/ps2dev/ps2sdk/ee/bin/mips64r5900el-ps2-elf-ar \
-    -DCMAKE_RANLIB=/usr/local/ps2dev/ps2sdk/ee/bin/mips64r5900el-ps2-elf-ranlib \
+    -DCMAKE_C_COMPILER=$CC \
+    -DCMAKE_AR=$AR \
+    -DCMAKE_RANLIB=$RANLIB \
     -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
 cmake --build . -- -j $PROC_NR || { exit 1; }
