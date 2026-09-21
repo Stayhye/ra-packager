@@ -24,9 +24,9 @@ cmake .. -DCMAKE_SYSTEM_NAME=PS2 -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 cmake --build . -- -j $PROC_NR || { exit 1; }
 
 ## Copy and rename the compiled library to the repository root directory
-if [ -f "anarch_libretro_ps2.a" ]; then
-    cp anarch_libretro_ps2.a ../../anarch_libretro_ps2.a
+if [ -f "build/anarch_libretro_ps2.a" ]; then
+    cp build/anarch_libretro_ps2.a ../anarch_libretro_ps2.a
 else
-    # Fallback to catch any variant naming convention
-    find . -name "*.a" -exec cp {} ../../anarch_libretro_ps2.a \;
+    # Fallback to catch any variant naming convention in the build folder
+    find build -name "*.a" -exec cp {} ../anarch_libretro_ps2.a \;
 fi
