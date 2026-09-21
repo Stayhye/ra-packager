@@ -1,35 +1,30 @@
 #!/bin/bash
-# package.sh for Anarch (PS2 target)
+set -e
 
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
-
 REPO_URL="https://github.com/Stayhye/anarch-libretro"
 REPO_FOLDER="anarch_libretro"
 BRANCH_NAME="main"
 
+# Lock in the workspace root before changing directories
+WORKSPACE_ROOT=$(pwd)
+
 if test ! -d "$REPO_FOLDER"; then
-    git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
+    git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER
 fi
 
-cd $REPO_FOLDER || { exit 1; }
+cd "$REPO_FOLDER"
 git fetch origin
 git reset --hard origin/${BRANCH_NAME}
-git checkout ${BRANCH_NAME} || { exit 1; }
+git checkout ${BRANCH_NAME}
 
-## Create build directory for CMake
-mkdir -p build && cd build || { exit 1; }
+mkdir -p build
+cd build
 
-## Configure and Compile using CMake (targeting PS2)
-cmake .. -DCMAKE_SYSTEM_NAME=PS2 -DCMAKE_BUILD_TYPE=Release || { exit 1; }
-cmake --build . -- -j $PROC_NR || { exit 1; }
+cmake .. -DCMAKE_SYSTEM_NAME=PS2 -DCMAKE_BUILD_TYPE=Release
+cmake --build . -- -j $PROC_NR
 
-## Go back to the repository root, then to the workspace root
-cd ..
-cd ..
+# Copy directly using the tracked workspace root path
+cp anarch_libretro_ps2.a "$WORKSPACE_ROOT/anarch_libretro_ps2.a"
 
-## Copy and rename the compiled library to the workspace root directory
-if [ -f "anarch_libretro/build/anarch_libretro_ps2.a" ]; then
-    cp anarch_libretro/build/anarch_libretro_ps2.a anarch_libretro_ps2.a
-else
-    find anarch_libretro -name "anarch_libretro_ps2.a" -exec cp {} . \;
-fi
+echo "Successfully built and copied anarch_libretro_ps2.a to root."
