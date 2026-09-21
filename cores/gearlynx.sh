@@ -7,7 +7,6 @@ REPO_URL="https://github.com/Stayhye/Gearlynx"
 REPO_FOLDER="gearlynx"
 BRANCH_NAME="main"
 
-
 if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
 fi
@@ -22,4 +21,10 @@ cd platforms/libretro || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
 
-
+## Copy and rename the compiled library to the repository root directory
+if [ -f "libretro_ps2.a" ]; then
+    cp libretro_ps2.a ../../gearlynx_libretro_ps2.a
+else
+    # Fallback to catch any variant naming convention
+    find . -maxdepth 1 -name "*.a" -exec cp {} ../../gearlynx_libretro_ps2.a \;
+fi
