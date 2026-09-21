@@ -20,8 +20,14 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 ## Create build directory for CMake
 mkdir -p build && cd build || { exit 1; }
 
-## Configure and Compile using CMake (targeting PS2)
-cmake .. -DCMAKE_SYSTEM_NAME=PS2 -DCMAKE_BUILD_TYPE=Release || { exit 1; }
+## Configure and Compile using CMake with explicit PS2 cross-compiler flags
+cmake .. \
+    -DCMAKE_SYSTEM_NAME=Generic \
+    -DCMAKE_C_COMPILER=mips64r5900el-ps2-elf-gcc \
+    -DCMAKE_AR=mips64r5900el-ps2-elf-ar \
+    -DCMAKE_RANLIB=mips64r5900el-ps2-elf-ranlib \
+    -DCMAKE_BUILD_TYPE=Release || { exit 1; }
+
 cmake --build . -- -j $PROC_NR || { exit 1; }
 
 ## Go back to the repository root folder
