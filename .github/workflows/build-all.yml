@@ -37,6 +37,7 @@ jobs:
           #[genesis_plus_gx, genesis_plus_gx_libretro_ps2],
           #[gearboy, gearboy_libretro_ps2],
           [gearlynx, gearlynx_libretro_ps2],
+          [gearsystem, gearsystem_libretro_ps2],
           #[gpsp, gpsp_libretro_ps2],
           #[gpsp_libretro, gpsp_libretro_ps2],
           #[gw-libretro, gw-libretro_ps2],
