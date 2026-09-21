@@ -5,7 +5,7 @@ PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/Gearlynx"
 REPO_FOLDER="gearlynx"
-BRANCH_NAME="master"
+BRANCH_NAME="main"
 
 
 if test ! -d "$REPO_FOLDER"; then
