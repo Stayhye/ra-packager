@@ -32,12 +32,12 @@ export CXX="/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++"
 export AR="/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar"
 export RANLIB="/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ranlib"
 
-# Expose ps2sdk and gcc internal include directories cleanly without spaces in defines
+# Expose ps2sdk and gcc internal include directories cleanly, and force-include stddef.h globally via GCC
 PS2_INC_DIR="/usr/local/ps2dev/ee/mips64r5900el-ps2-elf/include"
 GCC_INC_DIR="$($CC -print-file-name=include)"
 GCC_FIXED_INC_DIR="$($CC -print-file-name=include-fixed)"
 
-export CFLAGS="-I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2_INC_DIR -I$GCC_INC_DIR -I$GCC_FIXED_INC_DIR"
+export CFLAGS="-I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2_INC_DIR -I$GCC_INC_DIR -I$GCC_FIXED_INC_DIR -include stddef.h"
 export CPPFLAGS="$CFLAGS"
 
 ## Configure using CMake with absolute paths to compiler and archiver for PS2
