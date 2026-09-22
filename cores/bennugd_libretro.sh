@@ -17,7 +17,7 @@ if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
 fi
 
-cd "$REPO_FOLDER" || { exit 1; tab_exit=1 }
+cd "$REPO_FOLDER" || { exit 1; }
 git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
