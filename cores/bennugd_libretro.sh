@@ -26,6 +26,12 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 rm -rf build
 mkdir -p build && cd build || { exit 1; }
 
+# Export global cross-compilation flags to fix missing size_t and standard headers in freestanding/PS2 toolchains
+export CFLAGS="${CFLAGS} -Dsize_t=unsigned int -I$(dirname $(which mips64r5900el-ps2-elf-gcc))/../mips64r5900el-ps2-elf/include"
+export CPPFLAGS="${CPPFLAGS} -Dsize_t=unsigned int"
+export CC="mips64r5900el-ps2-elf-gcc"
+export CXX="mips64r5900el-ps2-elf-g++"
+
 ## Configure using CMake with absolute paths to compiler and archiver for PS2
 cmake .. \
     -DCMAKE_SYSTEM_NAME=Generic \
