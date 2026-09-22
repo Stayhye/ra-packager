@@ -17,7 +17,7 @@ if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
 fi
 
-cd "$REPO_FOLDER" || { exit 1; }
+cd "$REPO_FOLDER" || { exit 1; tab_exit=1 }
 git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
@@ -26,17 +26,18 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 rm -rf build
 mkdir -p build && cd build || { exit 1; }
 
-# Export strict toolchain paths and explicit standard include folders for the PS2 SDK headers
+# Export strict toolchain paths
 export CC="/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc"
 export CXX="/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++"
 export AR="/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar"
 export RANLIB="/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ranlib"
 
-# Expose ps2sdk and gcc internal include directories cleanly, and force-include stddef.h globally via GCC
+# Expose ps2sdk and gcc internal include directories explicitly 
 PS2_INC_DIR="/usr/local/ps2dev/ee/mips64r5900el-ps2-elf/include"
 GCC_INC_DIR="$($CC -print-file-name=include)"
 GCC_FIXED_INC_DIR="$($CC -print-file-name=include-fixed)"
 
+# Force GCC to prepend <stddef.h> to every file compiled, resolving size_t globally for zlib-ng
 export CFLAGS="-I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2_INC_DIR -I$GCC_INC_DIR -I$GCC_FIXED_INC_DIR -include stddef.h"
 export CPPFLAGS="$CFLAGS"
 
