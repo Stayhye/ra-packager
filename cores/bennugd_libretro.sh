@@ -26,22 +26,31 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 rm -rf build
 mkdir -p build && cd build || { exit 1; }
 
-# Export global cross-compilation flags to fix missing size_t and standard headers in freestanding/PS2 toolchains
-export CFLAGS="${CFLAGS} -Dsize_t=unsigned int -I$(dirname $(which mips64r5900el-ps2-elf-gcc))/../mips64r5900el-ps2-elf/include"
-export CPPFLAGS="${CPPFLAGS} -Dsize_t=unsigned int"
-export CC="mips64r5900el-ps2-elf-gcc"
-export CXX="mips64r5900el-ps2-elf-g++"
+# Export strict toolchain paths and explicit standard include folders for the PS2 SDK headers
+export CC="/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc"
+export CXX="/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-g++"
+export AR="/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar"
+export RANLIB="/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ranlib"
+
+# Expose ps2sdk and gcc internal include directories cleanly without spaces in defines
+PS2_INC_DIR="/usr/local/ps2dev/ee/mips64r5900el-ps2-elf/include"
+GCC_INC_DIR="$($CC -print-file-name=include)"
+GCC_FIXED_INC_DIR="$($CC -print-file-name=include-fixed)"
+
+export CFLAGS="-I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2_INC_DIR -I$GCC_INC_DIR -I$GCC_FIXED_INC_DIR"
+export CPPFLAGS="$CFLAGS"
 
 ## Configure using CMake with absolute paths to compiler and archiver for PS2
 cmake .. \
     -DCMAKE_SYSTEM_NAME=Generic \
     -DCMAKE_SYSTEM_PROCESSOR=mips \
-    -DCMAKE_C_COMPILER=/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-gcc \
-    -DCMAKE_AR=/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ar \
-    -DCMAKE_RANLIB=/usr/local/ps2dev/ee/bin/mips64r5900el-ps2-elf-ranlib \
+    -DCMAKE_C_COMPILER=$CC \
+    -DCMAKE_CXX_COMPILER=$CXX \
+    -DCMAKE_AR=$AR \
+    -DCMAKE_RANLIB=$RANLIB \
     -DCMAKE_BUILD_TYPE=Release || { exit 1; }
 
-# Build with verbose output and without -j to see the exact linker error clearly
+# Build with verbose output
 cmake --build . --target bennugd_libretro --verbose || { exit 1; }
 
 ## Go back to the repository root folder
