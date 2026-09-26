@@ -5,6 +5,10 @@
 
 ./prepare_retroarch.sh || { exit 1; }
 
+#amiarcadia
+./cores/amiarcadia.sh || { exit 1; }
+./generate_retroarch.sh amiarcadia amiarcadia_libretro_ps2 || { exit 1; } 
+
 #hatariB
 ./cores/hatariB.sh || { exit 1; }
 ./generate_retroarch.sh HatariB hatarib_libretro_ps2 || { exit 1; } 
