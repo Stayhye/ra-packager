@@ -5,6 +5,10 @@
 
 ./prepare_retroarch.sh || { exit 1; }
 
+#nestopia
+./cores/nestopia.sh || { exit 1; }
+./generate_retroarch.sh nestopia nestopia_libretro_ps2 || { exit 1; } 
+
 #amiarcadia
 ./cores/amiarcadia.sh || { exit 1; }
 ./generate_retroarch.sh amiarcadia amiarcadia_libretro_ps2 || { exit 1; } 
