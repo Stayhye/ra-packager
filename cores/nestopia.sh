@@ -26,7 +26,7 @@ make -j $PROC_NR platform=ps2 || { exit 1; }
 cd .. || { exit 1; }
 
 ## Find and copy the generated archive
-FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_ps2.a" | head -n 1)
+FOUND_ARCHIVE=$(find "$REPO_FOLDER" -name "*_libretro_ps2.a" | head -n 1)
 if [ -z "$FOUND_ARCHIVE" ]; then
     echo "Error: Could not find generated static archive (*_ps2.a)"
     exit 1
