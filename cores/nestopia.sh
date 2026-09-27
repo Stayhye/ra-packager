@@ -22,4 +22,6 @@ cd libretro || { exit 1; }
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-
+# Fix: Move the compiled core back to the root of the nestopia folder
+# so the subsequent CI/CD steps can find it.
+cp nestopia_libretro_ps2.a ../ || { exit 1; }
