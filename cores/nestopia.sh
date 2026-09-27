@@ -22,8 +22,4 @@ cd libretro || { exit 1; }
 make -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -j $PROC_NR platform=ps2 || { exit 1; }
 
-## Return back to the workspace root  
-cd .. || { exit 1; }
-
-cp -f "$FOUND_ARCHIVE" ./libretro_ps2.a || { exit 1; }
 
