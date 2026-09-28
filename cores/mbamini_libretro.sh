@@ -29,9 +29,12 @@ mkdir -p obj/retro/mame
 
 make -f makefile -j $PROC_NR platform=ps2 || { exit 1; }
 
-# Force the final linker to keep all static symbols from the core archive
-export LDFLAGS="-Wl,--whole-archive -L$(pwd) -lmbamini_libretro_ps2 -Wl,--no-whole-archive"
+# Go back to root project directory where RetroArch links everything
+cd ..
 
-if [ -f "mbamini_libretro_ps2.a" ]; then
-    echo "Successfully built and prepared mbamini_libretro_ps2.a with whole-archive linker flags."
+# Force the final linker to include the static library with whole-archive so no libretro symbols are dropped
+export LIBS="-Wl,--whole-archive -L$REPO_FOLDER -lmbamini_libretro_ps2 -Wl,--no-whole-archive $LIBS"
+
+if [ -f "$REPO_FOLDER/mbamini_libretro_ps2.a" ]; then
+    echo "Successfully built and exported LIBS with whole-archive for $REPO_FOLDER/mbamini_libretro_ps2.a"
 fi
