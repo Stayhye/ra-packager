@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/fixGB"
-REPO_FOLDER="fixgb_libretro"
+REPO_FOLDER="fixgb"
 BRANCH_NAME="master"
 
 if test ! -d "$REPO_FOLDER"; then
