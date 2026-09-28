@@ -21,6 +21,6 @@ export PS2DEV=/usr/local/ps2dev
 export PS2SDK=$PS2DEV/ps2sdk
 export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2SDK/bin
 
-## Compile core
+# Compile core
 make -f makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f makefile -j $PROC_NR platform=ps2 || { exit 1; }
