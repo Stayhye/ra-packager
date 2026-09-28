@@ -170,9 +170,9 @@
 ./cores/libretro-samples.sh || { exit 1; }
 ./generate_retroarch.sh libretro-samples test_libretro_ps2 || { exit 1; }
 
-#MBA.mini_libretro
-./cores/MBA.mini_libretro.sh || { exit 1; }
-./generate_retroarch.sh MBA.mini_libretro MBA.mini_libretro_ps2 || { exit 1; }
+#mbamini_libretro
+./cores/mbamini_libretro.sh || { exit 1; }
+./generate_retroarch.sh mbamini_libretro mbamini_libretro_ps2 || { exit 1; }
 
 #mame2000-libretro
 ./cores/mame2000-libretro.sh || { exit 1; }
