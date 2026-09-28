@@ -28,3 +28,10 @@ make -f makefile platform=ps2 clean || { exit 1; }
 mkdir -p obj/retro/mame
 
 make -f makefile -j $PROC_NR platform=ps2 || { exit 1; }
+
+# Force the final linker to keep all static symbols from the core archive
+export LDFLAGS="-Wl,--whole-archive -L$(pwd) -lmbamini_libretro_ps2 -Wl,--no-whole-archive"
+
+if [ -f "mbamini_libretro_ps2.a" ]; then
+    echo "Successfully built and prepared mbamini_libretro_ps2.a with whole-archive linker flags."
+fi
