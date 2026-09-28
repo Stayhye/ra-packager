@@ -34,6 +34,7 @@ jobs:
           #[ecwolf, ecwolf_libretro_ps2],
           #[fbalpha2012_cps1, fbalpha2012_cps1_libretro_ps2],
           #[fbalpha2012_cps2, fbalpha2012_cps2_libretro_ps2],
+          [fixgb, fixgb_libretro_ps2],
           #[freeintv, freeintv_libretro_ps2],
           #[fuse_libretro, fuse_libretro_ps2],
           #[fmsx_libretro, fmsx_libretro_ps2],

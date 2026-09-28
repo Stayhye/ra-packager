@@ -9,6 +9,11 @@
 ./cores/jumpnbump_libretro.sh || { exit 1; }
 ./generate_retroarch.sh jumpnbump_libretro jumpnbump_libretro_ps2 || { exit 1; } 
 
+#fixgb
+./cores/fixgb.sh || { exit 1; }
+./generate_retroarch.sh fixgb fixgb_libretro_ps2 || { exit 1; } 
+
+
 #snes9x
 ./cores/snes9x.sh || { exit 1; }
 ./generate_retroarch.sh snes9x snes9x_libretro_ps2 || { exit 1; } 
