@@ -24,7 +24,7 @@ export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/iop/bin:$PS2SDK/bin
 # Compile core
 make -f makefile platform=ps2 clean || { exit 1; }
 
-# Ensure the sub-archive directory exists before parallel compilation starts
+# Ensure the required object directory tree exists prior to parallel building
 mkdir -p obj/retro/mame
 
 make -f makefile -j $PROC_NR platform=ps2 || { exit 1; }
