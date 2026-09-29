@@ -5,11 +5,11 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 ## Download the source code.
-REPO_URL="https://github.com/fjtrujy/libretro-prboom"
-##REPO_URL="https://github.com/Stayhye/libretro-prboom" 
+##REPO_URL="https://github.com/fjtrujy/libretro-prboom"
+REPO_URL="https://github.com/Stayhye/libretro-prboom" 
 REPO_FOLDER="libretro-prboom"
-BRANCH_NAME="fix-dynamic-platforms"
-##BRANCH_NAME="master"
+##BRANCH_NAME="fix-dynamic-platforms"
+BRANCH_NAME="master"
 ##BRANCH_NAME="ps2-support"
 
 if test ! -d "$REPO_FOLDER"; then 
@@ -18,6 +18,7 @@ else
 	cd $REPO_FOLDER && git fetch origin && git reset --hard origin/${BRANCH_NAME} && git checkout ${BRANCH_NAME} || { exit 1; }
 fi
 
+sh tools/ps2_defines_check.sh
 
 ## Compile core
 make -j $PROC_NR platform=ps2 clean  || { exit 1; }
