@@ -1,6 +1,6 @@
 #!/bin/bash
 # package.sh by Francisco Javier Trujillo Mata (fjtrujy@gmail.com)
-# Optimized for direct object linking on PS2 libretro ports
+# Optimized for direct recursive object linking on PS2 libretro ports
 
 set -e # Exit immediately if a command exits with a non-zero status
 
@@ -32,22 +32,21 @@ mkdir -p obj/retro/mame
 make -f makefile -j "$PROC_NR" platform=ps2
 cd ..
 
-# Verify and collect all compiled object files for direct linking
-OBJ_DIR="$REPO_FOLDER/obj"
-if [ ! -d "$OBJ_DIR" ]; then
-    echo "Error: Object directory '$OBJ_DIR' not found!" >&2
+# Verify and collect all compiled object files recursively across the repo
+if [ ! -d "$REPO_FOLDER" ]; then
+    echo "Error: Repository folder '$REPO_FOLDER' not found!" >&2
     exit 1
 fi
 
-OBJS=$(find "$OBJ_DIR" -name '*.o')
-OBJ_COUNT=$(echo "$OBJS" | grep -c '\.o$')
+OBJS=$(find "$REPO_FOLDER" -name '*.o')
+OBJ_COUNT=$(echo "$OBJS" | grep -c '\.o$' || true)
 
 if [ "$OBJ_COUNT" -eq 0 ]; then
     echo "Error: No object files found to link!" >&2
     exit 1
 fi
 
-# Inject directly into LIBS, bypassing static archive symbol-dropping issues
-export LIBS="$OBJS $LIBS"
+# Force linker grouping around core objects to resolve circular/unresolved symbols
+export LIBS="-Wl,--start-group $OBJS -Wl,--end-group $LIBS"
 
-echo "Successfully compiled $OBJ_COUNT object files and prepared them for direct linking!"
+echo "Successfully compiled and queued $OBJ_COUNT object files for direct linking!"
