@@ -32,9 +32,9 @@ make -f makefile -j $PROC_NR platform=ps2 || { exit 1; }
 # Go back to root project directory where RetroArch links everything
 cd ..
 
-# Force the final linker to include the static library with whole-archive so no libretro symbols are dropped
-export LIBS="-Wl,--whole-archive -L$REPO_FOLDER -lmbamini_libretro_ps2 -Wl,--no-whole-archive $LIBS"
+# Explicitly pass the full absolute archive path with whole-archive linker flags to ensure ld doesn't strip symbols
+export LIBS="-Wl,--whole-archive $(pwd)/$REPO_FOLDER/mbamini_libretro_ps2.a -Wl,--no-whole-archive $LIBS"
 
 if [ -f "$REPO_FOLDER/mbamini_libretro_ps2.a" ]; then
-    echo "Successfully built and exported LIBS with whole-archive for $REPO_FOLDER/mbamini_libretro_ps2.a"
+    echo "Successfully built and forced whole-archive linking for $REPO_FOLDER/mbamini_libretro_ps2.a"
 fi
