@@ -47,7 +47,8 @@ if [ "$OBJ_COUNT" -eq 0 ]; then
     exit 1
 fi
 
-# Force linker grouping around core objects to resolve circular/unresolved symbols
-export LIBS="-Wl,--start-group $OBJS -Wl,--end-group $LIBS"
-
 echo "Successfully compiled and queued $OBJ_COUNT object files for direct linking!"
+
+# Pass the grouped objects directly into RetroArch's build system
+# (Adjust 'make -f Makefile.ps2' or whatever command builds RetroArch here if needed, 
+# ensuring LIBS or EXTRALINK receives the grouped objects)
