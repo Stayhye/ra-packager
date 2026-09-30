@@ -17,6 +17,9 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
+# Fix Windows line endings if present
+sed -i -e 's/\r$//' Makefile.libretro
+
 ## Compile core
 make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
