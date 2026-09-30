@@ -17,8 +17,9 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-# Fix Windows line endings if present
-sed -i -e 's/\r$//' Makefile.libretro
+# Fix Windows line endings reliably using Python
+python3 -c "with open('Makefile.libretro', 'rb') as f: content = f.read()
+with open('Makefile.libretro', 'wb') as f: f.write(content.replace(b'\r\n', b'\n'))"
 
 ## Compile core
 make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
