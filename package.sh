@@ -10,8 +10,8 @@
 ./generate_retroarch.sh jumpnbump_libretro jumpnbump_libretro_ps2 || { exit 1; } 
 
 #mesence
-./cores/mesence.sh || { exit 1; }
-./generate_retroarch.sh mesence mesence_libretro_ps2 || { exit 1; } 
+./cores/mesen2.sh || { exit 1; }
+./generate_retroarch.sh mesen2 mesen2_libretro_ps2 || { exit 1; } 
 
 #fixgb
 ./cores/fixgb.sh || { exit 1; }

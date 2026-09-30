@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/MesenCE"
-REPO_FOLDER="mesence"
+REPO_FOLDER="mesen2"
 BRANCH_NAME="master"
 
 
