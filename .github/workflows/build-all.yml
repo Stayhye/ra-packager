@@ -62,6 +62,7 @@ jobs:
           #[mame2010-libretro, mame2010-libretro_ps2],
           #[mame2014_libretro, mame2014_libretro_ps2],
           #[mbamini_libretro, mbamini_libretro_ps2],
+          [mesence, mesence_libretro_ps2],
           #[mgba, mgba_libretro_ps2],
           #[mednafen_gba_libretro, mednafen_gba_libretro_ps2],
           #[mednafen_pce_libretro, mednafen_pce_libretro_ps2],
