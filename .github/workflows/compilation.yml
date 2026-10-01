@@ -30,13 +30,17 @@ jobs:
           [libretro-fceumm, fceumm_libretro_orbis],
          ]
 
-    container: ${{ matrix.docker_owner }}/orbisdev:latest
+    container: 
+      image: ${{ matrix.docker_owner }}/orbisdev:latest
+      env:
+        PS4SDK: /usr/local/orbisdev
+
     steps:
     - uses: actions/checkout@v4
 
     - name: Install dependencies
       run: |
-        apk update && apk add --no-cache build-base git bash python3
+        apk update && apk add --no-cache build-base musl-dev libc-dev git bash python3
       
     - name: Compile project
       run: |
@@ -53,7 +57,7 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
-        name: RA-${{ matrix.docker_owner }}-${{ steps.slug.outputs.sha8 }}
+        name: RA-${{ matrix.docker_owner }}-${{ matrix.core_opts[0] }}-${{ steps.slug.outputs.sha8 }}
         path: RA/
 
   libretro-info-core:
@@ -62,13 +66,17 @@ jobs:
       matrix:
         docker_owner: [orbisdev]
 
-    container: ${{ matrix.docker_owner }}/orbisdev:latest
+    container: 
+      image: ${{ matrix.docker_owner }}/orbisdev:latest
+      env:
+        PS4SDK: /usr/local/orbisdev
+
     steps:
     - uses: actions/checkout@v4
 
     - name: Install dependencies
       run: |
-        apk update && apk add --no-cache build-base git bash python3
+        apk update && apk add --no-cache build-base musl-dev libc-dev git bash python3
 
     - name: Compile project
       run: |
@@ -83,5 +91,5 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
-        name: RA-${{ matrix.docker_owner }}-${{ steps.slug.outputs.sha8 }}
+        name: RA-core-info-${{ steps.slug.outputs.sha8 }}
         path: RA/
