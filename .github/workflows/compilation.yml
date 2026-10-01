@@ -21,13 +21,13 @@ jobs:
           [libretro-samples, test_libretro_orbis],
           [blueMSX-libretro, bluemsx_libretro_orbis],
           [fmsx-libretro, fmsx_libretro_orbis],
-          # [libretro-prboom, prboom_libretro_orbis],
-          # [picodrive, picodrive_libretro_orbis],
-          # [ecwolf, ecwolf_libretro_orbis],
-          # [snes9x2002, snes9x2002_libretro_orbis],
-          # [libretro-lutro, lutro_libretro_orbis],
-          # [gpsp, gpsp_libretro_orbis],
-          # [libretro-fceumm, fceumm_libretro_orbis],
+          [libretro-prboom, prboom_libretro_orbis],
+          [picodrive, picodrive_libretro_orbis],
+          [ecwolf, ecwolf_libretro_orbis],
+          [snes9x2002, snes9x2002_libretro_orbis],
+          [libretro-lutro, lutro_libretro_orbis],
+          [gpsp, gpsp_libretro_orbis],
+          [libretro-fceumm, fceumm_libretro_orbis],
          ]
 
     container: ${{ matrix.docker_owner }}/orbisdev:latest
