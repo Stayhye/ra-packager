@@ -30,7 +30,11 @@ jobs:
           [libretro-fceumm, fceumm_libretro_orbis],
          ]
 
-    container: ${{ matrix.docker_owner }}/orbisdev:latest
+    container: 
+      image: ${{ matrix.docker_owner }}/orbisdev:latest
+      env:
+        PS4SDK: /usr/local/orbisdev
+
     steps:
     - uses: actions/checkout@v4
 
