@@ -34,9 +34,9 @@ jobs:
       image: ${{ matrix.docker_owner }}/orbisdev:latest
       env:
         PS4SDK: /usr/local/orbisdev
-        # Force the cross-compiler to pick up the SDK's internal include directories if it drifts
-        CFLAGS: "-I/usr/local/orbisdev/include -I/usr/local/orbisdev/x86_64-orbis-elf/include"
-        CXXFLAGS: "-I/usr/local/orbisdev/include -I/usr/local/orbisdev/x86_64-orbis-elf/include"
+        # Include the toolchain/Clang internal include directory to bypass -nostdinc restrictions on standard headers
+        CFLAGS: "-I/usr/local/orbisdev/include -I/usr/local/orbisdev/x86_64-orbis-elf/include -isystem /usr/lib/clang/$(clang -dumpversion)/include"
+        CXXFLAGS: "-I/usr/local/orbisdev/include -I/usr/local/orbisdev/x86_64-orbis-elf/include -isystem /usr/lib/clang/$(clang -dumpversion)/include"
 
     steps:
     - uses: actions/checkout@v4
