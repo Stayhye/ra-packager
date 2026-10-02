@@ -36,8 +36,8 @@ jobs:
       image: ${{ matrix.docker_owner }}/orbisdev:latest
       env:
         PS4SDK: /usr/local/orbisdev
-        CFLAGS: "-I/usr/local/orbisdev/include -I/usr/local/orbisdev/x86_64-orbis-elf/include -isystem /usr/lib/clang/$(clang -dumpversion)/include"
-        CXXFLAGS: "-I/usr/local/orbisdev/include -I/usr/local/orbisdev/x86_64-orbis-elf/include -isystem /usr/lib/clang/$(clang -dumpversion)/include"
+        CFLAGS: "-I/usr/local/orbisdev/include -I/usr/local/orbisdev/x86_64-orbis-elf/include"
+        CXXFLAGS: "-I/usr/local/orbisdev/include -I/usr/local/orbisdev/x86_64-orbis-elf/include -std=c++11"
 
     steps:
     - uses: actions/checkout@v4
@@ -50,6 +50,8 @@ jobs:
       run: |
         ./prepare_release.sh
         ./prepare_retroarch.sh
+        # Patch out hardcoded c++98 flags in core Makefiles to use c++11 for modern libc++ compatibility
+        find . -name "Makefile*" -exec sed -i 's/-std=c++98/-std=c++11/g' {} +
         ./cores/${{ matrix.core_opts[0] }}.sh
         ./generate_retroarch.sh ${{ matrix.core_opts[0] }} ${{ matrix.core_opts[1] }}
 
