@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/xmil-libretro"
-REPO_FOLDER="xmil_libretro"
+REPO_FOLDER="xmil-libretro"
 BRANCH_NAME="master"
 
 
@@ -22,3 +22,5 @@ cd libretro || { exit 1; }
 ## Compile core
 make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
+
+cd .. 
