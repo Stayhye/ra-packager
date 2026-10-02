@@ -7,6 +7,7 @@ REPO_URL="https://github.com/Stayhye/xmil-libretro"
 REPO_FOLDER="xmil-libretro"
 BRANCH_NAME="master"
 
+
 if test ! -d "$REPO_FOLDER"; then
     git clone --recurse-submodules --depth 1 -b $BRANCH_NAME $REPO_URL $REPO_FOLDER || { exit 1; }
 fi
@@ -26,14 +27,13 @@ make -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
 echo "Listing generated static libraries:"
 ls -la *.a
 
-# Move the generated file up 1 folder (adjust name if it differs, e.g., xmil_libretro.a)
-if [ -f "xmil_libretro_ps2.a" ]; then
-    mv xmil_libretro_ps2.a ../ || { exit 1; }
-elif [ -f "xmil_libretro.a" ]; then
-    mv xmil_libretro.a ../ || { exit 1; }
+# Handle the generated file (since it builds as x1_libretro_ps2.a)
+if [ -f "x1_libretro_ps2.a" ]; then
+    # Copy/rename it to xmil_libretro_ps2.a so subsequent steps find it
+    cp x1_libretro_ps2.a ../xmil_libretro_ps2.a || { exit 1; }
 else
-    # Fallback to moving any .a file produced in this directory
-    mv *.a ../ || { exit 1; }
+    echo "Error: x1_libretro_ps2.a not found!"
+    exit 1
 fi
 
 cd ../
