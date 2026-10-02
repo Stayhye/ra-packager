@@ -23,4 +23,7 @@ cd libretro || { exit 1; }
 make -f Makefile.libretro -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile.libretro -j $PROC_NR platform=ps2 || { exit 1; }
 
-cd .. 
+# Move the generated file up 1 folder
+mv xmil_libretro_ps2.a ../ || { exit 1; }
+
+cd ../
