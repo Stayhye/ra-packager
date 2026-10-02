@@ -4,7 +4,7 @@
 PROC_NR=$(getconf _NPROCESSORS_ONLN)
 
 REPO_URL="https://github.com/Stayhye/smsplus-gx"
-REPO_FOLDER="smsplus-gx"
+REPO_FOLDER="smsplus"
 BRANCH_NAME="master"
 
 
