@@ -9,6 +9,8 @@ on:
   pull_request:
   repository_dispatch:
     types: [run_build]
+  workflow_dispatch:
+    inputs: {}
 
 jobs:
   cores:
@@ -34,7 +36,6 @@ jobs:
       image: ${{ matrix.docker_owner }}/orbisdev:latest
       env:
         PS4SDK: /usr/local/orbisdev
-        # Include the toolchain/Clang internal include directory to bypass -nostdinc restrictions on standard headers
         CFLAGS: "-I/usr/local/orbisdev/include -I/usr/local/orbisdev/x86_64-orbis-elf/include -isystem /usr/lib/clang/$(clang -dumpversion)/include"
         CXXFLAGS: "-I/usr/local/orbisdev/include -I/usr/local/orbisdev/x86_64-orbis-elf/include -isystem /usr/lib/clang/$(clang -dumpversion)/include"
 
