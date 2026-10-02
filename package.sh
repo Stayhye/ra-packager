@@ -5,9 +5,13 @@
 
 ./prepare_retroarch.sh || { exit 1; }
 
+#xmil_libretro
+./cores/xmil_libretro.sh || { exit 1; }
+./generate_retroarch.sh xmil_libretro xmil_libretro_ps2 || { exit 1; } 
+
 #tamalibretro
 ./cores/tamalibretro.sh || { exit 1; }
-./generate_retroarch.sh tamalibretro tamalibretro_libretro_ps2 || { exit 1; } 
+./generate_retroarch.sh tamalibretro tamalibretro_libretro_ps2 || { exit 1; }
 
 #jumpnbump_libretro
 ./cores/jumpnbump_libretro.sh || { exit 1; }
