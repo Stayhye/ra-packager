@@ -13,7 +13,7 @@ if test ! -d "$REPO_FOLDER"; then
 else
 	cd $REPO_FOLDER && git fetch origin && git reset --hard origin/${BRANCH_NAME} && git checkout ${BRANCH_NAME} || { exit 1; }
 fi
-
+ 
 ## Compile core
 make -f Makefile.libretro -j $PROC_NR platform=orbis clean || { exit 1; }
 make -f Makefile.libretro  -j $PROC_NR platform=orbis || { exit 1; }
