@@ -5,6 +5,10 @@
 
 ./prepare_retroarch.sh || { exit 1; }
 
+#tamalibretro
+./cores/tamalibretro.sh || { exit 1; }
+./generate_retroarch.sh tamalibretro tamalibretro_libretro_ps2 || { exit 1; } 
+
 #jumpnbump_libretro
 ./cores/jumpnbump_libretro.sh || { exit 1; }
 ./generate_retroarch.sh jumpnbump_libretro jumpnbump_libretro_ps2 || { exit 1; } 
