@@ -19,12 +19,12 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 
 cd libretro || { exit 1; }
 
-# Patch libco/sjlj.c for PS2 (replace sig-based functions with standard setjmp/longjmp and remove sigaltstack)
+# Patch libco/sjlj.c for PS2 setjmp and remove unsupported sigaltstack blocks
 sed -i 's/sigjmp_buf/jmp_buf/g' libco/sjlj.c
 sed -i 's/sigsetjmp/setjmp/g' libco/sjlj.c
 sed -i 's/siglongjmp/longjmp/g' libco/sjlj.c
-sed -i 's/sigaltstack/\/\/sigaltstack/g' libco/sjlj.c
-sed -i 's/SA_ONSTACK/0/g' libco/sjlj.c
+sed -i 's/setjmp(\([^,]*\),\s*0)/setjmp(\1)/g' libco/sjlj.c
+sed -i 's/if(stack.ss_sp &&.*sigaltstack.*;/if(0) {/g' libco/sjlj.c
 
 # Compile core
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
