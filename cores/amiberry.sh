@@ -103,9 +103,9 @@ if [ -f "../src/machdep/maccess.h" ]; then
     sed -i 's/void do_put_mem_long(uint32_t\*/void do_put_mem_long(uae_u32*/g' ../src/machdep/maccess.h
 fi
 
-# Ensure sysdeps.h recognizes PS2/MIPS architecture cleanly
+# Prepend MIPS definitions to the very top of sysdeps.h to bypass CPU checks
 if [ -f "../src/include/sysdeps.h" ]; then
-    sed -i '/#error unrecognized CPU type/i #define __mips__ 1\n#define __mips64 1' ../src/include/sysdeps.h
+    sed -i '1i #define __mips__ 1\n#define __mips64 1' ../src/include/sysdeps.h
 fi
 
 # Compile core with flags
