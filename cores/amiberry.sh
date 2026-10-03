@@ -18,7 +18,24 @@ git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
 # Create directories if they don't exist
-mkdir -p libco libretro/libco
+mkdir -p libco libretro/libco arpa
+
+# Create a compatibility arpa/inet.h for PS2
+cat << 'EOF' > arpa/inet.h
+#ifndef _PS2_ARPA_INET_H
+#define _PS2_ARPA_INET_H
+#include <netinet/in.h>
+#include <sys/types.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
+int inet_pton(int af, const char *src, void *dst);
+#ifdef __cplusplus
+}
+#endif
+#endif
+EOF
 
 # Write a clean, working libco/sjlj.c for PS2 using standard static pointers
 cat << 'EOF' > libco/sjlj.c
@@ -108,6 +125,12 @@ if [ -f "../src/include/sysdeps.h" ]; then
     sed -i 's/#error unrecognized CPU type/\/\* #error unrecognized CPU type \*\//g' ../src/include/sysdeps.h
 fi
 
-# Compile core with flags
+# Fix cbytes type mismatch in blkdev_cdimage.cpp for uint32_t reference binding
+if [ -f "../src/blkdev_cdimage.cpp" ]; then
+    sed -i 's/uae_u32 cbytes;/uint32_t cbytes;/g' ../src/blkdev_cdimage.cpp
+fi
+
+# Compile core with flags (adding current dir to include path for arpa/inet.h)
+export CXXFLAGS="$CXXFLAGS -I.."
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
