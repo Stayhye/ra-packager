@@ -18,10 +18,10 @@ git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
 # Create directories if they don't exist
-mkdir -p libco libretro/libco arpa
+mkdir -p libco libretro/libco src/arpa src/include/arpa
 
-# Create a compatibility arpa/inet.h for PS2
-cat << 'EOF' > arpa/inet.h
+# Create a compatibility arpa/inet.h inside src include paths
+cat << 'EOF' > src/arpa/inet.h
 #ifndef _PS2_ARPA_INET_H
 #define _PS2_ARPA_INET_H
 #include <netinet/in.h>
@@ -36,6 +36,7 @@ int inet_pton(int af, const char *src, void *dst);
 #endif
 #endif
 EOF
+cp src/arpa/inet.h src/include/arpa/inet.h
 
 # Write a clean, working libco/sjlj.c for PS2 using standard static pointers
 cat << 'EOF' > libco/sjlj.c
@@ -130,7 +131,6 @@ if [ -f "../src/blkdev_cdimage.cpp" ]; then
     sed -i 's/uae_u32 cbytes;/uint32_t cbytes;/g' ../src/blkdev_cdimage.cpp
 fi
 
-# Compile core with flags (adding current dir to include path for arpa/inet.h)
-export CXXFLAGS="$CXXFLAGS -I.."
+# Compile core with flags
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
