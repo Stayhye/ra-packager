@@ -20,8 +20,8 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Create directories if they don't exist
 mkdir -p libco libretro/libco
 
-# Write a clean, working libco/sjlj.c for PS2 that doesn't use sigaltstack
-read -r -d '' SJLj_CONTENT << 'EOF' || true
+# Write a clean, working libco/sjlj.c for PS2 directly
+cat << 'EOF' > libco/sjlj.c
 #include <stdint.h>
 #include <setjmp.h>
 #include <stdlib.h>
@@ -32,12 +32,11 @@ read -r -d '' SJLj_CONTENT << 'EOF' || true
 typedef struct {
   jmp_buf context;
   void *memory;
+  void (*entry)(void);
 } cothread_struct;
 
 static thread_local cothread_struct* main_thread = NULL;
 static thread_local cothread_struct* current_thread = NULL;
-
-static void (*co_entry_point)(void) = 0;
 
 cothread_t co_active(void) {
   if (!main_thread) {
@@ -54,10 +53,11 @@ cothread_t co_derive(void* memory, unsigned int size, void (*coentry)(void)) {
     current_thread = main_thread;
   }
   thread->memory = memory;
+  thread->entry = coentry;
   if (setjmp(thread->context) == 0) {
     return (cothread_t)thread;
   }
-  co_entry_point();
+  current_thread->entry();
   return 0;
 }
 
@@ -91,8 +91,8 @@ cothread_t co_deserialise(void const* buffer) {
 }
 EOF
 
-echo "$SJLj_CONTENT" > libco/sjlj.c
-echo "$SJLj_CONTENT" > libretro/libco/sjlj.c
+# Copy to libretro location as well
+cp libco/sjlj.c libretro/libco/sjlj.c
 
 cd libretro || { exit 1; }
 
