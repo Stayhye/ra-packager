@@ -96,6 +96,13 @@ cp libco/sjlj.c libretro/libco/sjlj.c
 
 cd libretro || { exit 1; }
 
+# Patch maccess.h to use uae_u32 instead of uint32_t to match pointers cleanly on PS2 toolchain
+if [ -f "../src/machdep/maccess.h" ]; then
+    sed -i 's/uint32_t\* a/uae_u32* a/g' ../src/machdep/maccess.h
+    sed -i 's/uint32_t do_get_mem_long/uae_u32 do_get_mem_long/g' ../src/machdep/maccess.h
+    sed -i 's/void do_put_mem_long(uint32_t\*/void do_put_mem_long(uae_u32*/g' ../src/machdep/maccess.h
+fi
+
 # Compile core
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
