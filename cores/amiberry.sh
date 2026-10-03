@@ -17,29 +17,76 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-# Apply the libco patch here (or inside libretro depending on repo tree layout)
-if [ -f "libco/sjlj.c" ]; then
-    SJLJ_PATH="libco/sjlj.c"
-elif [ -f "libretro/libco/sjlj.c" ]; then
-    SJLJ_PATH="libretro/libco/sjlj.c"
-else
-    # Fallback to searching for it
-    SJLJ_PATH=$(find . -name "sjlj.c" | head -n 1)
-fi
+# Write a clean, working libco/sjlj.c for PS2 that doesn't use sigaltstack
+cat << 'EOF' > libco/sjlj.c
+#include <stdint.h>
+#include <setjmp.h>
+#include <stdlib.h>
 
-if [ -n "$SJLJ_PATH" ]; then
-    echo "==> Patching $SJLJ_PATH for PS2..."
-    sed -i 's/sigjmp_buf/jmp_buf/g' "$SJLJ_PATH"
-    sed -i 's/sigsetjmp/setjmp/g' "$SJLJ_PATH"
-    sed -i 's/siglongjmp/longjmp/g' "$SJLJ_PATH"
-    sed -i 's/setjmp(\([^,]*\),\s*0)/setjmp(\1)/g' "$SJLJ_PATH"
-    sed -i 's/stack_size/16384/g' "$SJLJ_PATH"
-    sed -i '/stack_t stack/,/}/c\  void *stack_base = __builtin_alloca(16384);' "$SJLJ_PATH"
-    sed -i 's/if(stack.ss_sp &&.*sigaltstack.*;/if(0) {/' "$SJLJ_PATH"
-    sed -i 's/struct sigaction.*/int dummy_sig = 0;/g' "$SJLJ_PATH"
-    sed -i 's/sigaction(.*/;/g' "$SJLJ_PATH"
-    sed -i 's/sigemptyset(.*/;/g' "$SJLJ_PATH"
-fi
+#define LIBCO_C
+#include "libco.h"
+
+typedef struct {
+  jmp_buf context;
+  void *memory;
+} cothread_struct;
+
+static thread_local cothread_struct* main_thread = NULL;
+static thread_local cothread_struct* current_thread = NULL;
+
+static void (*co_entry_point)(void) = 0;
+
+cothread_t co_active(void) {
+  if (!main_thread) {
+    main_thread = (cothread_struct*)malloc(sizeof(cothread_struct));
+    current_thread = main_thread;
+  }
+  return (cothread_t)current_thread;
+}
+
+cothread_t co_derive(void* memory, unsigned int size, void (*coentry)(void)) {
+  cothread_struct* thread = (cothread_struct*)memory;
+  if (!main_thread) {
+    main_thread = (cothread_struct*)malloc(sizeof(cothread_struct));
+    current_thread = main_thread;
+  }
+  thread->memory = memory;
+  if (setjmp(thread->context) == 0) {
+    return (cothread_t)thread;
+  }
+  co_entry_point();
+  return 0;
+}
+
+cothread_t co_create(unsigned int size, void (*coentry)(void)) {
+  void* memory = malloc(size);
+  if (!memory) return 0;
+  return co_derive(memory, size, coentry);
+}
+
+void co_delete(cothread_t handle) {
+  cothread_struct* thread = (cothread_struct*)handle;
+  if (thread && thread != main_thread) {
+    free(thread->memory);
+  }
+}
+
+void co_switch(cothread_t handle) {
+  cothread_struct* old_thread = current_thread;
+  current_thread = (cothread_struct*)handle;
+  if (setjmp(old_thread->context) == 0) {
+    longjmp(current_thread->context, 1);
+  }
+}
+
+int co_serialise(cothread_t handle, void* buffer) {
+  return 0;
+}
+
+cothread_t co_deserialise(void const* buffer) {
+  return 0;
+}
+EOF
 
 cd libretro || { exit 1; }
 
