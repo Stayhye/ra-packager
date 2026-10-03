@@ -17,8 +17,11 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
+# Create directories if they don't exist
+mkdir -p libco libretro/libco
+
 # Write a clean, working libco/sjlj.c for PS2 that doesn't use sigaltstack
-cat << 'EOF' > libco/sjlj.c
+read -r -d '' SJLj_CONTENT << 'EOF' || true
 #include <stdint.h>
 #include <setjmp.h>
 #include <stdlib.h>
@@ -87,6 +90,9 @@ cothread_t co_deserialise(void const* buffer) {
   return 0;
 }
 EOF
+
+echo "$SJLj_CONTENT" > libco/sjlj.c
+echo "$SJLj_CONTENT" > libretro/libco/sjlj.c
 
 cd libretro || { exit 1; }
 
