@@ -20,20 +20,35 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Create directories if they don't exist
 mkdir -p libco libretro/libco src/arpa src/include/arpa
 
-# Create a compatibility arpa/inet.h inside src include paths
+# Create a self-contained compatibility arpa/inet.h
 cat << 'EOF' > src/arpa/inet.h
 #ifndef _PS2_ARPA_INET_H
 #define _PS2_ARPA_INET_H
-#include <netinet/in.h>
+
 #include <sys/types.h>
+
+#ifndef in_addr_t
+typedef uint32_t in_addr_t;
+#endif
+
+struct in_addr {
+    in_addr_t s_addr;
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 const char *inet_ntop(int af, const void *src, char *dst, socklen_t size);
 int inet_pton(int af, const char *src, void *dst);
+unsigned long inet_addr(const char *cp);
+int inet_aton(const char *cp, struct in_addr *inp);
+char *inet_ntoa(struct in_addr in);
+
 #ifdef __cplusplus
 }
 #endif
+
 #endif
 EOF
 cp src/arpa/inet.h src/include/arpa/inet.h
