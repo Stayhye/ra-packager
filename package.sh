@@ -5,6 +5,10 @@
 
 ./prepare_retroarch.sh || { exit 1; }
 
+#amiberry
+./cores/amiberry.sh || { exit 1; }
+./generate_retroarch.sh amiberry amiberry_libretro_ps2 || { exit 1; } 
+
 #smsplus-gx
 ./cores/smsplus-gx.sh || { exit 1; }
 ./generate_retroarch.sh smsplus smsplus_libretro_ps2 || { exit 1; } 
