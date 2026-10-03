@@ -21,4 +21,4 @@ cd libretro || { exit 1; }
 
 ## Compile core
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
+make -f Makefile -j $PROC_NR platform=ps2 FLAGS="-march=r5900 -mtune=r5900 -G0 -ffast-math -fomit-frame-pointer -DPS2 -DABGR1555 -fno-expensive-optimizations -DLIBRETRO_NO_JIT -DCPU_MIPS -DEE -D_EE -DLSB_FIRST -D_POSIX_C_SOURCE=200809L -D_DEFAULT_SOURCE -Wno-error=incompatible-pointer-types" || { exit 1; }
