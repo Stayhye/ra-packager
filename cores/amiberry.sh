@@ -20,7 +20,7 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 # Create directories if they don't exist
 mkdir -p libco libretro/libco
 
-# Write a clean, working libco/sjlj.c for PS2 directly
+# Write a clean, working libco/sjlj.c for PS2 using standard static pointers
 cat << 'EOF' > libco/sjlj.c
 #include <stdint.h>
 #include <setjmp.h>
@@ -35,8 +35,8 @@ typedef struct {
   void (*entry)(void);
 } cothread_struct;
 
-static thread_local cothread_struct* main_thread = NULL;
-static thread_local cothread_struct* current_thread = NULL;
+static cothread_struct* main_thread = NULL;
+static cothread_struct* current_thread = NULL;
 
 cothread_t co_active(void) {
   if (!main_thread) {
