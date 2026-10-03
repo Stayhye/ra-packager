@@ -19,6 +19,13 @@ git checkout ${BRANCH_NAME} || { exit 1; }
 
 cd libretro || { exit 1; }
 
-## Compile core
+# Patch libco/sjlj.c for PS2 (replace sig-based functions with standard setjmp/longjmp and remove sigaltstack)
+sed -i 's/sigjmp_buf/jmp_buf/g' libco/sjlj.c
+sed -i 's/sigsetjmp/setjmp/g' libco/sjlj.c
+sed -i 's/siglongjmp/longjmp/g' libco/sjlj.c
+sed -i 's/sigaltstack/\/\/sigaltstack/g' libco/sjlj.c
+sed -i 's/SA_ONSTACK/0/g' libco/sjlj.c
+
+# Compile core
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
-make -f Makefile -j $PROC_NR platform=ps2 EXTRA_CFLAGS="-D_POSIX_C_SOURCE=200809L -D_DEFAULT_SOURCE -Wno-error=incompatible-pointer-types" FLAGS="-march=r5900 -mtune=r5900 -G0 -ffast-math -fomit-frame-pointer -DPS2 -DABGR1555 -fno-expensive-optimizations -DLIBRETRO_NO_JIT -DCPU_MIPS -DEE -D_EE -DLSB_FIRST -D_POSIX_C_SOURCE=200809L -D_DEFAULT_SOURCE -Wno-error=incompatible-pointer-types" || { exit 1; }
+make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
