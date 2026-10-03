@@ -25,6 +25,9 @@ sed -i 's/sigsetjmp/setjmp/g' libco/sjlj.c
 sed -i 's/siglongjmp/longjmp/g' libco/sjlj.c
 sed -i 's/setjmp(\([^,]*\),\s*0)/setjmp(\1)/g' libco/sjlj.c
 sed -i 's/if(stack.ss_sp &&.*sigaltstack.*;/if(0) {/g' libco/sjlj.c
+sed -i 's/SA_ONSTACK/0/g' libco/sjlj.c
+sed -i 's/struct sigaction/int/g' libco/sjlj.c
+sed -i 's/sigaction(/,\/./g' libco/sjlj.c
 
 # Compile core
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
