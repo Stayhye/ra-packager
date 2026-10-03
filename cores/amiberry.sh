@@ -17,20 +17,31 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
+# Apply the libco patch here (or inside libretro depending on repo tree layout)
+if [ -f "libco/sjlj.c" ]; then
+    SJLJ_PATH="libco/sjlj.c"
+elif [ -f "libretro/libco/sjlj.c" ]; then
+    SJLJ_PATH="libretro/libco/sjlj.c"
+else
+    # Fallback to searching for it
+    SJLJ_PATH=$(find . -name "sjlj.c" | head -n 1)
+fi
+
+if [ -n "$SJLJ_PATH" ]; then
+    echo "==> Patching $SJLJ_PATH for PS2..."
+    sed -i 's/sigjmp_buf/jmp_buf/g' "$SJLJ_PATH"
+    sed -i 's/sigsetjmp/setjmp/g' "$SJLJ_PATH"
+    sed -i 's/siglongjmp/longjmp/g' "$SJLJ_PATH"
+    sed -i 's/setjmp(\([^,]*\),\s*0)/setjmp(\1)/g' "$SJLJ_PATH"
+    sed -i 's/stack_size/16384/g' "$SJLJ_PATH"
+    sed -i '/stack_t stack/,/}/c\  void *stack_base = __builtin_alloca(16384);' "$SJLJ_PATH"
+    sed -i 's/if(stack.ss_sp &&.*sigaltstack.*;/if(0) {/' "$SJLJ_PATH"
+    sed -i 's/struct sigaction.*/int dummy_sig = 0;/g' "$SJLJ_PATH"
+    sed -i 's/sigaction(.*/;/g' "$SJLJ_PATH"
+    sed -i 's/sigemptyset(.*/;/g' "$SJLJ_PATH"
+fi
+
 cd libretro || { exit 1; }
-
-# Correctly patch libco/sjlj.c for PS2 setjmp/longjmp and bypass unsupported signal stacks
-sed -i 's/sigjmp_buf/jmp_buf/g' libco/sjlj.c
-sed -i 's/sigsetjmp/setjmp/g' libco/sjlj.c
-sed -i 's/siglongjmp/longjmp/g' libco/sjlj.c
-sed -i 's/setjmp(\([^,]*\),\s*0)/setjmp(\1)/g' libco/sjlj.c
-
-# Safely disable the sigaltstack/sigaction block to prevent struct errors on PS2
-sed -i '/stack_t stack/,/}/c\  void *stack_base = __builtin_alloca(stack_size);' libco/sjlj.c
-sed -i 's/if(stack.ss_sp &&.*sigaltstack.*;/if(0) {/' libco/sjlj.c
-sed -i 's/struct sigaction.*/int dummy_sig = 0;/g' libco/sjlj.c
-sed -i 's/sigaction(.*/;/g' libco/sjlj.c
-sed -i 's/sigemptyset(.*/;/g' libco/sjlj.c
 
 # Compile core
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
