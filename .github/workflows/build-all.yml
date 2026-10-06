@@ -21,7 +21,7 @@ jobs:
           #[81_libretro, 81_libretro_ps2],
           #[tamalibretro, tamalibretro_libretro_ps2],
           #[xmil-libretro, xmil_libretro_ps2],
-          [smsplus, smsplus_libretro_ps2],
+          #[smsplus, smsplus_libretro_ps2],
           [vice-libretro, vice_libretro_ps2],
           #[2048_libretro, 2048_libretro_ps2],
           #[atari800_libretro, atari800_libretro_ps2],
