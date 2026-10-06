@@ -5,6 +5,10 @@
 
 ./prepare_retroarch.sh || { exit 1; }
 
+#vice-libretro
+./cores/vice-libretro.sh || { exit 1; }
+./generate_retroarch.sh vice-libretro vice_libretro_ps2 || { exit 1; } 
+
 #smsplus-gx
 ./cores/smsplus-gx.sh || { exit 1; }
 ./generate_retroarch.sh smsplus smsplus_libretro_ps2 || { exit 1; }
