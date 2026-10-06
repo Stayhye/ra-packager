@@ -17,8 +17,16 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-# Lower optimization from -O3 to -O2 for PS2 platform block to avoid GCC reload ICE bug
-sed -i '/ifeq ($(platform), ps2)/,/^$/ s/-O3/-O2/g' Makefile
+# Lower optimization specifically for the problematic reSIDfp config files to avoid GCC reload ICE bug
+sed -i 's/-O3/-O2/g' Makefile
+
+# Override optimization for FilterModelConfig files to -O1 by appending custom rules or modifying flags
+cat << 'EOF' >> Makefile
+
+# Custom overrides to fix GCC reload ICE on PS2
+$(REROOT)/vice/src/residfp/builders/residfp-builder/residfp/FilterModelConfig.o: CXXFLAGS := $(subst -O3,-O1,$(CXXFLAGS))
+$(REROOT)/vice/src/residfp/builders/residfp-builder/residfp/FilterModelConfig8580.o: CXXFLAGS := $(subst -O3,-O1,$(CXXFLAGS))
+EOF
 
 ## Compile core
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
