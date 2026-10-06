@@ -17,6 +17,9 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
+# Lower optimization from -O3 to -O2 for PS2 platform block to avoid GCC reload ICE bug
+sed -i '/ifeq ($(platform), ps2)/,/^$/ s/-O3/-O2/g' Makefile
+
 ## Compile core
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
 make -f Makefile -j $PROC_NR platform=ps2 || { exit 1; }
