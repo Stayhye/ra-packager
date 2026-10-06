@@ -17,17 +17,13 @@ git fetch origin
 git reset --hard origin/${BRANCH_NAME}
 git checkout ${BRANCH_NAME} || { exit 1; }
 
-# Inject optimization disable pragma into the problematic source files to avoid the reload ICE bug
-CONFIG_FILE="vice/src/residfp/builders/residfp-builder/residfp/FilterModelConfig.cpp"
-CONFIG8580_FILE="vice/src/residfp/builders/residfp-builder/residfp/FilterModelConfig8580.cpp"
+# Force -O0 specifically for the problematic reSIDfp config translation units to bypass GCC reload ICE
+cat << 'EOF' >> Makefile
 
-if [ -f "$CONFIG_FILE" ]; then
-    sed -i 's/namespace reSIDfp {/#pragma GCC optimize ("O0")\nnamespace reSIDfp {/' "$CONFIG_FILE"
-fi
-
-if [ -f "$CONFIG8580_FILE" ]; then
-    sed -i 's/namespace reSIDfp {/#pragma GCC optimize ("O0")\nnamespace reSIDfp {/' "$CONFIG8580_FILE"
-fi
+# Bypass GCC reload ICE by dropping optimization to -O0 for these two files
+$(filter %FilterModelConfig.o, $(OBJECTS)): CXXFLAGS := $(subst -O3,-O0,$(subst -O2,-O0,$(subst -O1,-O0,$(CXXFLAGS)))) -O0
+$(filter %FilterModelConfig8580.o, $(OBJECTS)): CXXFLAGS := $(subst -O3,-O0,$(subst -O2,-O0,$(subst -O1,-O0,$(CXXFLAGS)))) -O0
+EOF
 
 ## Compile core
 make -f Makefile -j $PROC_NR platform=ps2 clean || { exit 1; }
